@@ -38,11 +38,11 @@ FresherNote is a web application inspired by Evernote that will be build using R
 * [API endpoints][api-endpoints]
 * [DB schema][schema]
 
-[views]: docs/views.md
-[components]: docs/components.md
-[flux-cycles]: docs/flux-cycles.md
-[api-endpoints]: docs/api-endpoints.md
-[schema]: docs/schema.md
+[views]: ./views.md
+[components]: ./components.md
+[flux-cycles]: ./flux-cycles.md
+[api-endpoints]: ./api-endpoints.md
+[schema]: ./schema.md
 
 ## Implementation Timeline
 
@@ -61,12 +61,13 @@ Figure out how to upload and play music from browser
 Create flux cycle for tracks
 
 Create Track CRUD and create components that render any track components
-  - <Stream />
-  - <HomeTracks />
-  - <UserLikes />
-  - <EditView />
-  - <TrackView />
-  - <CommentView />
+  - Stream
+  - HomeTracks
+  - UserLikes
+  - UserTracks
+  - EditView
+  - TrackView
+  - CommentView
 
 1 day (4/10)
 
@@ -74,14 +75,14 @@ Create flux cycle for comments
 
 Create Comment CRUD and create components that render any comment
 components
-  - <CommentItem />
+  - CommentItem
 
 create flux cycle for likes
 
 Create Like CRUD and create/edit components that render any Like
 components
-  - <CommentLikes />
-  - <Track />
+  - CommentLikes
+  - Track
 
 1 day (5/10)
 
