@@ -26,13 +26,13 @@
 ![user-update-track]
 
 
-[sign-up]: ./wireframes/sign_up.png
-[sign-in]: ./wireframes/sign_in.png
-[root-logged-in]: ./wireframes/root_logged_in.png
-[root-logged-out]: ./wireframes/root_logged_out.png
-[nav-bar&play-bar]: ./wireframes/nav_bar&play_bar.png
-[user]: ./wireframes/user.png
-[user-track]: ./wireframes/user_track.png
-[user-update-track]: ./wireframes/user_update_track.png
-[user-track-edit]: ./wireframes/user_track_edit.png
-[user-likes]: ./wireframes/user_likes.png
+[sign-up]: ./wireframes/sign_up.jpg
+[sign-in]: ./wireframes/sign_in.jpg
+[root-logged-in]: ./wireframes/root_logged_in.jpg
+[root-logged-out]: ./wireframes/root_logged_out.jpg
+[nav-bar&play-bar]: ./wireframes/nav_bar&play_bar.jpg
+[user]: ./wireframes/user.jpg
+[user-track]: ./wireframes/user_track.jpg
+[user-update-track]: ./wireframes/user_update_track.jpg
+[user-track-edit]: ./wireframes/user_track_edit.jpg
+[user-likes]: ./wireframes/user_likes.jpg
