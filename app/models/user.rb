@@ -18,15 +18,17 @@ class User < ActiveRecord::Base
   end
 
   def generate_session_token
-    session_token = SecureRandom.urlbase_64(16)
+    session_token = SecureRandom.urlsafe_base64(16)
     while User.find_by(session_token: session_token)
-      session_token = SecureRandom.urlbase_64(16)
+      session_token = SecureRandom.urlsafe_base64(16)
     end
     return session_token
   end
 
   def reset_session_token!
     self.session_token = generate_session_token
+    self.save!
+    self.session_token
   end
 
   def matches_password?(password)
