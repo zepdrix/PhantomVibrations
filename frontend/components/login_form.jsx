@@ -10,19 +10,17 @@ var LoginForm = React.createClass({
 	},
 
   getInitialState () {
-    return { username: '', password: '', errors: []};
+    return { username: '', password: '' };
   },
 
   componentDidMount () {
     this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
     this.sessionListener = SessionStore.addListener(this.redirectIfLoggedIn);
-    // this.formErrorHandler = ErrorStore.addListener(this.formErrors);
   },
 
   componentWillUnmount () {
     this.errorListener.remove();
     this.sessionListener.remove();
-    // this.formErrorHandler.remove();
   },
 
   redirectIfLoggedIn () {
@@ -41,7 +39,6 @@ var LoginForm = React.createClass({
 
         return <ul>{ errorMessages }</ul>;
     }
-    // this.setState({ errors: ErrorStore.errors('login form') });
   },
 
   formSubmit (e) {

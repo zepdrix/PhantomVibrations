@@ -16,6 +16,9 @@ const SessionApiUtil = require('./util/session_api_util.js'),
       SessionActions = require('./actions/session_actions.js');
 
 
+      window.SessionApiUtil = SessionApiUtil;
+      window.SessionActions = SessionActions;
+
 
 
 
@@ -31,9 +34,10 @@ const appRouter = (
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(appRouter, document.getElementById("content"));
+  if (window.currentUser) {
+    SessionActions.receiveCurrentUser(window.currentUser);
+  }
+  
+  const root = document.getElementById("content");
+  ReactDOM.render(appRouter, root);
 });
-
-
-window.SessionApiUtil = SessionApiUtil;
-window.SessionActions = SessionActions;

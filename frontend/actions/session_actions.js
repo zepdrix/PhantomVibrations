@@ -19,14 +19,13 @@ module.exports = {
       ErrorActions.setErrors);
   },
 
-  logoutUser (user) {
+  logoutUser () {
     SessionApiUtil.logoutUser(
-      user,
-      this.removeCurrentUser,
-      ErrorActions.setErrors);
+      this.removeCurrentUser);
   },
 
   receiveCurrentUser (user) {
+    debugger
     AppDispatcher.dispatch({
       actionType: SessionConstants.LOGIN,
       user: user

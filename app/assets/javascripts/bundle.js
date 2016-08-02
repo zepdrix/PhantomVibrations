@@ -62,6 +62,9 @@
 	var SessionApiUtil = __webpack_require__(240),
 	    SessionActions = __webpack_require__(241);
 	
+	window.SessionApiUtil = SessionApiUtil;
+	window.SessionActions = SessionActions;
+	
 	var appRouter = React.createElement(
 	  Router,
 	  { history: hashHistory },
@@ -75,11 +78,13 @@
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  ReactDOM.render(appRouter, document.getElementById("content"));
-	});
+	  if (window.currentUser) {
+	    SessionActions.receiveCurrentUser(window.currentUser);
+	  }
 	
-	window.SessionApiUtil = SessionApiUtil;
-	window.SessionActions = SessionActions;
+	  var root = document.getElementById("content");
+	  ReactDOM.render(appRouter, root);
+	});
 
 /***/ },
 /* 1 */
@@ -27111,17 +27116,50 @@
 	var React = __webpack_require__(1);
 	var LoginForm = __webpack_require__(247);
 	var SessionStore = __webpack_require__(248);
+	var SessionActions = __webpack_require__(241);
+	var Link = __webpack_require__(175).Link;
 	
 	var App = React.createClass({
 	  displayName: 'App',
+	  componentDidMount: function componentDidMount() {
+	    SessionStore.addListener(this.forceUpdate.bind(this));
+	  },
+	  logout: function logout(e) {
+	    e.preventDefault();
+	    SessionActions.logoutUser();
+	  },
 	  greeting: function greeting() {
 	    if (SessionStore.isUserLoggedIn()) {
 	      return React.createElement(
-	        'h3',
+	        'div',
 	        null,
-	        'What\'s up, ',
-	        SessionStore.currentUser().username,
-	        '? Let\'s groove!'
+	        React.createElement(
+	          'h3',
+	          null,
+	          'What\'s up, ',
+	          SessionStore.currentUser().username,
+	          '? Let\'s groove!'
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.logout },
+	          'Log Out'
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          Link,
+	          { to: '/login' },
+	          'Log In'
+	        ),
+	        React.createElement(
+	          Link,
+	          { to: '/signup' },
+	          'Sign Up'
+	        )
 	      );
 	    }
 	  },
@@ -27214,10 +27252,11 @@
 	  loginUser: function loginUser(user) {
 	    SessionApiUtil.loginUser(user, this.receiveCurrentUser, ErrorActions.setErrors);
 	  },
-	  logoutUser: function logoutUser(user) {
-	    SessionApiUtil.logoutUser(user, this.removeCurrentUser, ErrorActions.setErrors);
+	  logoutUser: function logoutUser() {
+	    SessionApiUtil.logoutUser(this.removeCurrentUser);
 	  },
 	  receiveCurrentUser: function receiveCurrentUser(user) {
+	    debugger;
 	    AppDispatcher.dispatch({
 	      actionType: SessionConstants.LOGIN,
 	      user: user
@@ -27583,17 +27622,15 @@
 	  },
 	
 	  getInitialState: function getInitialState() {
-	    return { username: '', password: '', errors: [] };
+	    return { username: '', password: '' };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
 	    this.sessionListener = SessionStore.addListener(this.redirectIfLoggedIn);
-	    // this.formErrorHandler = ErrorStore.addListener(this.formErrors);
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.errorListener.remove();
 	    this.sessionListener.remove();
-	    // this.formErrorHandler.remove();
 	  },
 	  redirectIfLoggedIn: function redirectIfLoggedIn() {
 	    if (SessionStore.isUserLoggedIn()) {
@@ -27618,7 +27655,6 @@
 	        errorMessages
 	      );
 	    }
-	    // this.setState({ errors: ErrorStore.errors('login form') });
 	  },
 	  formSubmit: function formSubmit(e) {
 	    e.preventDefault();

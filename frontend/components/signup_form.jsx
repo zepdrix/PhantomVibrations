@@ -3,7 +3,6 @@ const ErrorStore = require('../stores/error_store.js');
 const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
 
-
 var SignupForm = React.createClass({
 
   contextTypes: {
