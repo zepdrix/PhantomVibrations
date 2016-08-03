@@ -13,13 +13,12 @@ const TrackIndex = require('./components/track_index.jsx'),
 
 
 const SessionApiUtil = require('./util/session_api_util.js'),
-      SessionActions = require('./actions/session_actions.js');
+      SessionActions = require('./actions/session_actions.js'),
+      SetupApp = require('./setup_app.js');
 
 
       window.SessionApiUtil = SessionApiUtil;
       window.SessionActions = SessionActions;
-
-
 
 
 const appRouter = (
@@ -34,10 +33,10 @@ const appRouter = (
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (window.currentUser) {
-    SessionActions.receiveCurrentUser(window.currentUser);
-  }
-  
+  // if (window.currentUser) {
+  //   SessionActions.receiveCurrentUser(window.currentUser);
+  // }
+  SetupApp();
   const root = document.getElementById("content");
   ReactDOM.render(appRouter, root);
 });

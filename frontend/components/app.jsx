@@ -4,6 +4,8 @@ const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
 const Link = require('react-router').Link;
 
+const NavBar = require('./nav_bar.jsx');
+
 var App = React.createClass({
 
   componentDidMount () {
@@ -39,7 +41,8 @@ var App = React.createClass({
 
     return(
       <div>
-        <h1>Welcome to U Like Music? I Like Music Too! Let's Make Out!</h1>
+        <NavBar />
+        <h1>PhantomVibrations</h1>
         { this.greeting() }
         { this.props.children }
       </div>

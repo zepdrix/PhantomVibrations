@@ -24,8 +24,12 @@ module.exports = {
       this.removeCurrentUser);
   },
 
+  fetchCurrentUser (complete) {
+    SessionApiUtil.fetchCurrentUser(
+      SessionActions.receiveCurrentUser, complete);
+  },
+
   receiveCurrentUser (user) {
-    debugger
     AppDispatcher.dispatch({
       actionType: SessionConstants.LOGIN,
       user: user

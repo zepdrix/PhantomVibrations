@@ -13,12 +13,17 @@ module.exports = {
     });
   },
 
-  fetchCurrentUser (success, error) {
+  fetchCurrentUser (success, complete) {
     $.ajax({
       url: "api/session",
       method: "GET",
       success,
-      error
+      error: (xhr) => {
+        console.log("Error in SessionApiUtil#fetchCurrentUser");
+      },
+      complete: () => {
+        complete();
+      }
     });
   },
 
