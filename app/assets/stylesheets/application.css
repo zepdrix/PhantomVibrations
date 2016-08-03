@@ -62,17 +62,22 @@
 
  /* Clearfix */
 
+body {
+  font-family: 'Quicksand', sans-serif;
+}
+
  .group:after {
    content: "";
    display: block;
    clear: both;
  }
 
-
 .navbar {
   height: 40px;
   background-color: grey;
-  border: 1px solid grey;
+  padding-bottom: 20px;
+  background: linear-gradient(to bottom, grey, grey 65%, white)
+
 }
 
 .navbar-content {
@@ -85,7 +90,13 @@
 }
 
 .navbar-logout {
+  transition: 1s;
   float: right;
+}
+
+.navbar-logout:hover {
+  transition: 1s;
+  color: white;
 }
 
 .navbar-signup {
@@ -101,26 +112,39 @@
 }
 
 .navbar a {
-  padding: 10px 20px
+  padding: 10px 20px;
+  color: lightgrey;
+  transition: 1s;
+}
+
+.navbar a:hover {
+  color: white;
+  transition: 1s;
 }
 
 .navbar button {
+  color: lightgrey;
   text-align: center;
   padding: 10px 20px;
 }
 
 .login-form {
+  position: absolute;
   background-color: grey;
-  margin-left: 50%;
-  margin-top: 30%;
+  top: 50%;
+  left: 50%;
   transform: perspective(1px) translate(-50%, -50%);
-  width: 200px;
-  padding: 8px;
-  border-radius: 8px;
+  width: 300px;
+  padding: 20px 10px 20px 10px;
+  border-radius: 30px;
+  box-shadow: 0px 0px 30px black;
 }
 
 .login-input {
-  padding: 20px;
+  margin: 20px;
+}
+.input {
+  text-indent: 4px;
 }
 
 .login-button {
@@ -129,8 +153,53 @@
   padding: 5px;
 }
 
+.login-form-title {
+  font-size: 20px;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+}
+
 .navbar-words {
   text-align: right;
   display: block;
+  color: #D9D9D9;
   padding: 10px 20px 10px 20px;
+  transition: 1s;
+}
+
+.navbar-words:hover {
+  text-shadow: 0px 0px white;
+  transition: 1s;
+}
+
+.login-form input {
+  width: 90%;
+  height: 40px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid lightgrey;
+}
+
+.other-form-link {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+}
+
+.form-hover {
+  transition: 1s;
+}
+
+.form-hover:hover {
+  color: lightgrey;
+  transition: 1s;
+}
+
+.form-error {
+  display: block;
+  font-size: 12px;
+  text-align: center;
+  color: lightgrey;
 }

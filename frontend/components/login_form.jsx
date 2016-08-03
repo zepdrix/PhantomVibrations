@@ -41,7 +41,7 @@ var LoginForm = React.createClass({
     if (errors.length > 0) {
 
       let errorMessages = errors.map( (error, key) => {
-        return <li key={ key }>{ error }</li>;
+        return <li className="form-error" key={ key }>{ error }</li>;
         });
 
         return <ul>{ errorMessages }</ul>;
@@ -69,34 +69,37 @@ var LoginForm = React.createClass({
 
   render () {
     let navLink;
-
+    let formName;
     if (this.props.location.pathname === '/login') {
-      navLink = <Link to="/signup"/>;
+      navLink = <Link className="other-form-link form-hover" to="/signup">Sign Up instead</Link>;
+      formName = "Log In";
     } else {
-      navLink = <Link to="/login"/>;
+      navLink = <Link className="other-form-link form-hover" to="login">Log In instead</Link>;
+      formName = "Sign Up";
     }
 
     return(
       <div>
 
         <form className="login-form" onSubmit={this.formSubmit}>
-          { navLink }
+          <div className="login-form-title">{formName}</div>
           { this.formErrors() }
           <div className="login-input">
-            <input
+            <input className="input"
               placeholder="Username"
               value={this.state.username}
-              onChange={this.handleUsername}/>
+                onChange={this.handleUsername}/>
           </div>
           <br/>
           <div className="login-input">
-            <input
+            <input className="input"
               placeholder="Password"
               type="password"
               value={this.state.password}
               onChange={this.handlePassword}/>
           </div>
-          <button className="login-button">Submit</button>
+          <button className="login-button form-hover">Submit</button>
+          { navLink }
         </form>
       </div>
     );

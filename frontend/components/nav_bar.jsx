@@ -21,10 +21,10 @@ var NavBar = React.createClass({
 
     if (!this.state.currentUser.id) {
       return(
-        <div>
+        <nav>
           <Link to="/login" className="navbar-login">Log In</Link>
           <Link to="/signup" className="navbar-signup">Sign Up</Link>
-        </div>
+        </nav>
       );
     } else {
       return(

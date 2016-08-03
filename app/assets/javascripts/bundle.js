@@ -27154,7 +27154,7 @@
 	      var errorMessages = errors.map(function (error, key) {
 	        return React.createElement(
 	          'li',
-	          { key: key },
+	          { className: 'form-error', key: key },
 	          error
 	        );
 	      });
@@ -27184,11 +27184,21 @@
 	  },
 	  render: function render() {
 	    var navLink = void 0;
-	
+	    var formName = void 0;
 	    if (this.props.location.pathname === '/login') {
-	      navLink = React.createElement(Link, { to: '/signup' });
+	      navLink = React.createElement(
+	        Link,
+	        { className: 'other-form-link form-hover', to: '/signup' },
+	        'Sign Up instead'
+	      );
+	      formName = "Log In";
 	    } else {
-	      navLink = React.createElement(Link, { to: '/login' });
+	      navLink = React.createElement(
+	        Link,
+	        { className: 'other-form-link form-hover', to: 'login' },
+	        'Log In instead'
+	      );
+	      formName = "Sign Up";
 	    }
 	
 	    return React.createElement(
@@ -27197,12 +27207,16 @@
 	      React.createElement(
 	        'form',
 	        { className: 'login-form', onSubmit: this.formSubmit },
-	        navLink,
+	        React.createElement(
+	          'div',
+	          { className: 'login-form-title' },
+	          formName
+	        ),
 	        this.formErrors(),
 	        React.createElement(
 	          'div',
 	          { className: 'login-input' },
-	          React.createElement('input', {
+	          React.createElement('input', { className: 'input',
 	            placeholder: 'Username',
 	            value: this.state.username,
 	            onChange: this.handleUsername })
@@ -27211,7 +27225,7 @@
 	        React.createElement(
 	          'div',
 	          { className: 'login-input' },
-	          React.createElement('input', {
+	          React.createElement('input', { className: 'input',
 	            placeholder: 'Password',
 	            type: 'password',
 	            value: this.state.password,
@@ -27219,9 +27233,10 @@
 	        ),
 	        React.createElement(
 	          'button',
-	          { className: 'login-button' },
+	          { className: 'login-button form-hover' },
 	          'Submit'
-	        )
+	        ),
+	        navLink
 	      )
 	    );
 	  }
@@ -34386,7 +34401,7 @@
 	
 	    if (!this.state.currentUser.id) {
 	      return React.createElement(
-	        'div',
+	        'nav',
 	        null,
 	        React.createElement(
 	          Link,
