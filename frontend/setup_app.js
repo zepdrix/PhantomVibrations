@@ -5,5 +5,4 @@ module.exports = function () {
   if (typeof user !== "undefined") {
     SessionActions.receiveCurrentUser(user);
   }
-
 };

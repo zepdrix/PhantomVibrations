@@ -1,4 +1,5 @@
 const React = require('react');
+const Link = require('react-router').Link;
 const ErrorStore = require('../stores/error_store.js');
 const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
@@ -24,13 +25,19 @@ var LoginForm = React.createClass({
   },
 
   redirectIfLoggedIn () {
-    if (SessionStore.isUserLoggedIn()) {
-      this.context.router.push("/");
-    }
+    this.context.router.push("/");
   },
 
   formErrors () {
-    let errors = ErrorStore.errors('login form') || [];
+    let errorString;
+
+    if (this.props.location.pathname === "/login") {
+      errorString = 'login form';
+    } else {
+      errorString = 'signup form';
+    }
+
+    let errors = ErrorStore.errors(errorString) || [];
     if (errors.length > 0) {
 
       let errorMessages = errors.map( (error, key) => {
@@ -43,7 +50,11 @@ var LoginForm = React.createClass({
 
   formSubmit (e) {
     e.preventDefault();
-    SessionActions.loginUser(this.state);
+    if (this.props.location.pathname === "/login") {
+      SessionActions.loginUser(this.state);
+    } else {
+      SessionActions.createUser(this.state);
+    }
   },
 
   handleUsername (e) {
@@ -57,18 +68,39 @@ var LoginForm = React.createClass({
   },
 
   render () {
+    let navLink;
+
+    if (this.props.location.pathname === '/login') {
+      navLink = <Link to="/signup"/>;
+    } else {
+      navLink = <Link to="/login"/>;
+    }
+
     return(
       <div>
-        { this.formErrors() }
-        <form onSubmit={this.formSubmit}>
-          <input value={this.state.username} onChange={this.handleUsername}/>
-          <input type="password" value={this.state.password} onChange={this.handlePassword}/>
-          <button>Submit</button>
+
+        <form className="login-form" onSubmit={this.formSubmit}>
+          { navLink }
+          { this.formErrors() }
+          <div className="login-input">
+            <input
+              placeholder="Username"
+              value={this.state.username}
+              onChange={this.handleUsername}/>
+          </div>
+          <br/>
+          <div className="login-input">
+            <input
+              placeholder="Password"
+              type="password"
+              value={this.state.password}
+              onChange={this.handlePassword}/>
+          </div>
+          <button className="login-button">Submit</button>
         </form>
       </div>
     );
   }
 });
-
 
 module.exports = LoginForm;

@@ -8,7 +8,7 @@ module.exports = {
       success,
       error(xhr) {
         const errors = xhr.responseJSON;
-        errorCb("createUser", errors);
+        errorCb("signup form", errors);
       }
     });
   },

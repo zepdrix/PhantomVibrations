@@ -7,35 +7,20 @@ const Link = require('react-router').Link;
 const NavBar = require('./nav_bar.jsx');
 
 var App = React.createClass({
+  getInitialState () {
+    return { currentUser: SessionStore.currentUser() };
+  },
 
   componentDidMount () {
-    SessionStore.addListener(this.forceUpdate.bind(this));
+    this.sessionListener = SessionStore.addListener(this.updateUser);
+    SessionActions.fetchCurrentUser();
   },
 
-  logout (e) {
-    e.preventDefault();
-    SessionActions.logoutUser();
+  updateUser () {
+
+    this.setState({ currentUser: SessionStore.currentUser() });
+
   },
-
-  greeting () {
-    if (SessionStore.isUserLoggedIn()) {
-      return(
-        <div>
-          <h3>What's up, { SessionStore.currentUser().username }? Let's groove!</h3>
-          <button onClick={ this.logout }>Log Out</button>
-        </div>
-      );
-    } else {
-      return(
-        <div>
-          <Link to="/login">Log In</Link>
-          <Link to="/signup">Sign Up</Link>
-        </div>
-      );
-    }
-  },
-
-
 
   render () {
 
@@ -43,7 +28,6 @@ var App = React.createClass({
       <div>
         <NavBar />
         <h1>PhantomVibrations</h1>
-        { this.greeting() }
         { this.props.children }
       </div>
     );

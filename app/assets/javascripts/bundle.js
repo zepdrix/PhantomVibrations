@@ -61,7 +61,7 @@
 	
 	var SessionApiUtil = __webpack_require__(266),
 	    SessionActions = __webpack_require__(265),
-	    SetupApp = __webpack_require__(270);
+	    SetupApp = __webpack_require__(271);
 	
 	window.SessionApiUtil = SessionApiUtil;
 	window.SessionActions = SessionActions;
@@ -74,14 +74,11 @@
 	    { path: '/', component: App },
 	    React.createElement(IndexRoute, { component: TrackIndex }),
 	    React.createElement(Route, { path: '/login', component: LoginForm }),
-	    React.createElement(Route, { path: '/signup', component: SignupForm })
+	    React.createElement(Route, { path: '/signup', component: LoginForm })
 	  )
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  // if (window.currentUser) {
-	  //   SessionActions.receiveCurrentUser(window.currentUser);
-	  // }
 	  SetupApp();
 	  var root = document.getElementById("content");
 	  ReactDOM.render(appRouter, root);
@@ -27115,6 +27112,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(240);
 	var SessionStore = __webpack_require__(263);
 	var SessionActions = __webpack_require__(265);
@@ -27139,12 +27137,18 @@
 	    this.sessionListener.remove();
 	  },
 	  redirectIfLoggedIn: function redirectIfLoggedIn() {
-	    if (SessionStore.isUserLoggedIn()) {
-	      this.context.router.push("/");
-	    }
+	    this.context.router.push("/");
 	  },
 	  formErrors: function formErrors() {
-	    var errors = ErrorStore.errors('login form') || [];
+	    var errorString = void 0;
+	
+	    if (this.props.location.pathname === "/login") {
+	      errorString = 'login form';
+	    } else {
+	      errorString = 'signup form';
+	    }
+	
+	    var errors = ErrorStore.errors(errorString) || [];
 	    if (errors.length > 0) {
 	
 	      var errorMessages = errors.map(function (error, key) {
@@ -27164,7 +27168,11 @@
 	  },
 	  formSubmit: function formSubmit(e) {
 	    e.preventDefault();
-	    SessionActions.loginUser(this.state);
+	    if (this.props.location.pathname === "/login") {
+	      SessionActions.loginUser(this.state);
+	    } else {
+	      SessionActions.createUser(this.state);
+	    }
 	  },
 	  handleUsername: function handleUsername(e) {
 	    e.preventDefault();
@@ -27175,18 +27183,43 @@
 	    this.setState({ password: e.target.value });
 	  },
 	  render: function render() {
+	    var navLink = void 0;
+	
+	    if (this.props.location.pathname === '/login') {
+	      navLink = React.createElement(Link, { to: '/signup' });
+	    } else {
+	      navLink = React.createElement(Link, { to: '/login' });
+	    }
+	
 	    return React.createElement(
 	      'div',
 	      null,
-	      this.formErrors(),
 	      React.createElement(
 	        'form',
-	        { onSubmit: this.formSubmit },
-	        React.createElement('input', { value: this.state.username, onChange: this.handleUsername }),
-	        React.createElement('input', { type: 'password', value: this.state.password, onChange: this.handlePassword }),
+	        { className: 'login-form', onSubmit: this.formSubmit },
+	        navLink,
+	        this.formErrors(),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement('input', {
+	            placeholder: 'Username',
+	            value: this.state.username,
+	            onChange: this.handleUsername })
+	        ),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement('input', {
+	            placeholder: 'Password',
+	            type: 'password',
+	            value: this.state.password,
+	            onChange: this.handlePassword })
+	        ),
 	        React.createElement(
 	          'button',
-	          null,
+	          { className: 'login-button' },
 	          'Submit'
 	        )
 	      )
@@ -34131,7 +34164,7 @@
 	      success: success,
 	      error: function error(xhr) {
 	        var errors = xhr.responseJSON;
-	        errorCb("createUser", errors);
+	        errorCb("signup form", errors);
 	      }
 	    });
 	  },
@@ -34293,51 +34326,20 @@
 	var SessionActions = __webpack_require__(265);
 	var Link = __webpack_require__(175).Link;
 	
-	var NavBar = __webpack_require__(271);
+	var NavBar = __webpack_require__(270);
 	
 	var App = React.createClass({
 	  displayName: 'App',
+	  getInitialState: function getInitialState() {
+	    return { currentUser: SessionStore.currentUser() };
+	  },
 	  componentDidMount: function componentDidMount() {
-	    SessionStore.addListener(this.forceUpdate.bind(this));
+	    this.sessionListener = SessionStore.addListener(this.updateUser);
+	    SessionActions.fetchCurrentUser();
 	  },
-	  logout: function logout(e) {
-	    e.preventDefault();
-	    SessionActions.logoutUser();
-	  },
-	  greeting: function greeting() {
-	    if (SessionStore.isUserLoggedIn()) {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'h3',
-	          null,
-	          'What\'s up, ',
-	          SessionStore.currentUser().username,
-	          '? Let\'s groove!'
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.logout },
-	          'Log Out'
-	        )
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          Link,
-	          { to: '/login' },
-	          'Log In'
-	        ),
-	        React.createElement(
-	          Link,
-	          { to: '/signup' },
-	          'Sign Up'
-	        )
-	      );
-	    }
+	  updateUser: function updateUser() {
+	
+	    this.setState({ currentUser: SessionStore.currentUser() });
 	  },
 	  render: function render() {
 	
@@ -34350,7 +34352,6 @@
 	        null,
 	        'PhantomVibrations'
 	      ),
-	      this.greeting(),
 	      this.props.children
 	    );
 	  }
@@ -34360,6 +34361,100 @@
 
 /***/ },
 /* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
+	var SessionStore = __webpack_require__(263);
+	var SessionActions = __webpack_require__(265);
+	
+	var NavBar = React.createClass({
+	  displayName: 'NavBar',
+	  getInitialState: function getInitialState() {
+	    return { currentUser: SessionStore.currentUser() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.sessionListener = SessionStore.addListener(this.updateUser);
+	    SessionActions.fetchCurrentUser();
+	  },
+	  updateUser: function updateUser() {
+	    this.setState({ currentUser: SessionStore.currentUser() });
+	  },
+	  greeting: function greeting() {
+	
+	    if (!this.state.currentUser.id) {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          Link,
+	          { to: '/login', className: 'navbar-login' },
+	          'Log In'
+	        ),
+	        React.createElement(
+	          Link,
+	          { to: '/signup', className: 'navbar-signup' },
+	          'Sign Up'
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'button',
+	          { className: 'navbar-logout', onClick: this.logout },
+	          'Log Out'
+	        )
+	      );
+	    }
+	  },
+	  logout: function logout(e) {
+	    e.preventDefault();
+	    SessionActions.logoutUser();
+	  },
+	  render: function render() {
+	    var barWords = void 0;
+	
+	    if (!!this.state.currentUser.id) {
+	      barWords = "Sup, " + this.state.currentUser.username;
+	    } else {
+	      barWords = '';
+	    }
+	
+	    return React.createElement(
+	      'header',
+	      { className: 'navbar' },
+	      React.createElement(
+	        'nav',
+	        { className: 'navbar-content' },
+	        React.createElement(
+	          Link,
+	          { to: '/', className: 'navbar-home' },
+	          'Home'
+	        ),
+	        React.createElement(
+	          'a',
+	          { href: '#', className: 'navbar-collection' },
+	          'Collection'
+	        ),
+	        this.greeting(),
+	        React.createElement(
+	          'div',
+	          { className: 'navbar-words' },
+	          barWords
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = NavBar;
+
+/***/ },
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -34372,47 +34467,6 @@
 	    SessionActions.receiveCurrentUser(user);
 	  }
 	};
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(263);
-	var SessionActions = __webpack_require__(265);
-	
-	var NavBar = React.createClass({
-	  displayName: 'NavBar',
-	  getInitialState: function getInitialState() {
-	    return { currentUser: SessionStore.currentUser() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.sessionListener = SessionStore.addListener(this.updateUser);
-	
-	    SessionActions.fetchCurrentUser();
-	  },
-	  updateUser: function updateUser() {
-	    if (this.isMounted()) {
-	      this.setState({ currentUser: SessionStore.currentUser() });
-	    }
-	  },
-	  render: function render() {
-	    var barWords = void 0;
-	    if (this.state.currentUser !== {}) {
-	      barWords = this.state.currentUser.username;
-	    }
-	    return React.createElement(
-	      'div',
-	      null,
-	      'current user is: ',
-	      barWords
-	    );
-	  }
-	});
-	
-	module.exports = NavBar;
 
 /***/ }
 /******/ ]);

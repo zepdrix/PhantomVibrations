@@ -26,16 +26,13 @@ const appRouter = (
     <Route path='/' component={ App }>
       <IndexRoute component={ TrackIndex }/>
       <Route path='/login' component={ LoginForm }/>
-      <Route path='/signup' component={ SignupForm }/>
+      <Route path='/signup' component={ LoginForm }/>
     </Route>
   </Router>
 );
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  // if (window.currentUser) {
-  //   SessionActions.receiveCurrentUser(window.currentUser);
-  // }
   SetupApp();
   const root = document.getElementById("content");
   ReactDOM.render(appRouter, root);
