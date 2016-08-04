@@ -8,7 +8,7 @@ var TrackIndexItem = React.createClass({
 
   render () {
     let trackUrl = `/tracks/${this.props.track.id}`;
-
+    let userUrl = `/users/${this.props.track.user_id}`;
     return(
       <li className="track-item">
         <div >
@@ -19,7 +19,7 @@ var TrackIndexItem = React.createClass({
           </div>
           <div className="track-user-info">
             <Link
-              to={ trackUrl }
+              to={ userUrl }
               className="track-item track-username">
               { this.props.track.user.username }
             </Link>

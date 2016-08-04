@@ -7,7 +7,7 @@ module.exports = {
       success: (resp) => {
         successCb(resp);
       },
-      error: () => {
+      error: (resp) => {
         console.log("Error in UserApiUtil#fetchUser");
       }
     });
@@ -20,7 +20,7 @@ module.exports = {
       success: (resp) => {
         successCb(resp);
       },
-      error: () => {
+      error: (resp) => {
         console.log("Error in UserApiUtil#fetchAllUsers");
       }
     });

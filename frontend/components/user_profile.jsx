@@ -1,32 +1,57 @@
 const React = require('react');
-const SessionStore = require('../stores/session_store.js');
-const SessionActions = require('../actions/session_action.js');
+const UserStore = require('../stores/user_store.js');
+const UserActions = require('../actions/user_actions.js');
+const TrackIndex = require('./track_index.jsx');
 
 var UserProfile = React.createClass({
 
   getInitialState () {
-    return { user: SessionStore.find(this.props.params.userId) };
+    return { user: UserStore.find(this.props.params.userId) };
   },
 
   componentDidMount () {
-    this.sessionListener = SessionStore.addListener(this.onChange);
-    SessionActions.fetchA();
+    this.userListener = UserStore.addListener(this.onChange);
+    UserActions.fetchUser(this.props.params.userId);
   },
 
   componentWillUnmount () {
-    this.sessionListener.remove();
+    this.userListener.remove();
+  },
+
+  userTracks () {
+    return <TrackIndex tracks={this.state.user.tracks}/>;
   },
 
   onChange () {
-    this.setState({ user: SessionStore.find(this.props.params.userId) });
+    this.setState({ user: UserStore.find(this.props.params.userId) });
   },
 
   render () {
-    return(
-      <div>
+    if (this.state.user) {
+      let username = this.state.user.username;
+      let userTracks = this.state.user.tracks;
+      return(
 
-      </div>
-    );
+        <div className="user-page section">
+          <div className="user-page-header">
+            <h2>{ username }'s Vibrations</h2>
+          </div>
+          <br/>
+          <TrackIndex tracks={ userTracks }/>
+        </div>
+
+      );
+
+    } else {
+      return(
+        <div>
+        </div>
+      );
+    }
+
+
   }
 
 });
+
+module.exports = UserProfile;

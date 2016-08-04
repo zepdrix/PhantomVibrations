@@ -13,6 +13,7 @@ const TrackIndex = require('./components/track_index.jsx'),
       SignupForm = require('./components/signup_form.jsx'),
       HomePage = require('./components/home_page.jsx'),
       UserPage = require('./components/user_page.jsx'),
+      UserProfile = require('./components/user_profile.jsx'),
       App = require('./components/app.jsx');
 
 
@@ -54,6 +55,7 @@ const appRouter = (
       <Route path='/login' component={ LoginForm }/>
       <Route path='/signup' component={ LoginForm }/>
       <Route path='/tracks/:trackId' component={ TrackShow }/>
+      <Route path='/users/:userId' component={ UserProfile }/>
       <Route path='/upload' component={ TrackForm } onEnter={ _ensureLoggedIn }/>
     </Route>
   </Router>

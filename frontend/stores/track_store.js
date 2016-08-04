@@ -20,11 +20,11 @@ TrackStore.find = function (trackId) {
   return _tracks[trackId];
 };
 
-const resetTrack = function (track) {
+const _resetTrack = function (track) {
   _tracks[track.id] = track;
 };
 
-const resetAllTracks = function (tracks) {
+const _resetAllTracks = function (tracks) {
   _tracks = {};
   tracks.forEach( (track) => {
     _tracks[track.id] = track;
@@ -34,11 +34,11 @@ const resetAllTracks = function (tracks) {
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case TrackConstants.RECEIVE_TRACK:
-      resetTrack(payload.track);
+      _resetTrack(payload.track);
       this.__emitChange();
       break;
     case TrackConstants.RECEIVE_TRACKS:
-      resetAllTracks(payload.tracks);
+      _resetAllTracks(payload.tracks);
       this.__emitChange();
       break;
   }

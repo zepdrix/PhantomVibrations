@@ -9,8 +9,8 @@ module.exports = {
       this.receiveUser);
   },
 
-  fetchUsers () {
-    UserApiUtil.fetchUsers(
+  fetchAllUsers () {
+    UserApiUtil.fetchAllUsers(
       this.receiveAllUsers);
   },
 

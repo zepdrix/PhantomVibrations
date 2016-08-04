@@ -61,6 +61,7 @@
 	    SignupForm = __webpack_require__(276),
 	    HomePage = __webpack_require__(277),
 	    UserPage = __webpack_require__(278),
+	    UserProfile = __webpack_require__(282),
 	    App = __webpack_require__(279);
 	
 	var SessionApiUtil = __webpack_require__(250),
@@ -99,6 +100,7 @@
 	    React.createElement(Route, { path: '/login', component: LoginForm }),
 	    React.createElement(Route, { path: '/signup', component: LoginForm }),
 	    React.createElement(Route, { path: '/tracks/:trackId', component: TrackShow }),
+	    React.createElement(Route, { path: '/users/:userId', component: UserProfile }),
 	    React.createElement(Route, { path: '/upload', component: TrackForm, onEnter: _ensureLoggedIn })
 	  )
 	);
@@ -27123,7 +27125,6 @@
 	var TrackIndex = React.createClass({
 	  displayName: 'TrackIndex',
 	  render: function render() {
-	
 	    var allTrackIndexItems = this.props.tracks.map(function (track, key) {
 	      return React.createElement(TrackIndexItem, { key: key, track: track });
 	    });
@@ -27158,7 +27159,7 @@
 	  },
 	  render: function render() {
 	    var trackUrl = '/tracks/' + this.props.track.id;
-	
+	    var userUrl = '/users/' + this.props.track.user_id;
 	    return React.createElement(
 	      'li',
 	      { className: 'track-item' },
@@ -27180,7 +27181,7 @@
 	          React.createElement(
 	            Link,
 	            {
-	              to: trackUrl,
+	              to: userUrl,
 	              className: 'track-item track-username' },
 	            this.props.track.user.username
 	          ),
@@ -34331,11 +34332,11 @@
 	  return _tracks[trackId];
 	};
 	
-	var resetTrack = function resetTrack(track) {
+	var _resetTrack = function _resetTrack(track) {
 	  _tracks[track.id] = track;
 	};
 	
-	var resetAllTracks = function resetAllTracks(tracks) {
+	var _resetAllTracks = function _resetAllTracks(tracks) {
 	  _tracks = {};
 	  tracks.forEach(function (track) {
 	    _tracks[track.id] = track;
@@ -34345,11 +34346,11 @@
 	TrackStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case TrackConstants.RECEIVE_TRACK:
-	      resetTrack(payload.track);
+	      _resetTrack(payload.track);
 	      this.__emitChange();
 	      break;
 	    case TrackConstants.RECEIVE_TRACKS:
-	      resetAllTracks(payload.tracks);
+	      _resetAllTracks(payload.tracks);
 	      this.__emitChange();
 	      break;
 	  }
@@ -35014,6 +35015,193 @@
 	  var user = window.phantomVibes.user;
 	  if (typeof user !== "undefined") {
 	    SessionActions.receiveCurrentUser(user);
+	  }
+	};
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var UserStore = __webpack_require__(283);
+	var UserActions = __webpack_require__(285);
+	var TrackIndex = __webpack_require__(238);
+	
+	var UserProfile = React.createClass({
+	  displayName: 'UserProfile',
+	  getInitialState: function getInitialState() {
+	    return { user: UserStore.find(this.props.params.userId) };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userListener = UserStore.addListener(this.onChange);
+	    UserActions.fetchUser(this.props.params.userId);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.userListener.remove();
+	  },
+	  userTracks: function userTracks() {
+	    return React.createElement(TrackIndex, { tracks: this.state.user.tracks });
+	  },
+	  onChange: function onChange() {
+	    this.setState({ user: UserStore.find(this.props.params.userId) });
+	  },
+	  render: function render() {
+	    if (this.state.user) {
+	      var username = this.state.user.username;
+	      var userTracks = this.state.user.tracks;
+	      return React.createElement(
+	        'div',
+	        { className: 'user-page section' },
+	        React.createElement(
+	          'div',
+	          { className: 'user-page-header' },
+	          React.createElement(
+	            'h2',
+	            null,
+	            username,
+	            '\'s Vibrations'
+	          )
+	        ),
+	        React.createElement('br', null),
+	        React.createElement(TrackIndex, { tracks: userTracks })
+	      );
+	    } else {
+	      return React.createElement('div', null);
+	    }
+	  }
+	});
+	
+	module.exports = UserProfile;
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(253).Store;
+	
+	var AppDispatcher = __webpack_require__(245),
+	    UserConstants = __webpack_require__(284);
+	
+	var UserStore = new Store(AppDispatcher);
+	
+	var _users = {};
+	
+	UserStore.all = function () {
+	  var users = [];
+	
+	  Object.keys(_users).forEach(function (userId) {
+	    users.push(_users[userId]);
+	  });
+	  return users;
+	};
+	
+	UserStore.find = function (id) {
+	  return _users[id];
+	};
+	
+	var _resetUser = function _resetUser(user) {
+	  _users[user.id] = user;
+	};
+	
+	var _resetAllUsers = function _resetAllUsers(users) {
+	  _users = {};
+	
+	  users.forEach(function (user) {
+	    _users[user.id] = user;
+	  });
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case UserConstants.RECEIVE_USER:
+	      _resetUser(payload.user);
+	      this.__emitChange();
+	      break;
+	    case UserConstants.RECEIVE_USERS:
+	      _resetAllUsers(payload.users);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = UserStore;
+
+/***/ },
+/* 284 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  RECEIVE_USER: "RECEIVE_USER",
+	  RECEIVE_USERS: "RECEIVE_USERS"
+	};
+
+/***/ },
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var UserApiUtil = __webpack_require__(286),
+	    UserConstants = __webpack_require__(284),
+	    AppDispatcher = __webpack_require__(245);
+	
+	module.exports = {
+	  fetchUser: function fetchUser(id) {
+	    UserApiUtil.fetchUser(id, this.receiveUser);
+	  },
+	  fetchAllUsers: function fetchAllUsers() {
+	    UserApiUtil.fetchAllUsers(this.receiveAllUsers);
+	  },
+	  receiveUser: function receiveUser(user) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USER,
+	      user: user
+	    });
+	  },
+	  receiveAllUsers: function receiveAllUsers(users) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USERS,
+	      users: users
+	    });
+	  }
+	};
+
+/***/ },
+/* 286 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  fetchUser: function fetchUser(id, successCb) {
+	    $.ajax({
+	      url: "api/users/" + id,
+	      method: "GET",
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in UserApiUtil#fetchUser");
+	      }
+	    });
+	  },
+	  fetchAllUsers: function fetchAllUsers(successCb) {
+	    $.ajax({
+	      url: "api/users",
+	      method: "GET",
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in UserApiUtil#fetchAllUsers");
+	      }
+	    });
 	  }
 	};
 
