@@ -39,6 +39,12 @@ var NavBar = React.createClass({
     }
   },
 
+  logout (e) {
+    e.preventDefault();
+    SessionActions.logoutUser();
+    this.context.router.push('/login');
+  },
+
   navRight () {
     if (SessionStore.isUserLoggedIn()) {
       return(
@@ -60,11 +66,6 @@ var NavBar = React.createClass({
     }
   },
 
-  logout (e) {
-    e.preventDefault();
-    SessionActions.logoutUser();
-    this.context.router.push('/');
-  },
 
   render () {
     return (

@@ -25,6 +25,8 @@ var TrackForm = React.createClass({
   },
 
   redirectIfTrackSaved() {
+    console.log(TrackStore.all());
+    TrackActions.fetchAllTracks();
     this.context.router.push("/");
   },
 
@@ -67,6 +69,7 @@ var TrackForm = React.createClass({
           <br/>
           <div className="login-input">
             <textarea className="input"
+
               placeholder="Track Description"
               value={this.state.description}
               onChange={this.handleDescription}/>

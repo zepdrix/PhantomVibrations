@@ -8,8 +8,11 @@ const React = require('react'),
 
 const TrackIndex = require('./components/track_index.jsx'),
       TrackForm = require('./components/track_form.jsx'),
+      TrackShow = require('./components/track_show.jsx'),
       LoginForm = require('./components/login_form.jsx'),
       SignupForm = require('./components/signup_form.jsx'),
+      HomePage = require('./components/home_page.jsx'),
+      UserPage = require('./components/user_page.jsx'),
       App = require('./components/app.jsx');
 
 
@@ -32,12 +35,25 @@ const _ensureLoggedIn = function (nextState, replace) {
   }
 };
 
+const _loadLanding = function () {
+  if (SessionStore.isUserLoggedIn()) {
+    return(
+      <UserPage/>
+    );
+  } else {
+    return(
+      <HomePage/>
+    );
+  }
+};
+
 const appRouter = (
   <Router history={ hashHistory }>
     <Route path='/' component={ App }>
-
+      <IndexRoute component={ _loadLanding }/>
       <Route path='/login' component={ LoginForm }/>
       <Route path='/signup' component={ LoginForm }/>
+      <Route path='/tracks/:trackId' component={ TrackShow }/>
       <Route path='/upload' component={ TrackForm } onEnter={ _ensureLoggedIn }/>
     </Route>
   </Router>

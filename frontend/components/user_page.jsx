@@ -22,10 +22,13 @@ var UserPage = React.createClass({
   },
 
   render () {
-    console.log(TrackStore.all());
 
     return(
-      <div className="user-page section">User Page
+      <div className="user-page section">
+        <div className="user-page-header">
+          <h2>Your Vibrations</h2>
+        </div>
+        <br/>
         <TrackIndex tracks={ this.state.tracks }/>
       </div>
     );

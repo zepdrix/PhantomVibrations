@@ -11,7 +11,6 @@ TrackStore.all = function () {
   let tracks = [];
 
   Object.keys(_tracks).forEach( (trackId) => {
-
     tracks.push(_tracks[trackId]);
   });
   return tracks;

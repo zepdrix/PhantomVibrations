@@ -21,26 +21,26 @@ var App = React.createClass({
   updateUser () {
     this.setState({ currentUser: SessionStore.currentUser() });
   },
+  //
+  // pageContent () {
+  //   if (SessionStore.isUserLoggedIn()) {
+  //     return(
+  //       <UserPage/>
+  //     );
+  //   } else {
+  //     return(
+  //       <HomePage/>
+  //     );
+  //   }
+  // },
+  // { this.pageContent() }
 
-  pageContent () {
-    if (SessionStore.isUserLoggedIn()) {
-      return(
-        <UserPage/>
-      );
-    } else {
-      return(
-        <HomePage/>
-      );
-    }
-  },
-
+  // <h1>PhantomVibrations</h1>
   render () {
 
     return(
       <div>
         <NavBar />
-        <h1>PhantomVibrations</h1>
-        { this.pageContent() }
         { this.props.children }
       </div>
     );

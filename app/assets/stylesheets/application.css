@@ -142,14 +142,27 @@ body {
   box-shadow: 0px 0px 30px black;
 }
 
-.login-input {
-  margin: 20px;
+.create-track-form {
+  position: absolute;
+  background-color: grey;
+  top: 50%;
+  left: 50%;
+  transform: perspective(1px) translate(-50%, -50%);
+  width: 300px;
+  padding: 20px 10px 20px 10px;
+  border-radius: 30px;
+  box-shadow: 0px 0px 30px black;
 }
+
+.login-input {
+  margin: 10px;
+}
+
 .input {
   text-indent: 4px;
 }
 
-.login-button {
+.login-button, .create-track-button {
   display: block;
   margin: 0 auto;
   padding: 5px;
@@ -176,9 +189,17 @@ body {
   transition: 1s;
 }
 
-.login-form input {
+.login-form input, .create-track-form input {
   width: 90%;
   height: 40px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid lightgrey;
+}
+
+.create-track-form textarea {
+  width: 90%;
+  height: 80px;
   display: block;
   margin: 0 auto;
   border: 1px solid lightgrey;
@@ -240,4 +261,9 @@ body {
 .user-page.section {
   margin: 0 auto;
   width: 800px;
+}
+
+h2 {
+  margin-top: 20px;
+  font-size: 26px;
 }

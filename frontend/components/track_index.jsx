@@ -10,7 +10,6 @@ var TrackIndex = React.createClass({
 
     return (
       <div>
-        <h1>TRACK INDEX, BABY!!!!</h1>
         <ul>{ allTrackIndexItems }</ul>
       </div>
   );
