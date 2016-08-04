@@ -9,7 +9,8 @@ Users
 Tracks
   integer   "user_id"
   string    "title"
-  integer   "track_length"
+  text      "description"
+  integer   "plays"
   string    "image_url"
   string    "track_url"
 

@@ -3,6 +3,7 @@ const Link = require('react-router').Link;
 const ErrorStore = require('../stores/error_store.js');
 const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
+const FormConstants = require('../constants/form_constants.js');
 
 var LoginForm = React.createClass({
 
@@ -32,9 +33,9 @@ var LoginForm = React.createClass({
     let errorString;
 
     if (this.props.location.pathname === "/login") {
-      errorString = 'login form';
+      errorString = FormConstants.LOGIN_FORM;
     } else {
-      errorString = 'signup form';
+      errorString = FormConstants.SIGNUP_FORM;
     }
 
     let errors = ErrorStore.errors(errorString) || [];
@@ -48,7 +49,7 @@ var LoginForm = React.createClass({
     }
   },
 
-  formSubmit (e) {
+  handleSubmit (e) {
     e.preventDefault();
     if (this.props.location.pathname === "/login") {
       SessionActions.loginUser(this.state);
@@ -80,8 +81,7 @@ var LoginForm = React.createClass({
 
     return(
       <div>
-
-        <form className="login-form" onSubmit={this.formSubmit}>
+        <form className="login-form" onSubmit={this.handleSubmit}>
           <div className="login-form-title">{formName}</div>
           { this.formErrors() }
           <div className="login-input">

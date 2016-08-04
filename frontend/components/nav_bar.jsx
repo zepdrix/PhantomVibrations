@@ -4,6 +4,10 @@ const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
 
 var NavBar = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   getInitialState () {
     return { currentUser: SessionStore.currentUser() };
   },
@@ -17,20 +21,41 @@ var NavBar = React.createClass({
     this.setState({ currentUser: SessionStore.currentUser() });
   },
 
-  greeting () {
-
-    if (!this.state.currentUser.id) {
+  navLeft () {
+    if (SessionStore.isUserLoggedIn()) {
       return(
-        <nav>
-          <Link to="/login" className="navbar-login">Log In</Link>
-          <Link to="/signup" className="navbar-signup">Sign Up</Link>
-        </nav>
+        <div>
+          <Link to='/' className="navbar-home">Home</Link>
+          <a href="#"className="navbar-collection">Collection</a>
+        </div>
       );
     } else {
       return(
         <div>
-          <button className="navbar-logout" onClick={ this.logout }>Log Out</button>
+          <Link to='/' className="navbar-home">Home</Link>
+          <a href="#"className="navbar-collection">Collection</a>
         </div>
+      );
+    }
+  },
+
+  navRight () {
+    if (SessionStore.isUserLoggedIn()) {
+      return(
+        <div>
+          <button className="navbar-logout" onClick={ this.logout }>Log Out</button>
+          <Link to='/upload' className="navbar-upload">Upload</Link>
+          <Link to='#' className="navbar-words">Sup, { this.state.currentUser.username }</Link>
+        </div>
+      );
+    } else {
+      return(
+        <div>
+          <nav>
+            <Link to="/login" className="navbar-login">Log In</Link>
+            <Link to="/signup" className="navbar-signup">Sign Up</Link>
+          </nav>
+      </div>
       );
     }
   },
@@ -38,33 +63,19 @@ var NavBar = React.createClass({
   logout (e) {
     e.preventDefault();
     SessionActions.logoutUser();
+    this.context.router.push('/');
   },
 
   render () {
-    let barWords;
-
-    if (!!this.state.currentUser.id) {
-      barWords = "Sup, " + this.state.currentUser.username;
-    } else {
-      barWords = '';
-    }
-
-
     return (
       <header className="navbar">
         <nav className="navbar-content">
-
-          <Link to='/' className="navbar-home">Home</Link>
-          <a href="#"className="navbar-collection">Collection</a>
-          { this.greeting() }
-          <div className="navbar-words">{ barWords }</div>
+          { this.navLeft() }
+          { this.navRight() }
         </nav>
-
       </header>
     );
   }
-
-
 });
 
 

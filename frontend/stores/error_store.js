@@ -35,6 +35,7 @@ ErrorStore.__onDispatch = function (payload) {
       _clearErrors();
       this.__emitChange();
       break;
+
   }
 };
 

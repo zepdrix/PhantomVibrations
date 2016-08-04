@@ -1,3 +1,5 @@
+const FormConstants = require('../constants/form_constants.js');
+
 module.exports = {
   createUser (user, success, errorCb) {
     $.ajax({
@@ -7,22 +9,20 @@ module.exports = {
       dataType: "json",
       success,
       error(xhr) {
-        const errors = xhr.responseJSON;
-        errorCb("signup form", errors);
+        errorCb(FormConstants.SIGNUP_FORM, xhr.responseJSON);
       }
     });
   },
 
-  fetchCurrentUser (success, complete) {
+  fetchCurrentUser (cb) {
     $.ajax({
       url: "api/session",
       method: "GET",
-      success,
+      success(user) {
+        cb(user);
+      },
       error: (xhr) => {
         console.log("Error in SessionApiUtil#fetchCurrentUser");
-      },
-      complete: () => {
-        complete();
       }
     });
   },
@@ -35,8 +35,7 @@ module.exports = {
       dataType: "json",
       success,
       error(xhr) {
-        const errors = xhr.responseJSON;
-        errorCb("login form", errors);
+        errorCb(FormConstants.LOGIN_FORM, xhr.responseJSON);
       }
     });
   },
@@ -51,7 +50,4 @@ module.exports = {
       }
     });
   }
-
-
-
 };

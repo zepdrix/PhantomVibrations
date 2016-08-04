@@ -1,0 +1,5 @@
+module.exports = {
+   LOGIN_FORM: "LOGIN_FORM",
+   SIGNUP_FORM: "SIGNUP_FORM",
+   CREATE_TRACK_FORM: "CREATE_TRACK_FORM"
+};

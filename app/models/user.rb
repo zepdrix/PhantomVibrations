@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id              :integer          not null, primary key
+#  username        :string           not null
+#  session_token   :string           not null
+#  password_digest :string           not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#
+
 class User < ActiveRecord::Base
 
   attr_reader :password
@@ -7,6 +19,12 @@ class User < ActiveRecord::Base
   validates :password, length: { minimum: 8, allow_nil: true }
 
   after_initialize :ensure_session_token
+
+  has_many( :tracks,
+    class_name: 'Track',
+    foreign_key: :user_id,
+    primary_key: :id
+  )
 
   def self.find_by_credentials(username, password)
     user = User.find_by(username: username)

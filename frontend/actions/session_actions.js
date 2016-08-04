@@ -1,10 +1,9 @@
-const SessionApiUtil = require('../util/session_api_util.js');
-const SessionConstants = require('../constants/session_constants.js');
-const AppDispatcher = require('../dispatcher/dispatcher.js');
-const ErrorActions = require('./error_actions.js');
+const SessionApiUtil = require('../util/session_api_util.js'),
+      SessionConstants = require('../constants/session_constants.js'),
+      AppDispatcher = require('../dispatcher/dispatcher.js'),
+      ErrorActions = require('./error_actions.js');
 
 module.exports = {
-
   createUser (user) {
     SessionApiUtil.createUser(
       user,
@@ -24,9 +23,9 @@ module.exports = {
       this.removeCurrentUser);
   },
 
-  fetchCurrentUser (complete) {
+  fetchCurrentUser () {
     SessionApiUtil.fetchCurrentUser(
-      SessionActions.receiveCurrentUser, complete);
+      SessionActions.receiveCurrentUser);
   },
 
   receiveCurrentUser (user) {

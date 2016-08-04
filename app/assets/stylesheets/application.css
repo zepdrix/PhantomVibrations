@@ -91,6 +91,7 @@ body {
 
 .navbar-logout {
   transition: 1s;
+  padding-left: 0px;
   float: right;
 }
 
@@ -112,7 +113,8 @@ body {
 }
 
 .navbar a {
-  padding: 10px 20px;
+  padding: 10px 10px;
+  padding-left: 10px;
   color: lightgrey;
   transition: 1s;
 }
@@ -125,7 +127,7 @@ body {
 .navbar button {
   color: lightgrey;
   text-align: center;
-  padding: 10px 20px;
+  padding: 10px 10px 10px 10px;
 }
 
 .login-form {
@@ -161,11 +163,11 @@ body {
   padding: 5px;
 }
 
+
 .navbar-words {
   text-align: right;
   display: block;
   color: #D9D9D9;
-  padding: 10px 20px 10px 20px;
   transition: 1s;
 }
 
@@ -196,10 +198,46 @@ body {
   color: lightgrey;
   transition: 1s;
 }
+.navbar-upload {
+  float: right;
+  padding-left: 60px;
+}
 
 .form-error {
   display: block;
   font-size: 12px;
   text-align: center;
   color: lightgrey;
+}
+
+.track-avatar-img {
+  float: left;
+  padding-right: 5px;
+  height: 160px;
+  width: 160px;
+}
+
+.track-item {
+  left: 100px;
+  width: 600px;
+  margin-bottom: 20px;
+  height: 160px;
+  /*background: #EF9957;*/
+}
+
+.track-item.track-username {
+  color: greys;
+}
+
+.track-item.track-title {
+  font-size: 14px;
+}
+
+.track-user-info {
+  padding: 5px;
+}
+
+.user-page.section {
+  margin: 0 auto;
+  width: 800px;
 }

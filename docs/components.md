@@ -23,9 +23,8 @@ Component Hierarchy
   - Playbar
   - UserIndex (/user)
     - UserHeader
-    - UserTracks
+    - TrackIndex
       - Track
-        - Likes
   - UserTrack (/user/track_name)
     - TrackView
     - CommentView
@@ -33,9 +32,8 @@ Component Hierarchy
       - CommentProfile
       - CommentLikes
       - CommentItem
-  - Stream (/)
+  - TrackIndex (/)
     - Track
-      - Likes
   - UploadForm (/upload)
   - Likes (/user/likes)
     - UserLikes

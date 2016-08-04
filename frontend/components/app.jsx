@@ -5,6 +5,8 @@ const SessionActions = require('../actions/session_actions.js');
 const Link = require('react-router').Link;
 
 const NavBar = require('./nav_bar.jsx');
+const HomePage = require('./home_page.jsx');
+const UserPage = require('./user_page.jsx');
 
 var App = React.createClass({
   getInitialState () {
@@ -17,9 +19,19 @@ var App = React.createClass({
   },
 
   updateUser () {
-
     this.setState({ currentUser: SessionStore.currentUser() });
+  },
 
+  pageContent () {
+    if (SessionStore.isUserLoggedIn()) {
+      return(
+        <UserPage/>
+      );
+    } else {
+      return(
+        <HomePage/>
+      );
+    }
   },
 
   render () {
@@ -28,6 +40,7 @@ var App = React.createClass({
       <div>
         <NavBar />
         <h1>PhantomVibrations</h1>
+        { this.pageContent() }
         { this.props.children }
       </div>
     );
