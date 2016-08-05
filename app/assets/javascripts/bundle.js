@@ -27136,7 +27136,7 @@
 	      { className: 'track-index' },
 	      React.createElement(
 	        'ul',
-	        null,
+	        { className: 'track-index list' },
 	        allTrackIndexItems
 	      )
 	    );
@@ -35023,7 +35023,7 @@
 	        React.createElement(
 	          'h2',
 	          null,
-	          'Your Vibrations'
+	          'Discover New Vibrations'
 	        )
 	      ),
 	      React.createElement('br', null),
@@ -35456,11 +35456,10 @@
 	  render: function render() {
 	
 	    if (TrackStore.isCurrentTrack()) {
-	      debugger;
 	      // this.state.currentTrack.play();
 	      return React.createElement(
 	        'div',
-	        { className: 'playbar with song' },
+	        { className: 'playbar with-song' },
 	        this.state.currentTrack.title,
 	        React.createElement(
 	          'div',
@@ -35474,11 +35473,7 @@
 	        )
 	      );
 	    } else {
-	      return React.createElement(
-	        'div',
-	        { className: 'playbar no song' },
-	        'No Track!safdsadasdfadgadgsdag'
-	      );
+	      return React.createElement('div', { className: 'playbar no-song' });
 	    }
 	  }
 	});

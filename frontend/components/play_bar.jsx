@@ -28,10 +28,9 @@ var PlayBar = React.createClass({
   render () {
 
     if (TrackStore.isCurrentTrack()) {
-      debugger
       // this.state.currentTrack.play();
       return(
-        <div className="playbar with song">
+        <div className="playbar with-song">
           { this.state.currentTrack.title }
           <div onClick={ this.handlePlay }>
             Play
@@ -44,8 +43,7 @@ var PlayBar = React.createClass({
       );
     } else {
       return(
-        <div className="playbar no song">
-          No Track!safdsadasdfadgadgsdag
+        <div className="playbar no-song">
         </div>
       );
     }

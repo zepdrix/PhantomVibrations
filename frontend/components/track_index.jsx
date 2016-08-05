@@ -9,7 +9,7 @@ var TrackIndex = React.createClass({
 
     return (
       <div className="track-index">
-        <ul>{ allTrackIndexItems }</ul>
+        <ul className="track-index list">{ allTrackIndexItems }</ul>
       </div>
   );
   }
