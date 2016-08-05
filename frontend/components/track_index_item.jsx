@@ -39,7 +39,7 @@ var TrackIndexItem = React.createClass({
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
     return(
-      <li className="track-item" style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 55%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 80%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
+      <li className="track-item" style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 55%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 80%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}>
         <div >
           <div className="track-avatar-img" >
             <Link to={ trackUrl } className="track-avatar-img">
@@ -53,7 +53,9 @@ var TrackIndexItem = React.createClass({
               className="track-item track-username">
               { this.props.track.user.username }
             </Link>
+
             <br/>
+
             <Link
               to={ trackUrl }
               className="track-item track-title">
@@ -62,10 +64,9 @@ var TrackIndexItem = React.createClass({
           </div>
 
           <div className="track-audio-el">
-            <audio id={ this.props.track.id }>
-              <source src={ this.props.track.audio_url } type="audio/ogg"/>
-            </audio>
-
+            <div id={ this.props.track.id } className="track-id">
+              <div id={ this.props.track.audio_url } className="audio/ogg"/>
+            </div>
           </div>
 
         </div>

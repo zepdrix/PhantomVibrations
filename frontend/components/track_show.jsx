@@ -24,6 +24,18 @@ var TrackShow = React.createClass({
     this.sessionListener.remove();
   },
 
+  onClick (e) {
+    e.preventDefault();
+
+    let track = new Audio();
+    let currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
+
+    track.title = currentTrack.title;
+    track.autoplay = true;
+    track.src = currentTrack.audio_url;
+    TrackActions.resetCurrentTrack(track);
+  },
+
   onChange () {
     let track = TrackStore.find(this.props.params.trackId);
     let currentUser = SessionStore.currentUser();
@@ -39,22 +51,30 @@ var TrackShow = React.createClass({
         <div className="track-show">
           <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(rbg1[0])+', '+(rbg1[1])+', '+(rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
             <div className="track-show top-left">
-              <div className="play-icon">
+              <div className="play-icon" id={ this.state.track.id } onClick={ this.onClick }>
               </div>
+              <div className="user-area">
+                <div className="username">
+                  { this.state.track.user.username }
+                </div>
 
-              <div className="username">
-                { this.state.track.user.username }
+                <br/>
+
+                <div className="track-title">
+                  { this.state.track.title}
+                </div>
+
               </div>
-
               <div>
                 <audio id={ this.state.track.id }>
                   <source src={ this.state.track.audio_url } type="audio/ogg"/>
                 </audio>
               </div>
 
-              <div className="track-title">
-                { this.state.track.title}
-              </div>
+            </div>
+
+            <div className="track-image">
+              <img src={ this.state.track.image_url }/>
 
             </div>
           </div>

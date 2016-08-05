@@ -11,7 +11,13 @@ var TrackForm = React.createClass({
   },
 
   getInitialState () {
-    return { title: '', description: '' };
+    return {
+      title: '',
+      description: '',
+      imageFile: null,
+      imageUrl: null,
+      audioFile: '',
+      audioUrl: null};
   },
 
   componentDidMount () {
@@ -38,9 +44,48 @@ var TrackForm = React.createClass({
     this.setState({ description: e.target.value });
   },
 
+  handleImage (e) {
+    let file = e.currentTarget.files[0];
+    let fileReader = new FileReader();
+
+    fileReader.onloadend = function () {
+      this.setState({ imageFile: file, imageUrl: fileReader.result });
+    }.bind(this);
+
+    if (file) {
+      fileReader.readAsDataURL(file);
+    }
+
+  },
+
+  handleAudio (e) {
+    let file = e.currentTarget.files[0];
+    debugger
+    let fileReader = new FileReader();
+
+    fileReader.onloadend = function () {
+      this.setState({ audioFile: file, audioUrl: fileReader.result });
+    }.bind(this);
+
+    if (file) {
+      fileReader.readAsDataURL(file);
+    }
+  },
+
+
   handleSubmit (e) {
     e.preventDefault();
-    TrackActions.createTrack(this.state);
+    let formData = new FormData();
+
+    formData.append("track[title]", this.state.title);
+    formData.append("track[description]", this.state.description);
+    formData.append("track[audio]", this.state.audioFile);
+
+    if (this.state.imageFile) {
+      formData.append("track[image]", this.state.imageFile);
+    }
+
+    TrackActions.createTrack(formData);
   },
 
   formErrors () {
@@ -57,23 +102,39 @@ var TrackForm = React.createClass({
   render () {
     return(
       <div>
-        <form className="create-track-form" onSubmit={ this.handleSubmit }>
+        <form className="create-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
           <div className="login-form-title">Upload a Track</div>
           { this.formErrors() }
           <div className="login-input">
             <input className="input"
               placeholder="Track Title"
-              value={this.state.title}
-                onChange={this.handleTitle}/>
+              value={ this.state.title }
+                onChange={ this.handleTitle }/>
           </div>
           <br/>
           <div className="login-input">
             <textarea className="input"
 
               placeholder="Track Description"
-              value={this.state.description}
-              onChange={this.handleDescription}/>
+              value={ this.state.description }
+              onChange={ this.handleDescription }/>
           </div>
+
+          <div className="login-input">
+            Upload a track image!
+            <input type="file" onChange={ this.handleImage }/>
+            <br/>
+            <img src={ this.state.imageUrl }/>
+          </div>
+
+          <div className="login-input">
+            Upload a song!
+            <input type="file" onChange={ this.handleAudio }/>
+            <br/>
+            <audio src={ this.state.audioUrl } preload="auto" controls>
+            </audio>
+          </div>
+
           <button className="create-track-button form-hover">Submit</button>
         </form>
       </div>

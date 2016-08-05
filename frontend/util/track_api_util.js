@@ -2,15 +2,17 @@ const FormConstants = require('../constants/form_constants.js');
 
 module.exports = {
 
-  createTrack (track, success, errorCb) {
+  createTrack (formData, success, errorCb) {
     $.ajax({
       url: "api/tracks",
       method: "POST",
-      data: { track: track },
       dataType: "json",
+      contentType: false,
+      processData: false,
+      data: formData,
       success,
       error(xhr) {
-        errorCb(FormConstants.CREATE_TRACK_FORM, xhr.responseJSON);
+        errorCb(FormConstants.CREATE_TRACK_FORM, xhr.responseJSON, xhr.responseText);
       }
     });
   },

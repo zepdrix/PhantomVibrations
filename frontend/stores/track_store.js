@@ -23,7 +23,11 @@ TrackStore.find = function (trackId) {
 };
 
 TrackStore.currentTrack = function () {
-  return Object.assign({}, _currentTrack);
+  return _currentTrack;
+};
+
+TrackStore.isCurrentTrack = function () {
+  return !!_currentTrack.src;
 };
 
 const _resetTrack = function (track) {
@@ -38,6 +42,10 @@ const _resetAllTracks = function (tracks) {
 };
 
 const _resetCurrentTrack = function (track) {
+  if (!!_currentTrack.src) {
+    _currentTrack.pause();
+
+  }
   _currentTrack = track;
 };
 
@@ -51,7 +59,7 @@ TrackStore.__onDispatch = function (payload) {
       _resetAllTracks(payload.tracks);
       this.__emitChange();
       break;
-    case TrackConstants.PLAY_TRACK:
+    case TrackConstants.RECEIVE_CURRENT_TRACK:
       _resetCurrentTrack(payload.track);
       this.__emitChange();
       break;

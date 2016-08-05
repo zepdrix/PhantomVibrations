@@ -9,9 +9,17 @@ var ErrorStore = new Store(AppDispatcher);
 var _errors = [];
 var _form = '';
 
-const _setErrors = function (form, errors) {
+const _setErrors = function (form, jsonErrors, textErrors) {
   _form = form;
-  _errors = errors;
+  _errors = [];
+
+  if (jsonErrors) {
+    _errors = jsonErrors;
+  }
+  
+  if (textErrors) {
+    _errors.push(textErrors);
+  }
 };
 
 const _clearErrors = function () {

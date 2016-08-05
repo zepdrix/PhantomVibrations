@@ -30,12 +30,11 @@ module.exports = {
     });
   },
 
-  playTrack (track) {
+  resetCurrentTrack (track) {
     AppDispatcher.dispatch({
-      actionType: TrackConstants.PLAY_TRACK,
+      actionType: TrackConstants.RECEIVE_CURRENT_TRACK,
       track: track
     });
-
   }
 
 };

@@ -21,6 +21,7 @@ const SessionApiUtil = require('./util/session_api_util.js'),
       SessionActions = require('./actions/session_actions.js'),
       TrackApiUtil = require('./util/track_api_util.js'),
       TrackActions = require('./actions/track_actions.js'),
+      TrackStore = require('./stores/track_store.js'),
       SessionStore = require('./stores/session_store.js'),
       SetupApp = require('./setup_app.js');
 
@@ -29,6 +30,7 @@ window.SessionApiUtil = SessionApiUtil;
 window.SessionActions = SessionActions;
 window.TrackApiUtil = TrackApiUtil;
 window.TrackActions = TrackActions;
+window.TrackStore = TrackStore;
 
 const _ensureLoggedIn = function (nextState, replace) {
   if (!SessionStore.isUserLoggedIn()) {

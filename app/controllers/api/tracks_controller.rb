@@ -32,12 +32,10 @@ class Api::TracksController < ApplicationController
     render "api/tracks/index"
   end
 
-
-
   private
 
   def track_params
-    params.require(:track).permit(:title, :description)
+    params.require(:track).permit(:title, :description, :image, :audio)
   end
 
 end

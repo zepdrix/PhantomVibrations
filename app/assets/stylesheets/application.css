@@ -74,9 +74,10 @@ body {
 
 .navbar {
   height: 40px;
-  background-color: grey;
-  padding-bottom: 20px;
-  background: linear-gradient(to bottom, grey, grey 65%, white)
+  background-color: #7A7A7A;
+  padding-bottom: 0px;
+  box-shadow: 0px 0px 10px grey;
+  /*background: linear-gradient(to bottom, grey, grey 65%, white)*/
 }
 
 .navbar-content {
@@ -235,7 +236,8 @@ body {
   padding-right: 5px;
   height: 160px;
   width: 160px;
-  border-radius: 50%;
+  border-radius: 90px;
+  /*box-shadow: 0px 0px 30px grey;*/
 }
 
 .track-item {
@@ -268,11 +270,6 @@ body {
   padding: 5px;
 }
 
-.user-page.section {
-  margin: 0 auto;
-  width: 900px;
-}
-
 h2 {
   margin-top: 20px;
   font-size: 26px;
@@ -293,26 +290,49 @@ h2 {
 .track-show .play-icon {
   display: block;
   float: left;
-
-
-  padding: 15px;
-  margin: 8px;
+  margin-top: 30px;
+  margin-left: 20px;
   margin-right: 20px;
-
 	border-top: 30px solid transparent;
 	border-left: 60px solid red;
 	border-bottom: 30px solid transparent;
-
 }
 
 .track-show .track-title {
-
   margin: 10px;
+  float: left;
   font-size: 25px;
 }
 
-.track-show .username {
+.track-show .username, .user-info .username {
   padding-top: 15px;
   margin: 10px;
+  float: left;
   font-size: 17px;
+}
+
+.track-show .track-image {
+  height: 300px;
+  width: 300px;
+  margin-top: 25px;
+  margin-right: 20px;
+  display: block;
+  float: right;
+  border: 1px solid grey;
+}
+
+.track-show .user-area {
+  float: left;
+
+}
+
+.user-page {
+  width: 900px;
+  margin: 0 auto;
+  margin-top: 35px;
+}
+
+.user-page .banner-area {
+  height: 300px;
+  box-shadow: 0px 0px 30px black;
 }
