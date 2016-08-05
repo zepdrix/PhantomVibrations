@@ -30,4 +30,12 @@ module.exports = {
     });
   },
 
+  playTrack (track) {
+    AppDispatcher.dispatch({
+      actionType: TrackConstants.PLAY_TRACK,
+      track: track
+    });
+
+  }
+
 };

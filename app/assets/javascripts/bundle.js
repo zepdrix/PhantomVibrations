@@ -27131,7 +27131,7 @@
 	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'track-index' },
 	      React.createElement(
 	        'ul',
 	        null,
@@ -27152,17 +27152,41 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	
+	var TrackStore = __webpack_require__(270);
+	var CSSHelper = __webpack_require__(288);
+	
+	var styleHelper = function styleHelper() {
+	  var arr = [195, 89];
+	  var randomArray = [];
+	  arr.push(Math.floor(Math.random() * 106) + 89);
+	  for (var i = 0; i < 2; i++) {
+	    var j = Math.floor(Math.random() * (2 - i));
+	    randomArray.push(arr.splice(j, 1)[0]);
+	  }
+	
+	  randomArray.push(arr[0]);
+	  return randomArray;
+	};
+	
 	var TrackIndexItem = React.createClass({
 	  displayName: 'TrackIndexItem',
 	  clickHandler: function clickHandler(e) {
 	    this.context.router.push('/tracks/' + this.props.track.id);
 	  },
+	  playTrack: function playTrack(e) {
+	    e.preventDefault();
+	  },
 	  render: function render() {
+	    var rbg1 = CSSHelper.styleHelper(125, 15);
+	    var rbg2 = [rbg1[1], rbg1[0], rbg1[2]];
+	
 	    var trackUrl = '/tracks/' + this.props.track.id;
+	    var trackImageUrl = this.props.track.image_url;
 	    var userUrl = '/users/' + this.props.track.user_id;
+	    var userImageUrl = this.props.track.user.image_url;
 	    return React.createElement(
 	      'li',
-	      { className: 'track-item' },
+	      { className: 'track-item', style: { background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 55%, rgba(' + rbg1[0] + ', ' + 0 + ', ' + rbg1[2] + ', 0.5) 80%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
 	      React.createElement(
 	        'div',
 	        null,
@@ -27171,8 +27195,8 @@
 	          { className: 'track-avatar-img' },
 	          React.createElement(
 	            Link,
-	            { to: trackUrl },
-	            React.createElement('img', { src: 'https://thesocietypages.org/socimages/files/2009/05/nopic_192.gif', height: '160', width: '160' })
+	            { to: trackUrl, className: 'track-avatar-img' },
+	            React.createElement('img', { className: 'track-avatar-img', src: trackImageUrl, height: '160', width: '160' })
 	          )
 	        ),
 	        React.createElement(
@@ -27192,6 +27216,15 @@
 	              to: trackUrl,
 	              className: 'track-item track-title' },
 	            this.props.track.title
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'track-audio-el' },
+	          React.createElement(
+	            'audio',
+	            { id: this.props.track.id },
+	            React.createElement('source', { src: this.props.track.audio_url, type: 'audio/ogg' })
 	          )
 	        )
 	      )
@@ -27335,6 +27368,12 @@
 	    AppDispatcher.dispatch({
 	      actionType: TrackConstants.RECEIVE_TRACKS,
 	      tracks: tracks
+	    });
+	  },
+	  playTrack: function playTrack(track) {
+	    AppDispatcher.dispatch({
+	      actionType: TrackConstants.PLAY_TRACK,
+	      track: track
 	    });
 	  }
 	};
@@ -34319,6 +34358,8 @@
 	
 	var _tracks = {};
 	
+	var _currentTrack = {};
+	
 	TrackStore.all = function () {
 	  var tracks = [];
 	
@@ -34332,6 +34373,10 @@
 	  return _tracks[trackId];
 	};
 	
+	TrackStore.currentTrack = function () {
+	  return Object.assign({}, _currentTrack);
+	};
+	
 	var _resetTrack = function _resetTrack(track) {
 	  _tracks[track.id] = track;
 	};
@@ -34343,6 +34388,10 @@
 	  });
 	};
 	
+	var _resetCurrentTrack = function _resetCurrentTrack(track) {
+	  _currentTrack = track;
+	};
+	
 	TrackStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case TrackConstants.RECEIVE_TRACK:
@@ -34351,6 +34400,10 @@
 	      break;
 	    case TrackConstants.RECEIVE_TRACKS:
 	      _resetAllTracks(payload.tracks);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.PLAY_TRACK:
+	      _resetCurrentTrack(payload.track);
 	      this.__emitChange();
 	      break;
 	  }
@@ -34367,43 +34420,81 @@
 	var React = __webpack_require__(1);
 	var TrackStore = __webpack_require__(270);
 	var TrackActions = __webpack_require__(241);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(275);
+	var CSSHelper = __webpack_require__(288);
 	
 	var TrackShow = React.createClass({
 	  displayName: 'TrackShow',
 	  getInitialState: function getInitialState() {
 	    var track = TrackStore.find(this.props.params.trackId);
-	    return { track: track };
+	    var currentUser = SessionStore.currentUser();
+	    return { track: track, currentUser: currentUser };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onChange);
+	    this.sessionListener = SessionStore.addListener(this.onChange);
 	    TrackActions.fetchAllTracks();
+	    SessionActions.fetchCurrentUser();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.trackListener.remove();
+	    this.sessionListener.remove();
 	  },
 	  onChange: function onChange() {
 	    var track = TrackStore.find(this.props.params.trackId);
-	    this.setState({ track: track });
+	    var currentUser = SessionStore.currentUser();
+	    this.setState({ track: track, currentUser: currentUser });
 	  },
 	  render: function render() {
-	    var currentTrackTitle = void 0;
-	    var currentTrackDescription = void 0;
-	    var currentTrackUsername = void 0;
+	    var rbg1 = CSSHelper.styleHelper();
+	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
 	
-	    if (typeof this.state.track !== 'undefined') {
-	      currentTrackTitle = this.state.track.title;
-	      currentTrackDescription = this.state.track.description;
-	      currentTrackUsername = this.state.track.user.username;
+	    if (this.state.track) {
+	      return React.createElement(
+	        'div',
+	        { className: 'track-show' },
+	        React.createElement(
+	          'div',
+	          { className: 'track-show banner-area', style: { background: '-webkit-linear-gradient(135deg, rgba(' + rbg1[0] + ', ' + rbg1[1] + ', ' + rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
+	          React.createElement(
+	            'div',
+	            { className: 'track-show top-left' },
+	            React.createElement('div', { className: 'play-icon' }),
+	            React.createElement(
+	              'div',
+	              { className: 'username' },
+	              this.state.track.user.username
+	            ),
+	            React.createElement(
+	              'div',
+	              null,
+	              React.createElement(
+	                'audio',
+	                { id: this.state.track.id },
+	                React.createElement('source', { src: this.state.track.audio_url, type: 'audio/ogg' })
+	              )
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'track-title' },
+	              this.state.track.title
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'track-show comment-area' },
+	          React.createElement(
+	            'div',
+	            { className: 'track-show currentuser' },
+	            this.state.currentUser.username
+	          )
+	        )
+	      );
 	    } else {
-	      currentTrackTitle = '';
-	      currentTrackUsername = '';
-	      currentTrackDescription = '';
+	      return React.createElement('div', null);
 	    }
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      currentTrackTitle,
-	      currentTrackDescription,
-	      currentTrackUsername
-	    );
 	  }
 	});
 	
@@ -34667,7 +34758,10 @@
 	    return { username: '', password: '' };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    SessionStore.addListener(this.redirectIfLoggedIn);
+	    this.sessionListener = SessionStore.addListener(this.redirectIfLoggedIn);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.sessionListener.remove();
 	  },
 	  redirectIfLoggedIn: function redirectIfLoggedIn() {
 	    if (SessionStore.isUserLoggedIn()) {
@@ -34743,14 +34837,14 @@
 	    return { tracks: TrackStore.all() };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    this.storeListener = TrackStore.addListener(this.onChange);
+	    this.trackListener = TrackStore.addListener(this.onChange);
 	    TrackActions.fetchAllTracks();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.trackListener.remove();
 	  },
 	  onChange: function onChange() {
 	    this.setState({ tracks: TrackStore.all() });
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.storeListener.remove();
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -34793,11 +34887,11 @@
 	    this.storeListener = TrackStore.addListener(this.onChange);
 	    TrackActions.fetchAllTracks();
 	  },
-	  onChange: function onChange() {
-	    this.setState({ tracks: TrackStore.all() });
-	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.storeListener.remove();
+	  },
+	  onChange: function onChange() {
+	    this.setState({ tracks: TrackStore.all() });
 	  },
 	  render: function render() {
 	
@@ -35202,6 +35296,28 @@
 	        console.log("Error in UserApiUtil#fetchAllUsers");
 	      }
 	    });
+	  }
+	};
+
+/***/ },
+/* 287 */,
+/* 288 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  styleHelper: function styleHelper() {
+	    var arr = [151, 64];
+	    var randomArray = [];
+	    arr.push(Math.floor(Math.random() * 87) + 64);
+	    for (var i = 0; i < 2; i++) {
+	      var j = Math.floor(Math.random() * (2 - i));
+	      randomArray.push(arr.splice(j, 1)[0]);
+	    }
+	
+	    randomArray.push(arr[0]);
+	    return randomArray;
 	  }
 	};
 

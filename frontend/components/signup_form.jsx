@@ -14,7 +14,11 @@ var SignupForm = React.createClass({
   },
 
   componentDidMount () {
-    SessionStore.addListener(this.redirectIfLoggedIn);
+    this.sessionListener = SessionStore.addListener(this.redirectIfLoggedIn);
+  },
+
+  componentWillUnmount () {
+    this.sessionListener.remove();
   },
 
   redirectIfLoggedIn () {

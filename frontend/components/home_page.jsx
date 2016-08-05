@@ -9,16 +9,16 @@ var HomePage = React.createClass({
   },
 
   componentDidMount () {
-    this.storeListener = TrackStore.addListener(this.onChange);
+    this.trackListener = TrackStore.addListener(this.onChange);
     TrackActions.fetchAllTracks();
+  },
+
+  componentWillUnmount () {
+    this.trackListener.remove();
   },
 
   onChange () {
     this.setState({ tracks: TrackStore.all() });
-  },
-
-  componentWillUnmount () {
-    this.storeListener.remove();
   },
 
   render () {

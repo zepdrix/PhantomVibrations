@@ -13,12 +13,12 @@ var UserPage = React.createClass({
     TrackActions.fetchAllTracks();
   },
 
-  onChange () {
-    this.setState({ tracks: TrackStore.all() });
-  },
-
   componentWillUnmount () {
     this.storeListener.remove();
+  },
+
+  onChange () {
+    this.setState({ tracks: TrackStore.all() });
   },
 
   render () {

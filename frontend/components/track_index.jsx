@@ -8,7 +8,7 @@ var TrackIndex = React.createClass({
     });
 
     return (
-      <div>
+      <div className="track-index">
         <ul>{ allTrackIndexItems }</ul>
       </div>
   );

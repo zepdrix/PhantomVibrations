@@ -7,6 +7,8 @@ const TrackStore = new Store(AppDispatcher);
 
 var _tracks = {};
 
+var _currentTrack = {};
+
 TrackStore.all = function () {
   let tracks = [];
 
@@ -20,6 +22,10 @@ TrackStore.find = function (trackId) {
   return _tracks[trackId];
 };
 
+TrackStore.currentTrack = function () {
+  return Object.assign({}, _currentTrack);
+};
+
 const _resetTrack = function (track) {
   _tracks[track.id] = track;
 };
@@ -31,6 +37,10 @@ const _resetAllTracks = function (tracks) {
   });
 };
 
+const _resetCurrentTrack = function (track) {
+  _currentTrack = track;
+};
+
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case TrackConstants.RECEIVE_TRACK:
@@ -39,6 +49,10 @@ TrackStore.__onDispatch = function (payload) {
       break;
     case TrackConstants.RECEIVE_TRACKS:
       _resetAllTracks(payload.tracks);
+      this.__emitChange();
+      break;
+    case TrackConstants.PLAY_TRACK:
+      _resetCurrentTrack(payload.track);
       this.__emitChange();
       break;
   }
