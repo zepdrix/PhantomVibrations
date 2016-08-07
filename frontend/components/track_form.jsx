@@ -51,7 +51,7 @@ var TrackForm = React.createClass({
     fileReader.onloadend = function () {
       this.setState({ imageFile: file, imageUrl: fileReader.result });
     }.bind(this);
-    debugger
+
     if (file) {
       fileReader.readAsDataURL(file);
     }

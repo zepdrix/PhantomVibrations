@@ -34134,7 +34134,7 @@
 	
 	    var track = new Audio();
 	    var currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
-	
+	    track.id = currentTrack.id;
 	    track.title = currentTrack.title;
 	    track.autoplay = true;
 	    track.src = currentTrack.audio_url;
@@ -34192,7 +34192,7 @@
 	var FormConstants = __webpack_require__(267);
 	
 	module.exports = {
-	  createTrack: function createTrack(formData, success, errorCb) {
+	  createTrack: function createTrack(formData, successCb, errorCb) {
 	    $.ajax({
 	      url: "api/tracks",
 	      method: "POST",
@@ -34200,7 +34200,9 @@
 	      contentType: false,
 	      processData: false,
 	      data: formData,
-	      success: success,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
 	      error: function error(xhr) {
 	        errorCb(FormConstants.CREATE_TRACK_FORM, xhr.responseJSON, xhr.responseText);
 	      }
@@ -34270,13 +34272,15 @@
 	var FormConstants = __webpack_require__(267);
 	
 	module.exports = {
-	  createUser: function createUser(user, success, errorCb) {
+	  createUser: function createUser(user, successCb, errorCb) {
 	    $.ajax({
 	      url: "api/users",
 	      method: "POST",
 	      data: { user: user },
 	      dataType: "json",
-	      success: success,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
 	      error: function error(xhr) {
 	        errorCb(FormConstants.SIGNUP_FORM, xhr.responseJSON);
 	      }
@@ -34295,23 +34299,27 @@
 	      }
 	    });
 	  },
-	  loginUser: function loginUser(user, success, errorCb) {
+	  loginUser: function loginUser(user, successCb, errorCb) {
 	    $.ajax({
 	      url: "api/session",
 	      method: "POST",
 	      data: { user: user },
 	      dataType: "json",
-	      success: success,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
 	      error: function error(xhr) {
 	        errorCb(FormConstants.LOGIN_FORM, xhr.responseJSON);
 	      }
 	    });
 	  },
-	  logoutUser: function logoutUser(success) {
+	  logoutUser: function logoutUser(successCb) {
 	    $.ajax({
 	      url: "api/session",
 	      method: "DELETE",
-	      success: success,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
 	      error: function error() {
 	        console.log("Logout error in SessionApiUtil#logoutUser");
 	      }
@@ -34440,7 +34448,7 @@
 	    fileReader.onloadend = function () {
 	      this.setState({ imageFile: file, imageUrl: fileReader.result });
 	    }.bind(this);
-	    debugger;
+	
 	    if (file) {
 	      fileReader.readAsDataURL(file);
 	    }
@@ -34562,6 +34570,8 @@
 	var SessionActions = __webpack_require__(276);
 	var CSSHelper = __webpack_require__(263);
 	var TrackChange = __webpack_require__(264);
+	var CommentForm = __webpack_require__(291);
+	var CommentIndex = __webpack_require__(296);
 	
 	var TrackShow = React.createClass({
 	  displayName: 'TrackShow',
@@ -34580,7 +34590,10 @@
 	    this.trackListener.remove();
 	    this.sessionListener.remove();
 	  },
-	  onClick: function onClick(e) {
+	  pauseCurrentTrack: function pauseCurrentTrack() {
+	    TrackStore.currentTrack().pause();
+	  },
+	  playTrack: function playTrack(e) {
 	    TrackChange.playTrack(e);
 	  },
 	  onChange: function onChange() {
@@ -34588,9 +34601,17 @@
 	    var currentUser = SessionStore.currentUser();
 	    this.setState({ track: track, currentUser: currentUser });
 	  },
+	  playIcon: function playIcon() {
+	    if (parseInt(TrackStore.currentTrack().id) === this.state.track.id && !TrackStore.currentTrack().paused) {
+	      return React.createElement('div', { className: 'pause-icon', id: this.state.track.id, onClick: this.pauseCurrentTrack });
+	    } else {
+	      return React.createElement('div', { className: 'play-icon', id: this.state.track.id, onClick: this.playTrack });
+	    }
+	  },
 	  render: function render() {
 	    var rbg1 = CSSHelper.styleHelper();
 	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
+	    debugger;
 	
 	    if (this.state.track) {
 	      var userUrl = '/users/' + this.state.track.user_id;
@@ -34603,7 +34624,7 @@
 	          React.createElement(
 	            'div',
 	            { className: 'track-show top-left' },
-	            React.createElement('div', { className: 'play-icon', id: this.state.track.id, onClick: this.onClick }),
+	            this.playIcon(),
 	            React.createElement(
 	              'div',
 	              { className: 'user-area' },
@@ -34644,8 +34665,18 @@
 	          { className: 'track-show comment-area' },
 	          React.createElement(
 	            'div',
-	            { className: 'track-show currentuser' },
-	            this.state.currentUser.username
+	            { className: 'track-show comment-form' },
+	            React.createElement(CommentForm, { track: this.state.track })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'track-show description' },
+	            this.state.track.description
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'track-show comment-index' },
+	            React.createElement(CommentIndex, { comments: this.state.track.comments })
 	          )
 	        )
 	      );
@@ -35698,6 +35729,268 @@
 	    SessionActions.receiveCurrentUser(user);
 	  }
 	};
+
+/***/ },
+/* 291 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var CommentActions = __webpack_require__(292);
+	var CommentStore = __webpack_require__(295);
+	var ErrorStore = __webpack_require__(271);
+	var FormConstants = __webpack_require__(267);
+	
+	var CommentForm = React.createClass({
+	  displayName: 'CommentForm',
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return { body: '' };
+	  },
+	  componentDidMount: function componentDidMount() {},
+	  handleBody: function handleBody(e) {
+	    e.preventDefault();
+	    this.setState({ body: e.target.value });
+	  },
+	  handleSubmit: function handleSubmit(e) {
+	    e.preventDefault();
+	    CommentActions.createComment({
+	      body: this.state.body,
+	      track_id: this.props.track.id,
+	      track_percentage: 0.23
+	    });
+	    this.setState({ body: '' });
+	    TrackActions.fetchAllTracks();
+	  },
+	  render: function render() {
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'comment-form', onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'div',
+	          { className: 'comment-input' },
+	          React.createElement('input', {
+	            placeholder: 'Write a comment',
+	            value: this.state.body,
+	            onChange: this.handleBody })
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CommentForm;
+
+/***/ },
+/* 292 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var CommentApiUtil = __webpack_require__(293);
+	var CommentConstants = __webpack_require__(294);
+	var AppDispatcher = __webpack_require__(259);
+	var ErrorStore = __webpack_require__(271);
+	
+	module.exports = {
+	  createComment: function createComment(comment) {
+	    CommentApiUtil.createComment(comment, this.receiveComment);
+	  },
+	  fetchAllComments: function fetchAllComments() {
+	    CommentApiUtil.fetchAllComments(this.receiveComments);
+	  },
+	  receiveComment: function receiveComment(comment) {
+	    AppDispatcher.dispatch({
+	      actionType: CommentConstants.RECEIVE_COMMENT,
+	      comment: comment
+	    });
+	  },
+	  receiveComments: function receiveComments(comments) {
+	    AppDispatcher.dispatch({
+	      actionType: CommentConstants.RECEIVE_COMMENTS,
+	      comments: comments
+	    });
+	  }
+	};
+
+/***/ },
+/* 293 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var FormConstants = __webpack_require__(267);
+	
+	module.exports = {
+	  createComment: function createComment(comment, successCb) {
+	    $.ajax({
+	      url: "api/comments",
+	      method: "POST",
+	      data: { comment: comment },
+	      dataType: "json",
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in CommentApiUtil#createComment");
+	      }
+	    });
+	  },
+	  fetchComment: function fetchComment(id, successCb) {
+	    $.ajax({
+	      url: "api/comments/" + id,
+	      method: "GET",
+	      succes: function succes(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in CommentApiUtil#fetchComment");
+	      }
+	    });
+	  },
+	  fetchAllComments: function fetchAllComments(successCb) {
+	    $.ajax({
+	      url: "api/comments",
+	      method: "GET",
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in CommentApiUtil#fetchAllComments");
+	      }
+	    });
+	  }
+	};
+
+/***/ },
+/* 294 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  RECEIVE_COMMENT: "RECEIVE_COMMENT",
+	  RECEIVE_COMMENTS: "RECEIVE_COMMENTS"
+	};
+
+/***/ },
+/* 295 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(241).Store;
+	
+	var AppDispatcher = __webpack_require__(259),
+	    CommentConstants = __webpack_require__(294);
+	
+	var CommentStore = new Store(AppDispatcher);
+	
+	var _comments = {};
+	
+	CommentStore.all = function () {
+	  var comments = [];
+	
+	  Object.keys(_comments).forEach(function (commentId) {
+	    comments.push(_comments[commentId]);
+	  });
+	};
+	
+	CommentStore.find = function (commentId) {
+	  return _comments[commentId];
+	};
+	
+	var _resetComment = function _resetComment(comment) {
+	  _comments[comment.id] = comment;
+	};
+	
+	var _resetAllComments = function _resetAllComments(comments) {
+	  _comments = {};
+	  comments.forEach(function (comment) {
+	    _comments[comment.id] = comment;
+	  });
+	};
+	
+	CommentStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case CommentConstants.RECEIVE_COMMENT:
+	      _resetComment(payload.comment);
+	      this.__emitChange();
+	      break;
+	    case CommentConstants.RECEIVE_COMMENTS:
+	      _resetAllComments(payload.comments);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = CommentStore;
+
+/***/ },
+/* 296 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var CommentIndexItem = __webpack_require__(297);
+	
+	var CommentIndex = React.createClass({
+	  displayName: 'CommentIndex',
+	  render: function render() {
+	    debugger;
+	    var allCommentIndexItems = this.props.comments.map(function (comment, key) {
+	      return React.createElement(CommentIndexItem, { key: key, comment: comment });
+	    });
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'comment-index' },
+	      React.createElement(
+	        'ul',
+	        { className: 'comment-index list' },
+	        allCommentIndexItems
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CommentIndex;
+
+/***/ },
+/* 297 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var CommentIndexItem = React.createClass({
+	  displayName: 'CommentIndexItem',
+	  render: function render() {
+	
+	    return React.createElement(
+	      'li',
+	      null,
+	      React.createElement(
+	        'div',
+	        null,
+	        this.props.comment.body
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CommentIndexItem;
 
 /***/ }
 /******/ ]);

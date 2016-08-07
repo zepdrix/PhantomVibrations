@@ -2,7 +2,7 @@ const FormConstants = require('../constants/form_constants.js');
 
 module.exports = {
 
-  createTrack (formData, success, errorCb) {
+  createTrack (formData, successCb, errorCb) {
     $.ajax({
       url: "api/tracks",
       method: "POST",
@@ -10,7 +10,9 @@ module.exports = {
       contentType: false,
       processData: false,
       data: formData,
-      success,
+      success: (resp) => {
+        successCb(resp);
+      },
       error(xhr) {
         errorCb(FormConstants.CREATE_TRACK_FORM, xhr.responseJSON, xhr.responseText);
       }

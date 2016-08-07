@@ -8,7 +8,7 @@ module.exports = {
 
     let track = new Audio();
     let currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
-
+    track.id = currentTrack.id;
     track.title = currentTrack.title;
     track.autoplay = true;
     track.src = currentTrack.audio_url;

@@ -6,6 +6,8 @@ const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
 const CSSHelper = require('../helpers/css.js');
 const TrackChange = require('../helpers/track_change.js');
+const CommentForm = require('./comment_form.jsx');
+const CommentIndex = require('./comment_index.jsx');
 
 var TrackShow = React.createClass({
   getInitialState () {
@@ -26,7 +28,11 @@ var TrackShow = React.createClass({
     this.sessionListener.remove();
   },
 
-  onClick (e) {
+  pauseCurrentTrack () {
+    TrackStore.currentTrack().pause();
+  },
+
+  playTrack (e) {
     TrackChange.playTrack(e);
   },
 
@@ -36,10 +42,22 @@ var TrackShow = React.createClass({
     this.setState({ track, currentUser });
   },
 
+  playIcon () {
+    if (parseInt(TrackStore.currentTrack().id) === this.state.track.id && !TrackStore.currentTrack().paused) {
+      return(
+        <div className="pause-icon" id={ this.state.track.id } onClick={ this.pauseCurrentTrack }/>
+      );
+    } else {
+      return(
+        <div className="play-icon" id={ this.state.track.id } onClick={ this.playTrack }/>
+      );
+    }
+  },
+
   render () {
     let rbg1 = CSSHelper.styleHelper();
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-
+    debugger
 
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
@@ -47,8 +65,7 @@ var TrackShow = React.createClass({
         <div className="track-show">
           <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(rbg1[0])+', '+(rbg1[1])+', '+(rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
             <div className="track-show top-left">
-              <div className="play-icon" id={ this.state.track.id } onClick={ this.onClick }>
-              </div>
+              { this.playIcon() }
               <div className="user-area">
                 <div className="username">
                   <Link to={ userUrl }>{ this.state.track.user.username }</Link>
@@ -77,8 +94,16 @@ var TrackShow = React.createClass({
 
           <div className="track-show comment-area">
 
-            <div className="track-show currentuser">
-              { this.state.currentUser.username }
+            <div className="track-show comment-form">
+              <CommentForm track={ this.state.track }/>
+            </div>
+
+            <div className="track-show description">
+              { this.state.track.description }
+            </div>
+
+            <div className="track-show comment-index">
+              <CommentIndex comments={ this.state.track.comments}/>
             </div>
           </div>
         </div>

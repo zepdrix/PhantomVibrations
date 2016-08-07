@@ -30,9 +30,17 @@ class Track < ActiveRecord::Base
   has_attached_file :audio, default_url: 'nocturne.ogg'
   # validates_attachment_content_type :audio, content_type: /\Aimage\/.*\Z/
 
-  belongs_to( :user,
+  belongs_to(
+    :user,
     class_name: 'User',
     foreign_key: :user_id,
+    primary_key: :id
+  )
+
+  has_many(
+    :comments,
+    class_name: 'Comment',
+    foreign_key: :track_id,
     primary_key: :id
   )
 

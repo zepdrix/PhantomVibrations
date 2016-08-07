@@ -1,13 +1,15 @@
 const FormConstants = require('../constants/form_constants.js');
 
 module.exports = {
-  createUser (user, success, errorCb) {
+  createUser (user, successCb, errorCb) {
     $.ajax({
       url: "api/users",
       method: "POST",
       data: { user: user },
       dataType: "json",
-      success,
+      success: (resp) => {
+        successCb(resp);
+      },
       error(xhr) {
         errorCb(FormConstants.SIGNUP_FORM, xhr.responseJSON);
       }
@@ -27,24 +29,28 @@ module.exports = {
     });
   },
 
-  loginUser (user, success, errorCb) {
+  loginUser (user, successCb, errorCb) {
     $.ajax({
       url: "api/session",
       method: "POST",
       data: { user: user },
       dataType: "json",
-      success,
+      success: (resp) => {
+        successCb(resp);
+      },
       error(xhr) {
         errorCb(FormConstants.LOGIN_FORM, xhr.responseJSON);
       }
     });
   },
 
-  logoutUser (success) {
+  logoutUser (successCb) {
     $.ajax({
       url: "api/session",
       method: "DELETE",
-      success,
+      success: (resp) => {
+        successCb(resp);
+      },
       error: function () {
         console.log("Logout error in SessionApiUtil#logoutUser");
       }
