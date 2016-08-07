@@ -11,7 +11,7 @@ var TrackIndex = React.createClass({
       <div className="track-index">
         <ul className="track-index list">{ allTrackIndexItems }</ul>
       </div>
-  );
+    );
   }
 });
 

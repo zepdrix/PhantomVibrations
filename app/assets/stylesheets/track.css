@@ -1,0 +1,59 @@
+
+.track-avatar-img {
+  float: left;
+  height: 160px;
+  width: 160px;
+  box-shadow: 0px 0px 30px #BABABA;
+}
+
+.track-item {
+  left: 100px;
+  width: 600px;
+  margin-bottom: 45px;
+  height: 160px;
+  border-bottom-left-radius: 80px;
+  border-bottom-right-radius: 80px;
+}
+
+.track-item.track-username {
+  color: #A3A3A3;
+}
+
+.track-item.track-title {
+  color: #636363;
+  font-size: 14px;
+}
+
+
+.track-item.track-username, .track-item.track-title {
+  margin-left: 10px;
+}
+
+
+.track-user-info {
+  padding: 5px;
+}
+
+.track-show {
+  width: 900px;
+  margin: 0 auto;
+  margin-top: 75px;
+}
+
+.track-show.banner-area {
+  width: 100%;
+  transition: 1s;
+  height: 350px;
+  box-shadow: 0px 0px 30px black;
+}
+
+.track-show .play-icon {
+  display: block;
+  float: left;
+  margin-top: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+	border-top: 30px solid transparent;
+	border-left: 60px solid #FC6F0A;
+	border-bottom: 30px solid transparent;
+}

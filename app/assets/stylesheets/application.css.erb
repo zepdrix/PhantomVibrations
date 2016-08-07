@@ -13,249 +13,14 @@
  *= require_tree .
  *= require_self
  */
- html, body, header, nav, h1, a,
- ul, li, strong, main, button, i,
- section, img, div, h2, p, form,
- fieldset, label, input, textarea,
- span, article, footer, time, small {
-   margin: 0;
-   padding: 0;
-   border: 0;
-   outline: 0;
-   font: inherit;
-   color: inherit;
-   text-align: inherit;
-   text-decoration: inherit;
-   vertical-align: inherit;
-   box-sizing: inherit;
-   background: transparent;
- }
-
- ul {
-   list-style: none;
- }
-
- img {
-   display: block;
-   width: 100%;
-   height: auto;
- }
-
- input[type="password"],
- input[type="email"],
- input[type="text"],
- input[type="submit"],
- textarea,
- button {
-   /*
-   Get rid of native styling. Read more here:
-   http://css-tricks.com/almanac/properties/a/appearance/
-   */
-   -webkit-appearance: none;
-   -moz-appearance: none;
- }
-
- button,
- input[type="submit"] {
-   cursor: pointer;
- }
-
- /* Clearfix */
-
-body {
-  font-family: 'Quicksand', sans-serif;
-  background-color: #E7EDD5;
-  height: 100%;
-}
-
- .group:after {
-  content: "";
-  display: block;
-  clear: both;
- }
-
-.navbar {
-  /*height: 40px;*/
-  /*margin-top: -40px;*/
-  /*padding: */
-  width: 100%;
-  top: 0;
-  left: 0;
-  background-color: #525252;
-  box-shadow: 0px 0px 30px black;
-  position: fixed;
-  /*background: linear-gradient(to bottom, grey, grey 65%, white)*/
-}
-
-.navbar-content {
-  padding-bottom: 0px;
-  margin: 0 auto;
-  width: 900px;
-}
-
-.nav-bar-right, .nav-bar-left {
-  padding: 10px;
-  color: lightgrey;
-  transition: 0.5s;
-}
-
-.nav-bar-right:hover, .nav-bar-left:hover {
-  color: white;
-  transition: 0.5s;
-}
-
-.nav-bar-left {
-  float: left;
-}
-
-.nav-bar-right {
-  float: right;
-}
-
-.create-track-form, .edit-user-form, .login-form {
-  position: absolute;
-  background-color: #525252;
-  top: 44%;
-  left: 50%;
-  transform: perspective(1px) translate(-50%, -50%);
-  width: 300px;
-  padding: 20px 10px 20px 10px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 30px black;
-}
-
-.user-edit {
-  margin: 5px;
-  margin-left: 15px;
-}
-
-.login-input {
-  margin: 10px;
-}
-
-.input {
-  text-indent: 4px;
-  color: white;
-}
-
-.login-button, .create-track-button, .update-user-button {
-  display: block;
-  margin: 0 auto;
-  padding: 5px;
-}
-
-.login-form-title, .create-track-form-title, .edit-user-form-title {
-  font-size: 20px;
-  text-align: center;
-  display: block;
-  margin: 0 auto;
-  padding: 5px;
-}
 
 
-.login-form input, .create-track-form input, .edit-user-form input {
-  width: 90%;
-  height: 40px;
-  display: block;
-  margin: 0 auto;
-  border: 1px solid lightgrey;
-}
-
-.create-track-form textarea {
-  width: 90%;
-  height: 80px;
-  display: block;
-  margin: 0 auto;
-  border: 1px solid lightgrey;
-}
-
-.other-form-link {
-  display: block;
-  text-align: center;
-  font-size: 12px;
-}
-
-.form-hover {
-  transition: 1s;
-}
-
-.form-hover:hover {
-  color: lightgrey;
-  transition: 1s;
-}
-
-.form-error {
-  display: block;
-  font-size: 12px;
-  text-align: center;
-  color: lightgrey;
-}
-
-.track-avatar-img img{
-  float: left;
-  /*padding-right: 5px;*/
-  height: 160px;
-  width: 160px;
-  /*border-radius: 90px;*/
-  box-shadow: 0px 0px 30px grey;
-}
-
-.track-item {
-  left: 100px;
-  width: 600px;
-  margin-bottom: 45px;
-  height: 160px;
-  border-bottom-left-radius: 80px;
-  border-bottom-right-radius: 80px;
-}
-
-.track-item.track-username {
-  color: #A3A3A3;
-}
-
-.track-item.track-title {
-  color: #636363;
-  font-size: 14px;
-}
-
-
-.track-item.track-username, .track-item.track-title {
-  margin-left: 10px;
-}
-
-
-.track-user-info {
-  padding: 5px;
-}
 
 h2 {
   margin-top: 20px;
   font-size: 26px;
 }
 
-.track-show {
-  width: 900px;
-  margin: 0 auto;
-  margin-top: 75px;
-}
-
-.track-show.banner-area {
-  width: 100%;
-  transition: 1s;
-  height: 350px;
-  box-shadow: 0px 0px 30px black;
-}
-
-.track-show .play-icon {
-  display: block;
-  float: left;
-  margin-top: 30px;
-  margin-left: 20px;
-  margin-right: 20px;
-	border-top: 30px solid transparent;
-	border-left: 60px solid #FC6F0A;
-	border-bottom: 30px solid transparent;
-}
 
 .play-icon:active {
   transition: 0.5s;
@@ -287,7 +52,6 @@ h2 {
   border-bottom: 10px solid transparent;
   /*background-image: url(<%= asset_path 'play.svg' %>)*/
 }
-
 
 .track-show .track-title {
   margin-left: 10px;
@@ -323,12 +87,12 @@ h2 {
   border: 1px solid grey;
 }
 
-.track-show .user-area {
+.user-area {
   float: left;
 }
 
 .user-avatar-image, .track-image {
-  box-shadow: 0px 0px 18px grey;
+  box-shadow: 0px 0px 30px grey;
 }
 
 .user-page{
@@ -363,4 +127,34 @@ h2 {
   width: 160px;
   height: 160px;
   border: 1px solid grey;
+}
+
+.track-avatar-comments-container {
+  position: relative;
+  top: 260px;
+  margin-left: 30px;
+  /*background-color: grey;*/
+  width: 500px;
+  height: 40px;
+}
+
+
+.comment-avatar-index {
+  position: relative;
+  height: 20px;
+}
+
+.comment-avatar-image {
+  position: absolute;
+  left:0px;
+  top: 0px;
+  height: 20px;
+  width: 20px;
+}
+
+.comment-avatar-comment {
+  position: absolute;
+  left: 0px;
+  top: 20px;
+  font-size: 10px;
 }

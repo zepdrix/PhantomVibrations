@@ -3,6 +3,7 @@ const CommentActions = require('../actions/comment_actions.js');
 const CommentStore = require('../stores/comment_store.js');
 const ErrorStore = require('../stores/error_store.js');
 const FormConstants = require('../constants/form_constants.js');
+const TrackStore = require('../stores/track_store.js');
 
 var CommentForm = React.createClass({
   contextTypes: {
@@ -22,18 +23,29 @@ var CommentForm = React.createClass({
   },
 
   handleSubmit (e) {
+    let trackPercentage;
+    if (TrackStore.isCurrentTrack()) {
+      let currentTrack = TrackStore.currentTrack();
+      trackPercentage = currentTrack.currentTime / currentTrack.seekable.end(0);
+    } else {
+      trackPercentage = Math.random();
+    }
+
+    // console.log(trackPercentage);
+
     e.preventDefault();
     CommentActions.createComment({
       body: this.state.body,
       track_id: this.props.track.id,
-      track_percentage: 0.23
+      track_percentage: trackPercentage
     });
     this.setState({ body: '' });
     TrackActions.fetchAllTracks();
   },
 
   render () {
-
+    console.log(TrackStore.currentTrack());
+    // debugger
     return(
       <div>
         <form className="comment-form" onSubmit={ this.handleSubmit }>

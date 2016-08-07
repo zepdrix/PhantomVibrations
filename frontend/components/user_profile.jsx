@@ -8,6 +8,7 @@ const CSSHelper = require('../helpers/css.js');
 var UserProfile = React.createClass({
 
   getInitialState () {
+    debugger
     return { user: UserStore.find(this.props.params.userId) };
   },
 
@@ -33,6 +34,7 @@ var UserProfile = React.createClass({
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
 
     if (this.state.user) {
+
       let username = this.state.user.username;
       let userTracks = this.state.user.tracks;
       let avatarUrl = this.state.user.avatar_image_url;

@@ -1,12 +1,13 @@
 const React = require('react');
 const CommentIndexItem = require('./comment_index_item.jsx');
+const UserStore = require('../stores/user_store.js');
 
 var CommentIndex = React.createClass({
 
   render () {
-    debugger
+
     let allCommentIndexItems = this.props.comments.map( (comment, key) => {
-      return <CommentIndexItem key={ key } comment={ comment }/>;
+      return <CommentIndexItem key={ key } comment={ comment } user={ UserStore.find(comment.user_id) } />;
     });
 
     return(

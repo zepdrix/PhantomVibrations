@@ -1,0 +1,85 @@
+
+
+.create-track-form, .edit-user-form, .login-form {
+  position: absolute;
+  background-color: #525252;
+  top: 44%;
+  left: 50%;
+  transform: perspective(1px) translate(-50%, -50%);
+  width: 300px;
+  padding: 20px 10px 20px 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px black;
+}
+
+.user-edit {
+  margin: 5px;
+  margin-left: 15px;
+}
+
+.login-input {
+  margin: 10px;
+}
+
+.input {
+  text-indent: 4px;
+  color: white;
+}
+
+.login-button, .create-track-button, .update-user-button {
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+}
+
+.login-form-title, .create-track-form-title, .edit-user-form-title {
+  font-size: 20px;
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+}
+
+
+.login-form input, .create-track-form input, .edit-user-form input {
+  width: 90%;
+  height: 40px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid lightgrey;
+}
+
+.create-track-form textarea {
+  width: 90%;
+  height: 80px;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid lightgrey;
+}
+
+.other-form-link {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+}
+
+.form-hover {
+  transition: 1s;
+}
+
+.form-hover:hover {
+  color: lightgrey;
+  transition: 1s;
+}
+
+.form-error {
+  display: block;
+  font-size: 12px;
+  text-align: center;
+  color: lightgrey;
+}
+
+.avatar-preview {
+  margin: 0 auto;
+  display: block;
+}

@@ -16,7 +16,6 @@ module.exports = {
   },
 
   updateUser (user) {
-    debugger
     UserApiUtil.updateUser(
       user,
       this.receiveUser,
