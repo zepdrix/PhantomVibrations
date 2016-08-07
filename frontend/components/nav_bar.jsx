@@ -25,15 +25,15 @@ var NavBar = React.createClass({
     if (SessionStore.isUserLoggedIn()) {
       return(
         <div>
-          <Link to='/' className="navbar-home">Home</Link>
-          <a href="#"className="navbar-collection">Collection</a>
+          <Link to='/' className="navbar-home nav-bar-left">Home</Link>
+          <a href="#"className="navbar-collection nav-bar-left">Collection</a>
         </div>
       );
     } else {
       return(
         <div>
-          <Link to='/' className="navbar-home">Home</Link>
-          <a href="#"className="navbar-collection">Collection</a>
+          <Link to='/' className="navbar-home nav-bar-left">Home</Link>
+          <a href="#"className="navbar-collection nav-bar-left">Collection</a>
         </div>
       );
     }
@@ -47,19 +47,20 @@ var NavBar = React.createClass({
 
   navRight () {
     if (SessionStore.isUserLoggedIn()) {
+      let userEditUrl = `/users/${this.state.currentUser.id}/edit`;
       return(
         <div>
-          <button className="navbar-logout" onClick={ this.logout }>Log Out</button>
-          <Link to='/upload' className="navbar-upload">Upload</Link>
-          <Link to='#' className="navbar-words">Sup, { this.state.currentUser.username }</Link>
+          <button className="navbar-logout nav-bar-right" onClick={ this.logout }>Log Out</button>
+          <Link to='/upload' className="navbar-upload nav-bar-right">Upload</Link>
+          <Link to={ userEditUrl } className="navbar-words nav-bar-right">Sup, { this.state.currentUser.username }</Link>
         </div>
       );
     } else {
       return(
         <div>
           <nav>
-            <Link to="/login" className="navbar-login">Log In</Link>
-            <Link to="/signup" className="navbar-signup">Sign Up</Link>
+            <Link to="/login" className="navbar-login nav-bar-right">Log In</Link>
+            <Link to="/signup" className="navbar-signup nav-bar-right">Sign Up</Link>
           </nav>
       </div>
       );

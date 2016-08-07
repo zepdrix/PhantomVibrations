@@ -26,6 +26,10 @@ TrackStore.currentTrack = function () {
   return _currentTrack;
 };
 
+TrackStore.currentTime = function () {
+  return _currentTrack.currentTime;
+};
+
 TrackStore.isCurrentTrack = function () {
   return !!_currentTrack.src;
 };

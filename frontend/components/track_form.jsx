@@ -4,11 +4,11 @@ const TrackStore = require('../stores/track_store.js');
 const ErrorStore = require('../stores/error_store.js');
 const FormConstants = require('../constants/form_constants.js');
 
-
 var TrackForm = React.createClass({
   contextTypes: {
     router: React.PropTypes.object.isRequired
   },
+
 
   getInitialState () {
     return {
@@ -17,7 +17,7 @@ var TrackForm = React.createClass({
       imageFile: null,
       imageUrl: null,
       audioFile: '',
-      audioUrl: null};
+      audioUrl: null };
   },
 
   componentDidMount () {
@@ -51,7 +51,7 @@ var TrackForm = React.createClass({
     fileReader.onloadend = function () {
       this.setState({ imageFile: file, imageUrl: fileReader.result });
     }.bind(this);
-
+    debugger
     if (file) {
       fileReader.readAsDataURL(file);
     }
@@ -60,7 +60,6 @@ var TrackForm = React.createClass({
 
   handleAudio (e) {
     let file = e.currentTarget.files[0];
-    debugger
     let fileReader = new FileReader();
 
     fileReader.onloadend = function () {
@@ -103,7 +102,7 @@ var TrackForm = React.createClass({
     return(
       <div>
         <form className="create-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
-          <div className="login-form-title">Upload a Track</div>
+          <div className="create-track-form-title">Upload a Track</div>
           { this.formErrors() }
           <div className="login-input">
             <input className="input"

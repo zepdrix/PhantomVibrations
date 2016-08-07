@@ -7,7 +7,7 @@ class Api::SessionsController < ApplicationController
       )
     if @user
       log_in(@user)
-      render json: @user
+      render "api/users/show"
 
     else
       render json: ["Invalid credentials!"], status: 422
@@ -15,8 +15,9 @@ class Api::SessionsController < ApplicationController
   end
 
   def show
+    @user = current_user
     if current_user
-      render json: current_user
+      render "api/users/show"
     else
       render json: {}
     end

@@ -3,6 +3,7 @@ const Link = require('react-router').Link;
 
 const TrackStore = require('../stores/track_store.js');
 const CSSHelper = require('../helpers/css.js');
+const TrackChange = require('../helpers/track_change.js');
 
 const styleHelper = () => {
   let arr = [195, 89];
@@ -24,6 +25,9 @@ var TrackIndexItem = React.createClass({
     this.context.router.push(`/tracks/${this.props.track.id}`);
   },
 
+  onClick (e) {
+    TrackChange.playTrack(e);
+  },
 
   playTrack (e) {
     e.preventDefault();
@@ -39,13 +43,15 @@ var TrackIndexItem = React.createClass({
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
     return(
-      <li className="track-item" style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 55%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 80%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}>
+      <li className="track-item" >
         <div >
           <div className="track-avatar-img" >
             <Link to={ trackUrl } className="track-avatar-img">
               <img className="track-avatar-img" src={ trackImageUrl } height="160" width="160"/>
               </Link>
           </div>
+
+          <div className="play-icon" id={ this.props.track.id } onClick={ this.onClick }/>
 
           <div className="track-user-info">
             <Link

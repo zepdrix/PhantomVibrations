@@ -1,4 +1,5 @@
 const React = require('react');
+const Link = require('react-router').Link;
 const UserStore = require('../stores/user_store.js');
 const UserActions = require('../actions/user_actions.js');
 const TrackIndex = require('./track_index.jsx');
@@ -34,17 +35,19 @@ var UserProfile = React.createClass({
     if (this.state.user) {
       let username = this.state.user.username;
       let userTracks = this.state.user.tracks;
+      let avatarUrl = this.state.user.avatar_image_url;
+      let userUrl = `/users/${this.state.user.id}`;
 
       return(
         <div className="user-page">
           <div className="user-page banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(rbg1[0])+', '+(rbg1[1])+', '+(rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
-            <div className="user-avatar-img">
-
+            <div>
+              <img className="user-avatar-image" src={ this.state.user.avatar_image_url }/>
             </div>
 
             <div className="user-info">
               <div className="username">
-                { username }
+                <Link to={ `/users/${this.state.user.id}` }>{ this.state.user.username }</Link>
               </div>
               <div className="user-location">
 
@@ -55,7 +58,7 @@ var UserProfile = React.createClass({
 
           <div className="user-tracks">
 
-            <h2>{ username }'s Vibrations</h2>
+            <h2>{ this.state.user.username }'s Vibrations</h2>
             <br/>
             <TrackIndex tracks={ userTracks }/>
           </div>

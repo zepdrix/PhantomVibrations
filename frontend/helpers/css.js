@@ -12,3 +12,6 @@ module.exports = {
     return randomArray;
   }
 };
+
+
+let trackshowBackgroundGradient = "style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 75%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 82%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}";

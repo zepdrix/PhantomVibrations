@@ -35,5 +35,4 @@ var UserPage = React.createClass({
   }
 });
 
-
 module.exports = UserPage;

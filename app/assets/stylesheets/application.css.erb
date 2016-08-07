@@ -64,94 +64,69 @@
 
 body {
   font-family: 'Quicksand', sans-serif;
+  background-color: #E7EDD5;
+  height: 100%;
 }
 
  .group:after {
-   content: "";
-   display: block;
-   clear: both;
+  content: "";
+  display: block;
+  clear: both;
  }
 
 .navbar {
-  height: 40px;
-  background-color: #7A7A7A;
-  padding-bottom: 0px;
-  box-shadow: 0px 0px 10px grey;
+  /*height: 40px;*/
+  /*margin-top: -40px;*/
+  /*padding: */
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: #525252;
+  box-shadow: 0px 0px 30px black;
+  position: fixed;
   /*background: linear-gradient(to bottom, grey, grey 65%, white)*/
 }
 
 .navbar-content {
+  padding-bottom: 0px;
   margin: 0 auto;
   width: 900px;
 }
 
-.navbar-login {
-  float: right;
+.nav-bar-right, .nav-bar-left {
+  padding: 10px;
+  color: lightgrey;
+  transition: 0.5s;
 }
 
-.navbar-logout {
-  transition: 1s;
-  padding-left: 0px;
-  float: right;
-}
-
-.navbar-logout:hover {
-  transition: 1s;
+.nav-bar-right:hover, .nav-bar-left:hover {
   color: white;
+  transition: 0.5s;
 }
 
-.navbar-signup {
-  float: right;
-}
-
-.navbar-home {
+.nav-bar-left {
   float: left;
 }
 
-.navbar-collection {
-  float: left;
+.nav-bar-right {
+  float: right;
 }
 
-.navbar a {
-  padding: 10px 10px;
-  padding-left: 10px;
-  color: lightgrey;
-  transition: 1s;
-}
-
-.navbar a:hover {
-  color: white;
-  transition: 1s;
-}
-
-.navbar button {
-  color: lightgrey;
-  text-align: center;
-  padding: 10px 10px 10px 10px;
-}
-
-.login-form {
+.create-track-form, .edit-user-form, .login-form {
   position: absolute;
-  background-color: grey;
-  top: 50%;
+  background-color: #525252;
+  top: 44%;
   left: 50%;
   transform: perspective(1px) translate(-50%, -50%);
   width: 300px;
   padding: 20px 10px 20px 10px;
-  border-radius: 30px;
+  border-radius: 10px;
   box-shadow: 0px 0px 30px black;
 }
 
-.create-track-form {
-  position: absolute;
-  background-color: grey;
-  top: 50%;
-  left: 50%;
-  transform: perspective(1px) translate(-50%, -50%);
-  width: 300px;
-  padding: 20px 10px 20px 10px;
-  border-radius: 30px;
-  box-shadow: 0px 0px 30px black;
+.user-edit {
+  margin: 5px;
+  margin-left: 15px;
 }
 
 .login-input {
@@ -160,15 +135,16 @@ body {
 
 .input {
   text-indent: 4px;
+  color: white;
 }
 
-.login-button, .create-track-button {
+.login-button, .create-track-button, .update-user-button {
   display: block;
   margin: 0 auto;
   padding: 5px;
 }
 
-.login-form-title {
+.login-form-title, .create-track-form-title, .edit-user-form-title {
   font-size: 20px;
   text-align: center;
   display: block;
@@ -177,19 +153,7 @@ body {
 }
 
 
-.navbar-words {
-  text-align: right;
-  display: block;
-  color: #D9D9D9;
-  transition: 1s;
-}
-
-.navbar-words:hover {
-  text-shadow: 0px 0px white;
-  transition: 1s;
-}
-
-.login-form input, .create-track-form input {
+.login-form input, .create-track-form input, .edit-user-form input {
   width: 90%;
   height: 40px;
   display: block;
@@ -219,10 +183,6 @@ body {
   color: lightgrey;
   transition: 1s;
 }
-.navbar-upload {
-  float: right;
-  padding-left: 60px;
-}
 
 .form-error {
   display: block;
@@ -233,38 +193,36 @@ body {
 
 .track-avatar-img img{
   float: left;
-  padding-right: 5px;
+  /*padding-right: 5px;*/
   height: 160px;
   width: 160px;
-  border-radius: 90px;
-  /*box-shadow: 0px 0px 30px grey;*/
+  /*border-radius: 90px;*/
+  box-shadow: 0px 0px 30px grey;
 }
 
 .track-item {
   left: 100px;
   width: 600px;
-  margin-bottom: 20px;
+  margin-bottom: 45px;
   height: 160px;
-  /*background: #EF9957;*/
-  /*background: linear-gradient(135deg, rgb(132, 97, 112) 0%, rgb(112, 146, 156) 100%);*/
-  /*background: -webkit-linear-gradient(left, rgba(132, 97, 112, 0) 20%, rgba(112, 146, 156, 1) 100%);*/
-  /*box-shadow: 0px 0px 30px black;*/
   border-bottom-left-radius: 80px;
   border-bottom-right-radius: 80px;
-  /*border-bottom-right-radius: 80px;*/
 }
 
 .track-item.track-username {
-  color: greys;
-  background: none;
-  box-shadow: none;
+  color: #A3A3A3;
 }
 
 .track-item.track-title {
-  background: none;
-  box-shadow: none;
+  color: #636363;
   font-size: 14px;
 }
+
+
+.track-item.track-username, .track-item.track-title {
+  margin-left: 10px;
+}
+
 
 .track-user-info {
   padding: 5px;
@@ -278,11 +236,12 @@ h2 {
 .track-show {
   width: 900px;
   margin: 0 auto;
-  margin-top: 35px;
+  margin-top: 75px;
 }
 
 .track-show.banner-area {
   width: 100%;
+  transition: 1s;
   height: 350px;
   box-shadow: 0px 0px 30px black;
 }
@@ -294,12 +253,30 @@ h2 {
   margin-left: 20px;
   margin-right: 20px;
 	border-top: 30px solid transparent;
-	border-left: 60px solid red;
+	border-left: 60px solid #FC6F0A;
 	border-bottom: 30px solid transparent;
 }
 
+.play-icon:active {
+  transition: 0.5s;
+  transform: translateY(3px);
+}
+
+.track-item .play-icon {
+  display: block;
+  float: left;
+  margin-top: 15px;
+  margin-left: 20px;
+  margin-right: 0px;
+  color: black;
+  border-top: 10px solid transparent;
+  border-left: 20px solid #FC6F0A;
+  border-bottom: 10px solid transparent;
+  /*background-image: url(<%= asset_path 'play.svg' %>)*/
+}
+
 .track-show .track-title {
-  margin: 10px;
+  margin-left: 10px;
   float: left;
   font-size: 25px;
 }
@@ -321,31 +298,55 @@ h2 {
   border: 1px solid grey;
 }
 
+.user-page .user-avatar-image {
+  height: 200px;
+  width: 200px;
+  margin-top: 25px;
+  margin-left: 20px;
+  display: block;
+  float: left;
+  border-radius: 50%;
+  border: 1px solid grey;
+}
+
 .track-show .user-area {
   float: left;
-
 }
 
-.user-page {
+.user-avatar-image, .track-image {
+  box-shadow: 0px 0px 18px grey;
+}
+
+.user-page{
   width: 900px;
   margin: 0 auto;
-  margin-top: 35px;
 }
+.user-page.section {
+  padding-top: 35px;
 
-.user-page .banner-area {
-  height: 300px;
+}
+.user-page.banner-area {
+  margin-top: 75px;
+  height: 250px;
   box-shadow: 0px 0px 30px black;
 }
-.list {
-  z-index: 10;
 
-}
 .with-song {
-  z-index: 10;
   position: fixed;
   width: 100%;
   height: 60px;
   margin: 0 auto;
-  background-color: grey;
+  background-color: #525252;
   bottom: 0%;
+  box-shadow: 0px 0px 30px black;
+  color: lightgrey;
+
+}
+
+.avatar-preview {
+  margin: 10px;
+  margin: 20px auto;
+  width: 160px;
+  height: 160px;
+  border: 1px solid grey;
 }

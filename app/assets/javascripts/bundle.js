@@ -55,22 +55,23 @@
 	    hashHistory = ReactRouter.hashHistory;
 	
 	var TrackIndex = __webpack_require__(238),
-	    TrackForm = __webpack_require__(264),
-	    TrackShow = __webpack_require__(272),
-	    LoginForm = __webpack_require__(276),
-	    SignupForm = __webpack_require__(277),
-	    HomePage = __webpack_require__(278),
-	    UserPage = __webpack_require__(279),
-	    UserProfile = __webpack_require__(280),
-	    App = __webpack_require__(285);
+	    TrackForm = __webpack_require__(272),
+	    TrackShow = __webpack_require__(273),
+	    LoginForm = __webpack_require__(277),
+	    SignupForm = __webpack_require__(278),
+	    HomePage = __webpack_require__(279),
+	    UserPage = __webpack_require__(280),
+	    UserProfile = __webpack_require__(281),
+	    CurrentUserProfile = __webpack_require__(286),
+	    App = __webpack_require__(287);
 	
 	var SessionApiUtil = __webpack_require__(269),
-	    SessionActions = __webpack_require__(275),
+	    SessionActions = __webpack_require__(276),
 	    TrackApiUtil = __webpack_require__(266),
 	    TrackActions = __webpack_require__(265),
 	    TrackStore = __webpack_require__(240),
-	    SessionStore = __webpack_require__(273),
-	    SetupApp = __webpack_require__(288);
+	    SessionStore = __webpack_require__(274),
+	    SetupApp = __webpack_require__(290);
 	
 	window.SessionApiUtil = SessionApiUtil;
 	window.SessionActions = SessionActions;
@@ -103,6 +104,7 @@
 	    React.createElement(Route, { path: '/signup', component: LoginForm }),
 	    React.createElement(Route, { path: '/tracks/:trackId', component: TrackShow }),
 	    React.createElement(Route, { path: '/users/:userId', component: UserProfile }),
+	    React.createElement(Route, { path: '/users/:userId/edit', component: CurrentUserProfile, onEnter: _ensureLoggedIn }),
 	    React.createElement(Route, { path: '/upload', component: TrackForm, onEnter: _ensureLoggedIn })
 	  )
 	);
@@ -27156,6 +27158,7 @@
 	
 	var TrackStore = __webpack_require__(240);
 	var CSSHelper = __webpack_require__(263);
+	var TrackChange = __webpack_require__(264);
 	
 	var styleHelper = function styleHelper() {
 	  var arr = [195, 89];
@@ -27175,6 +27178,9 @@
 	  clickHandler: function clickHandler(e) {
 	    this.context.router.push('/tracks/' + this.props.track.id);
 	  },
+	  onClick: function onClick(e) {
+	    TrackChange.playTrack(e);
+	  },
 	  playTrack: function playTrack(e) {
 	    e.preventDefault();
 	  },
@@ -27188,7 +27194,7 @@
 	    var userImageUrl = this.props.track.user.image_url;
 	    return React.createElement(
 	      'li',
-	      { className: 'track-item', style: { background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 55%, rgba(' + rbg1[0] + ', ' + 0 + ', ' + rbg1[2] + ', 0.5) 80%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 90%, rgba(0, 0, 0, 0) 100%)' } },
+	      { className: 'track-item' },
 	      React.createElement(
 	        'div',
 	        null,
@@ -27201,6 +27207,7 @@
 	            React.createElement('img', { className: 'track-avatar-img', src: trackImageUrl, height: '160', width: '160' })
 	          )
 	        ),
+	        React.createElement('div', { className: 'play-icon', id: this.props.track.id, onClick: this.onClick }),
 	        React.createElement(
 	          'div',
 	          { className: 'track-user-info' },
@@ -27268,6 +27275,10 @@
 	
 	TrackStore.currentTrack = function () {
 	  return _currentTrack;
+	};
+	
+	TrackStore.currentTime = function () {
+	  return _currentTrack.currentTime;
 	};
 	
 	TrackStore.isCurrentTrack = function () {
@@ -34105,6 +34116,8 @@
 	    return randomArray;
 	  }
 	};
+	
+	var trackshowBackgroundGradient = "style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 75%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 82%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}";
 
 /***/ },
 /* 264 */
@@ -34112,162 +34125,25 @@
 
 	'use strict';
 	
-	var React = __webpack_require__(1);
-	var TrackActions = __webpack_require__(265);
 	var TrackStore = __webpack_require__(240);
-	var ErrorStore = __webpack_require__(271);
-	var FormConstants = __webpack_require__(267);
+	var TrackActions = __webpack_require__(265);
 	
-	var TrackForm = React.createClass({
-	  displayName: 'TrackForm',
-	
-	  contextTypes: {
-	    router: React.PropTypes.object.isRequired
-	  },
-	
-	  getInitialState: function getInitialState() {
-	    return {
-	      title: '',
-	      description: '',
-	      imageFile: null,
-	      imageUrl: null,
-	      audioFile: '',
-	      audioUrl: null };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
-	    this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.errorListener.remove();
-	    this.trackListener.remove();
-	  },
-	  redirectIfTrackSaved: function redirectIfTrackSaved() {
-	    console.log(TrackStore.all());
-	    TrackActions.fetchAllTracks();
-	    this.context.router.push("/");
-	  },
-	  handleTitle: function handleTitle(e) {
-	    this.setState({ title: e.target.value });
-	  },
-	  handleDescription: function handleDescription(e) {
-	    this.setState({ description: e.target.value });
-	  },
-	  handleImage: function handleImage(e) {
-	    var file = e.currentTarget.files[0];
-	    var fileReader = new FileReader();
-	
-	    fileReader.onloadend = function () {
-	      this.setState({ imageFile: file, imageUrl: fileReader.result });
-	    }.bind(this);
-	
-	    if (file) {
-	      fileReader.readAsDataURL(file);
-	    }
-	  },
-	  handleAudio: function handleAudio(e) {
-	    var file = e.currentTarget.files[0];
-	    debugger;
-	    var fileReader = new FileReader();
-	
-	    fileReader.onloadend = function () {
-	      this.setState({ audioFile: file, audioUrl: fileReader.result });
-	    }.bind(this);
-	
-	    if (file) {
-	      fileReader.readAsDataURL(file);
-	    }
-	  },
-	  handleSubmit: function handleSubmit(e) {
+	module.exports = {
+	  playTrack: function playTrack(e) {
 	    e.preventDefault();
-	    var formData = new FormData();
 	
-	    formData.append("track[title]", this.state.title);
-	    formData.append("track[description]", this.state.description);
-	    formData.append("track[audio]", this.state.audioFile);
+	    var track = new Audio();
+	    var currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
 	
-	    if (this.state.imageFile) {
-	      formData.append("track[image]", this.state.imageFile);
-	    }
-	
-	    TrackActions.createTrack(formData);
+	    track.title = currentTrack.title;
+	    track.autoplay = true;
+	    track.src = currentTrack.audio_url;
+	    TrackActions.resetCurrentTrack(track);
 	  },
-	  formErrors: function formErrors() {
-	    var errors = ErrorStore.errors(FormConstants.CREATE_TRACK_FORM) || [];
-	    if (errors.length > 0) {
-	      var errorMessages = errors.map(function (error, key) {
-	        return React.createElement(
-	          'li',
-	          { className: 'form-error', key: key },
-	          error
-	        );
-	      });
-	
-	      return React.createElement(
-	        'ul',
-	        null,
-	        errorMessages
-	      );
-	    }
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'form',
-	        { className: 'create-track-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
-	        React.createElement(
-	          'div',
-	          { className: 'login-form-title' },
-	          'Upload a Track'
-	        ),
-	        this.formErrors(),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement('input', { className: 'input',
-	            placeholder: 'Track Title',
-	            value: this.state.title,
-	            onChange: this.handleTitle })
-	        ),
-	        React.createElement('br', null),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement('textarea', { className: 'input',
-	
-	            placeholder: 'Track Description',
-	            value: this.state.description,
-	            onChange: this.handleDescription })
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          'Upload a track image!',
-	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
-	          React.createElement('br', null),
-	          React.createElement('img', { src: this.state.imageUrl })
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          'Upload a song!',
-	          React.createElement('input', { type: 'file', onChange: this.handleAudio }),
-	          React.createElement('br', null),
-	          React.createElement('audio', { src: this.state.audioUrl, preload: 'auto', controls: true })
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'create-track-button form-hover' },
-	          'Submit'
-	        )
-	      )
-	    );
+	  pauseTrack: function pauseTrack(e) {
+	    TrackStore.currentTrack().pause();
 	  }
-	});
-	
-	module.exports = TrackForm;
+	};
 
 /***/ },
 /* 265 */
@@ -34355,7 +34231,8 @@
 	module.exports = {
 	   LOGIN_FORM: "LOGIN_FORM",
 	   SIGNUP_FORM: "SIGNUP_FORM",
-	   CREATE_TRACK_FORM: "CREATE_TRACK_FORM"
+	   CREATE_TRACK_FORM: "CREATE_TRACK_FORM",
+	   EDIT_USER_FORM: "EDIT_USER_FORM"
 	};
 
 /***/ },
@@ -34516,11 +34393,175 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var TrackActions = __webpack_require__(265);
+	var TrackStore = __webpack_require__(240);
+	var ErrorStore = __webpack_require__(271);
+	var FormConstants = __webpack_require__(267);
+	
+	var TrackForm = React.createClass({
+	  displayName: 'TrackForm',
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      title: '',
+	      description: '',
+	      imageFile: null,
+	      imageUrl: null,
+	      audioFile: '',
+	      audioUrl: null };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
+	    this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.errorListener.remove();
+	    this.trackListener.remove();
+	  },
+	  redirectIfTrackSaved: function redirectIfTrackSaved() {
+	    console.log(TrackStore.all());
+	    TrackActions.fetchAllTracks();
+	    this.context.router.push("/");
+	  },
+	  handleTitle: function handleTitle(e) {
+	    this.setState({ title: e.target.value });
+	  },
+	  handleDescription: function handleDescription(e) {
+	    this.setState({ description: e.target.value });
+	  },
+	  handleImage: function handleImage(e) {
+	    var file = e.currentTarget.files[0];
+	    var fileReader = new FileReader();
+	
+	    fileReader.onloadend = function () {
+	      this.setState({ imageFile: file, imageUrl: fileReader.result });
+	    }.bind(this);
+	    debugger;
+	    if (file) {
+	      fileReader.readAsDataURL(file);
+	    }
+	  },
+	  handleAudio: function handleAudio(e) {
+	    var file = e.currentTarget.files[0];
+	    var fileReader = new FileReader();
+	
+	    fileReader.onloadend = function () {
+	      this.setState({ audioFile: file, audioUrl: fileReader.result });
+	    }.bind(this);
+	
+	    if (file) {
+	      fileReader.readAsDataURL(file);
+	    }
+	  },
+	  handleSubmit: function handleSubmit(e) {
+	    e.preventDefault();
+	    var formData = new FormData();
+	
+	    formData.append("track[title]", this.state.title);
+	    formData.append("track[description]", this.state.description);
+	    formData.append("track[audio]", this.state.audioFile);
+	
+	    if (this.state.imageFile) {
+	      formData.append("track[image]", this.state.imageFile);
+	    }
+	
+	    TrackActions.createTrack(formData);
+	  },
+	  formErrors: function formErrors() {
+	    var errors = ErrorStore.errors(FormConstants.CREATE_TRACK_FORM) || [];
+	    if (errors.length > 0) {
+	      var errorMessages = errors.map(function (error, key) {
+	        return React.createElement(
+	          'li',
+	          { className: 'form-error', key: key },
+	          error
+	        );
+	      });
+	
+	      return React.createElement(
+	        'ul',
+	        null,
+	        errorMessages
+	      );
+	    }
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'create-track-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'div',
+	          { className: 'create-track-form-title' },
+	          'Upload a Track'
+	        ),
+	        this.formErrors(),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement('input', { className: 'input',
+	            placeholder: 'Track Title',
+	            value: this.state.title,
+	            onChange: this.handleTitle })
+	        ),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement('textarea', { className: 'input',
+	
+	            placeholder: 'Track Description',
+	            value: this.state.description,
+	            onChange: this.handleDescription })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          'Upload a track image!',
+	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
+	          React.createElement('br', null),
+	          React.createElement('img', { src: this.state.imageUrl })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          'Upload a song!',
+	          React.createElement('input', { type: 'file', onChange: this.handleAudio }),
+	          React.createElement('br', null),
+	          React.createElement('audio', { src: this.state.audioUrl, preload: 'auto', controls: true })
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'create-track-button form-hover' },
+	          'Submit'
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = TrackForm;
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
 	var TrackStore = __webpack_require__(240);
 	var TrackActions = __webpack_require__(265);
-	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(275);
+	var SessionStore = __webpack_require__(274);
+	var SessionActions = __webpack_require__(276);
 	var CSSHelper = __webpack_require__(263);
+	var TrackChange = __webpack_require__(264);
 	
 	var TrackShow = React.createClass({
 	  displayName: 'TrackShow',
@@ -34540,15 +34581,7 @@
 	    this.sessionListener.remove();
 	  },
 	  onClick: function onClick(e) {
-	    e.preventDefault();
-	
-	    var track = new Audio();
-	    var currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
-	
-	    track.title = currentTrack.title;
-	    track.autoplay = true;
-	    track.src = currentTrack.audio_url;
-	    TrackActions.resetCurrentTrack(track);
+	    TrackChange.playTrack(e);
 	  },
 	  onChange: function onChange() {
 	    var track = TrackStore.find(this.props.params.trackId);
@@ -34560,6 +34593,7 @@
 	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
 	
 	    if (this.state.track) {
+	      var userUrl = '/users/' + this.state.track.user_id;
 	      return React.createElement(
 	        'div',
 	        { className: 'track-show' },
@@ -34576,7 +34610,11 @@
 	              React.createElement(
 	                'div',
 	                { className: 'username' },
-	                this.state.track.user.username
+	                React.createElement(
+	                  Link,
+	                  { to: userUrl },
+	                  this.state.track.user.username
+	                )
 	              ),
 	              React.createElement('br', null),
 	              React.createElement(
@@ -34597,8 +34635,8 @@
 	          ),
 	          React.createElement(
 	            'div',
-	            { className: 'track-image' },
-	            React.createElement('img', { src: this.state.track.image_url })
+	            null,
+	            React.createElement('img', { className: 'track-image', src: this.state.track.image_url })
 	          )
 	        ),
 	        React.createElement(
@@ -34620,7 +34658,7 @@
 	module.exports = TrackShow;
 
 /***/ },
-/* 273 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34628,7 +34666,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    SessionConstants = __webpack_require__(274);
+	    SessionConstants = __webpack_require__(275);
 	
 	var SessionStore = new Store(AppDispatcher);
 	
@@ -34666,7 +34704,7 @@
 	module.exports = SessionStore;
 
 /***/ },
-/* 274 */
+/* 275 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34677,13 +34715,13 @@
 	};
 
 /***/ },
-/* 275 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var SessionApiUtil = __webpack_require__(269),
-	    SessionConstants = __webpack_require__(274),
+	    SessionConstants = __webpack_require__(275),
 	    AppDispatcher = __webpack_require__(259),
 	    ErrorActions = __webpack_require__(268);
 	
@@ -34715,7 +34753,7 @@
 	};
 
 /***/ },
-/* 276 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34723,8 +34761,8 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(275);
+	var SessionStore = __webpack_require__(274);
+	var SessionActions = __webpack_require__(276);
 	var FormConstants = __webpack_require__(267);
 	
 	var LoginForm = React.createClass({
@@ -34855,15 +34893,15 @@
 	module.exports = LoginForm;
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(275);
+	var SessionStore = __webpack_require__(274);
+	var SessionActions = __webpack_require__(276);
 	
 	var SignupForm = React.createClass({
 	  displayName: 'SignupForm',
@@ -34940,7 +34978,7 @@
 	module.exports = SignupForm;
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34987,7 +35025,7 @@
 	module.exports = HomePage;
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35035,14 +35073,15 @@
 	module.exports = UserPage;
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(281);
-	var UserActions = __webpack_require__(283);
+	var Link = __webpack_require__(175).Link;
+	var UserStore = __webpack_require__(282);
+	var UserActions = __webpack_require__(284);
 	var TrackIndex = __webpack_require__(238);
 	var CSSHelper = __webpack_require__(263);
 	
@@ -35071,6 +35110,8 @@
 	    if (this.state.user) {
 	      var username = this.state.user.username;
 	      var userTracks = this.state.user.tracks;
+	      var avatarUrl = this.state.user.avatar_image_url;
+	      var userUrl = '/users/' + this.state.user.id;
 	
 	      return React.createElement(
 	        'div',
@@ -35078,14 +35119,22 @@
 	        React.createElement(
 	          'div',
 	          { className: 'user-page banner-area', style: { background: '-webkit-linear-gradient(135deg, rgba(' + rbg1[0] + ', ' + rbg1[1] + ', ' + rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
-	          React.createElement('div', { className: 'user-avatar-img' }),
+	          React.createElement(
+	            'div',
+	            null,
+	            React.createElement('img', { className: 'user-avatar-image', src: this.state.user.avatar_image_url })
+	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'user-info' },
 	            React.createElement(
 	              'div',
 	              { className: 'username' },
-	              username
+	              React.createElement(
+	                Link,
+	                { to: '/users/' + this.state.user.id },
+	                this.state.user.username
+	              )
 	            ),
 	            React.createElement('div', { className: 'user-location' })
 	          )
@@ -35096,7 +35145,7 @@
 	          React.createElement(
 	            'h2',
 	            null,
-	            username,
+	            this.state.user.username,
 	            '\'s Vibrations'
 	          ),
 	          React.createElement('br', null),
@@ -35112,7 +35161,7 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35120,7 +35169,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    UserConstants = __webpack_require__(282);
+	    UserConstants = __webpack_require__(283);
 	
 	var UserStore = new Store(AppDispatcher);
 	
@@ -35167,7 +35216,7 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35178,14 +35227,15 @@
 	};
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var UserApiUtil = __webpack_require__(284),
-	    UserConstants = __webpack_require__(282),
-	    AppDispatcher = __webpack_require__(259);
+	var UserApiUtil = __webpack_require__(285),
+	    UserConstants = __webpack_require__(283),
+	    AppDispatcher = __webpack_require__(259),
+	    ErrorActions = __webpack_require__(268);
 	
 	module.exports = {
 	  fetchUser: function fetchUser(id) {
@@ -35193,6 +35243,10 @@
 	  },
 	  fetchAllUsers: function fetchAllUsers() {
 	    UserApiUtil.fetchAllUsers(this.receiveAllUsers);
+	  },
+	  updateUser: function updateUser(user) {
+	    debugger;
+	    UserApiUtil.updateUser(user, this.receiveUser, ErrorActions.setErrors);
 	  },
 	  receiveUser: function receiveUser(user) {
 	    AppDispatcher.dispatch({
@@ -35209,10 +35263,12 @@
 	};
 
 /***/ },
-/* 284 */
-/***/ function(module, exports) {
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	
+	var FormConstants = __webpack_require__(267);
 	
 	module.exports = {
 	  fetchUser: function fetchUser(id, successCb) {
@@ -35224,6 +35280,21 @@
 	      },
 	      error: function error(resp) {
 	        console.log("Error in UserApiUtil#fetchUser");
+	      }
+	    });
+	  },
+	  updateUser: function updateUser(formData, successCb, errorCb) {
+	    $.ajax({
+	      url: "api/users/" + formData.get('user[id]'),
+	      method: "PATCH",
+	      contentType: false,
+	      processData: false,
+	      data: formData,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(xhr) {
+	        errorCb(FormConstants.EDIT_USER_FORM, xhr.responseJSON, xhr.responseText);
 	      }
 	    });
 	  },
@@ -35242,21 +35313,155 @@
 	};
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LoginForm = __webpack_require__(276);
-	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(275);
+	var Link = __webpack_require__(175).Link;
+	var ErrorStore = __webpack_require__(271);
+	var SessionStore = __webpack_require__(274);
+	var SessionActions = __webpack_require__(276);
+	var UserStore = __webpack_require__(282);
+	var UserActions = __webpack_require__(284);
+	var FormConstants = __webpack_require__(267);
+	
+	var CurrentUserProfile = React.createClass({
+	  displayName: 'CurrentUserProfile',
+	
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    var potentialUser = SessionStore.currentUser();
+	    var user = SessionStore.isUserLoggedIn() ? potentialUser : {};
+	    return {
+	      username: user.username,
+	      avatarImageUrl: user.avatar_image_url,
+	      avatarImageFile: null,
+	      imageUrl: null };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
+	    this.sessionListener = UserStore.addListener(this.redirectIfUserSaved);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.errorListener.remove();
+	    this.sessionListener.remove();
+	  },
+	  handleUsername: function handleUsername(e) {
+	    e.preventDefault();
+	    this.setState({ username: e.target.value });
+	  },
+	  redirectIfUserSaved: function redirectIfUserSaved() {
+	    UserActions.fetchAllUsers();
+	    this.context.router.push('/users/' + SessionStore.currentUser().id);
+	  },
+	  handleImage: function handleImage(e) {
+	    var file = e.currentTarget.files[0];
+	    var fileReader = new FileReader();
+	
+	    fileReader.onloadend = function () {
+	      this.setState({ avatarImageFile: file, avatarImageUrl: fileReader.result });
+	    }.bind(this);
+	
+	    if (file) {
+	      fileReader.readAsDataURL(file);
+	    }
+	  },
+	  formErrors: function formErrors() {
+	    var errors = ErrorStore.errors(FormConstants.EDIT_USER_FORM) || [];
+	    if (errors.length > 0) {
+	      var errorMessages = errors.map(function (error, key) {
+	        return React.createElement(
+	          'li',
+	          { className: 'form-error', key: key },
+	          error
+	        );
+	      });
+	
+	      return React.createElement(
+	        'ul',
+	        null,
+	        errorMessages
+	      );
+	    }
+	  },
+	  handleSubmit: function handleSubmit(e) {
+	    e.preventDefault();
+	    var formData = new FormData();
+	    formData.append("user[username]", this.state.username);
+	    formData.append("user[id]", SessionStore.currentUser().id);
+	
+	    if (this.state.avatarImageFile) {
+	      formData.append("user[avatar_image]", this.state.avatarImageFile);
+	    }
+	    UserActions.updateUser(formData);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'edit-user-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'div',
+	          { className: 'edit-user-form-title' },
+	          'Edit Your Profile'
+	        ),
+	        this.formErrors(),
+	        React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            'div',
+	            { className: 'user-edit' },
+	            'Username'
+	          ),
+	          React.createElement('input', { className: 'input',
+	            value: this.state.username,
+	            onChange: this.handleUsername })
+	        ),
+	        React.createElement('img', { className: 'avatar-preview',
+	          src: this.state.avatarImageUrl }),
+	        React.createElement(
+	          'div',
+	          { className: 'user-edit' },
+	          'Avatar Image'
+	        ),
+	        React.createElement('input', { type: 'file', className: 'input', onChange: this.handleImage }),
+	        React.createElement(
+	          'button',
+	          { className: 'update-user-button form-hover' },
+	          'Update'
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CurrentUserProfile;
+
+/***/ },
+/* 287 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var LoginForm = __webpack_require__(277);
+	var SessionStore = __webpack_require__(274);
+	var SessionActions = __webpack_require__(276);
 	var Link = __webpack_require__(175).Link;
 	
-	var NavBar = __webpack_require__(286);
-	var PlayBar = __webpack_require__(287);
-	var HomePage = __webpack_require__(278);
-	var UserPage = __webpack_require__(279);
+	var NavBar = __webpack_require__(288);
+	var PlayBar = __webpack_require__(289);
+	var HomePage = __webpack_require__(279);
+	var UserPage = __webpack_require__(280);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -35270,27 +35475,11 @@
 	  updateUser: function updateUser() {
 	    this.setState({ currentUser: SessionStore.currentUser() });
 	  },
-	
-	  //
-	  // pageContent () {
-	  //   if (SessionStore.isUserLoggedIn()) {
-	  //     return(
-	  //       <UserPage/>
-	  //     );
-	  //   } else {
-	  //     return(
-	  //       <HomePage/>
-	  //     );
-	  //   }
-	  // },
-	  // { this.pageContent() }
-	
-	  // <h1>PhantomVibrations</h1>
 	  render: function render() {
 	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { className: 'app-div' },
 	      React.createElement(NavBar, null),
 	      this.props.children,
 	      React.createElement(PlayBar, null)
@@ -35301,15 +35490,15 @@
 	module.exports = App;
 
 /***/ },
-/* 286 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(275);
+	var SessionStore = __webpack_require__(274);
+	var SessionActions = __webpack_require__(276);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -35335,12 +35524,12 @@
 	        null,
 	        React.createElement(
 	          Link,
-	          { to: '/', className: 'navbar-home' },
+	          { to: '/', className: 'navbar-home nav-bar-left' },
 	          'Home'
 	        ),
 	        React.createElement(
 	          'a',
-	          { href: '#', className: 'navbar-collection' },
+	          { href: '#', className: 'navbar-collection nav-bar-left' },
 	          'Collection'
 	        )
 	      );
@@ -35350,12 +35539,12 @@
 	        null,
 	        React.createElement(
 	          Link,
-	          { to: '/', className: 'navbar-home' },
+	          { to: '/', className: 'navbar-home nav-bar-left' },
 	          'Home'
 	        ),
 	        React.createElement(
 	          'a',
-	          { href: '#', className: 'navbar-collection' },
+	          { href: '#', className: 'navbar-collection nav-bar-left' },
 	          'Collection'
 	        )
 	      );
@@ -35368,22 +35557,23 @@
 	  },
 	  navRight: function navRight() {
 	    if (SessionStore.isUserLoggedIn()) {
+	      var userEditUrl = '/users/' + this.state.currentUser.id + '/edit';
 	      return React.createElement(
 	        'div',
 	        null,
 	        React.createElement(
 	          'button',
-	          { className: 'navbar-logout', onClick: this.logout },
+	          { className: 'navbar-logout nav-bar-right', onClick: this.logout },
 	          'Log Out'
 	        ),
 	        React.createElement(
 	          Link,
-	          { to: '/upload', className: 'navbar-upload' },
+	          { to: '/upload', className: 'navbar-upload nav-bar-right' },
 	          'Upload'
 	        ),
 	        React.createElement(
 	          Link,
-	          { to: '#', className: 'navbar-words' },
+	          { to: userEditUrl, className: 'navbar-words nav-bar-right' },
 	          'Sup, ',
 	          this.state.currentUser.username
 	        )
@@ -35397,12 +35587,12 @@
 	          null,
 	          React.createElement(
 	            Link,
-	            { to: '/login', className: 'navbar-login' },
+	            { to: '/login', className: 'navbar-login nav-bar-right' },
 	            'Log In'
 	          ),
 	          React.createElement(
 	            Link,
-	            { to: '/signup', className: 'navbar-signup' },
+	            { to: '/signup', className: 'navbar-signup nav-bar-right' },
 	            'Sign Up'
 	          )
 	        )
@@ -35426,18 +35616,21 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 287 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var TrackStore = __webpack_require__(240);
+	var TrackChange = __webpack_require__(264);
 	
 	var PlayBar = React.createClass({
 	  displayName: 'PlayBar',
 	  getInitialState: function getInitialState() {
-	    return { currentTrack: TrackStore.currentTrack() };
+	    return {
+	      currentTrack: TrackStore.currentTrack(),
+	      currentTime: 0 };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onChange);
@@ -35446,11 +35639,17 @@
 	    this.setState({ currentTrack: TrackStore.currentTrack() });
 	  },
 	  handlePlay: function handlePlay(e) {
+	    var _this = this;
+	
 	    e.preventDefault();
 	    this.state.currentTrack.play();
+	    setInterval(function () {
+	      _this.setState({ currentTime: _this.state.currentTrack.currentTime });
+	    }, 30);
 	  },
 	  handlePause: function handlePause(e) {
 	    e.preventDefault();
+	    // TrackChange.pauseTrack(e);
 	    this.state.currentTrack.pause();
 	  },
 	  render: function render() {
@@ -35463,13 +35662,18 @@
 	        this.state.currentTrack.title,
 	        React.createElement(
 	          'div',
-	          { onClick: this.handlePlay },
+	          { className: 'play', onClick: this.handlePlay },
 	          'Play'
 	        ),
 	        React.createElement(
 	          'div',
-	          { onClick: this.handlePause },
+	          { className: 'pause', onClick: this.handlePause },
 	          'Pause'
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          TrackStore.currentTime()
 	        )
 	      );
 	    } else {
@@ -35481,12 +35685,12 @@
 	module.exports = PlayBar;
 
 /***/ },
-/* 288 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var SessionActions = __webpack_require__(275);
+	var SessionActions = __webpack_require__(276);
 	
 	module.exports = function () {
 	  var user = window.phantomVibes.user;

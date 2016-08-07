@@ -1,10 +1,12 @@
 const React = require('react');
 const TrackStore = require('../stores/track_store.js');
-
+const TrackChange = require('../helpers/track_change.js');
 
 var PlayBar = React.createClass({
   getInitialState () {
-    return { currentTrack: TrackStore.currentTrack() };
+    return {
+      currentTrack: TrackStore.currentTrack(),
+      currentTime: 0 };
   },
 
   componentDidMount () {
@@ -18,10 +20,12 @@ var PlayBar = React.createClass({
   handlePlay (e) {
     e.preventDefault();
     this.state.currentTrack.play();
+    setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 30);
   },
 
   handlePause (e) {
     e.preventDefault();
+    // TrackChange.pauseTrack(e);
     this.state.currentTrack.pause();
   },
 
@@ -32,12 +36,16 @@ var PlayBar = React.createClass({
       return(
         <div className="playbar with-song">
           { this.state.currentTrack.title }
-          <div onClick={ this.handlePlay }>
+          <div className="play" onClick={ this.handlePlay }>
             Play
           </div>
 
-          <div onClick={ this.handlePause }>
+          <div className="pause" onClick={ this.handlePause }>
             Pause
+          </div>
+
+          <div>
+            { TrackStore.currentTime() }
           </div>
         </div>
       );
