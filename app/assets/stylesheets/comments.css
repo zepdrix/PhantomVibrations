@@ -27,6 +27,16 @@
   padding-bottom: 20px;
 }
 
+.comment-avatar-image:hover {
+  position: absolute;
+  left:-2px;
+  top: -2px;
+  height: 24px;
+  width: 24px;
+  padding-bottom: 20px;
+  transition: 0.3s;
+}
+
 .comment-avatar-container {
   height: 40px;
   width: 80px;

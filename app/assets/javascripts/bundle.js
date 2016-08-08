@@ -36066,16 +36066,18 @@
 	    this.trackListener = TrackStore.addListener(this.onChange);
 	  },
 	  onChange: function onChange() {
+	
 	    this.setState({ currentTrack: TrackStore.currentTrack() });
 	  },
 	  handlePlay: function handlePlay(e) {
 	    var _this = this;
 	
 	    e.preventDefault();
-	    this.state.currentTrack.play();
+	
 	    setInterval(function () {
 	      _this.setState({ currentTime: _this.state.currentTrack.currentTime });
-	    }, 30);
+	    }, 100);
+	    this.state.currentTrack.play();
 	  },
 	  handlePause: function handlePause(e) {
 	    e.preventDefault();
@@ -36085,30 +36087,45 @@
 	  render: function render() {
 	
 	    if (TrackStore.isCurrentTrack()) {
+	      var percentage = 0;
 	      // this.state.currentTrack.play();
+	      if (this.state.currentTrack) {
+	        var barWidth = window.innerWidth < 900 ? 900 : window.innerWidth;
+	        percentage = this.state.currentTrack.currentTime / this.state.currentTrack.duration * barWidth;
+	      } else {
+	
+	        percentage = 0;
+	      }
+	
 	      return React.createElement(
 	        'div',
 	        { className: 'playbar with-song' },
-	        this.state.currentTrack.title,
 	        React.createElement(
 	          'div',
-	          { className: 'play', onClick: this.handlePlay },
-	          'Play'
+	          { className: 'words' },
+	          this.state.currentTrack.title,
+	          React.createElement(
+	            'div',
+	            { className: 'play', onClick: this.handlePlay },
+	            'Play'
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'pause', onClick: this.handlePause },
+	            'Pause'
+	          )
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'pause', onClick: this.handlePause },
-	          'Pause'
-	        ),
-	        React.createElement(
-	          'div',
-	          null,
-	          TrackStore.currentTime()
+	          { className: 'playnode-container' },
+	          React.createElement('div', { className: 'playnode-played', style: { width: percentage + 'px' } })
 	        )
 	      );
 	    } else {
 	      return React.createElement('div', { className: 'playbar no-song' });
 	    }
+	
+	    // <div className="playnode-remaining" style={{width: 'translateX(' + percentage + 'px)'}}>0</div>
 	  }
 	});
 	
