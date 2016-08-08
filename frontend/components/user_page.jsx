@@ -2,6 +2,7 @@ const React = require('react');
 const TrackIndex = require('./track_index.jsx');
 const TrackStore = require('../stores/track_store.js');
 const TrackActions = require('../actions/track_actions.js');
+const UserActions = require('../actions/user_actions.js');
 
 var UserPage = React.createClass({
   getInitialState () {
@@ -11,6 +12,7 @@ var UserPage = React.createClass({
   componentDidMount () {
     this.storeListener = TrackStore.addListener(this.onChange);
     TrackActions.fetchAllTracks();
+    UserActions.fetchAllUsers();
   },
 
   componentWillUnmount () {

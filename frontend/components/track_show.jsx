@@ -5,6 +5,7 @@ const TrackActions = require('../actions/track_actions.js');
 const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
 const UserActions = require('../actions/user_actions.js');
+const UserStore = require('../stores/user_store.js');
 const CSSHelper = require('../helpers/css.js');
 const TrackChange = require('../helpers/track_change.js');
 const CommentForm = require('./comment_form.jsx');
@@ -63,7 +64,7 @@ var TrackShow = React.createClass({
   render () {
     let rbg1 = CSSHelper.styleHelper();
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-
+    console.log(UserStore.all());
 
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
@@ -72,7 +73,7 @@ var TrackShow = React.createClass({
           <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(rbg1[0])+', '+(rbg1[1])+', '+(rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
             <div className="track-show top-left">
               { this.playIcon() }
-              
+
               <div className="user-area">
                 <div className="username">
                   <Link to={ userUrl }>{ this.state.track.user.username }</Link>
@@ -104,7 +105,11 @@ var TrackShow = React.createClass({
             </div>
           </div>
 
+
           <div className="track-show comment-area">
+            <div className="user-area">
+              <img src={ this.state.track.user.avatar_image_url }/>
+            </div>
 
             <div className="track-show comment-form">
               <CommentForm track={ this.state.track }/>

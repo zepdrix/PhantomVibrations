@@ -34569,6 +34569,7 @@
 	var SessionStore = __webpack_require__(274);
 	var SessionActions = __webpack_require__(276);
 	var UserActions = __webpack_require__(284);
+	var UserStore = __webpack_require__(282);
 	var CSSHelper = __webpack_require__(263);
 	var TrackChange = __webpack_require__(264);
 	var CommentForm = __webpack_require__(291);
@@ -34616,6 +34617,7 @@
 	  render: function render() {
 	    var rbg1 = CSSHelper.styleHelper();
 	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
+	    console.log(UserStore.all());
 	
 	    if (this.state.track) {
 	      var userUrl = '/users/' + this.state.track.user_id;
@@ -34672,6 +34674,11 @@
 	        React.createElement(
 	          'div',
 	          { className: 'track-show comment-area' },
+	          React.createElement(
+	            'div',
+	            { className: 'user-area' },
+	            React.createElement('img', { src: this.state.track.user.avatar_image_url })
+	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'track-show comment-form' },
@@ -35074,6 +35081,7 @@
 	var TrackIndex = __webpack_require__(238);
 	var TrackStore = __webpack_require__(240);
 	var TrackActions = __webpack_require__(265);
+	var UserActions = __webpack_require__(284);
 	
 	var UserPage = React.createClass({
 	  displayName: 'UserPage',
@@ -35083,6 +35091,7 @@
 	  componentDidMount: function componentDidMount() {
 	    this.storeListener = TrackStore.addListener(this.onChange);
 	    TrackActions.fetchAllTracks();
+	    UserActions.fetchAllUsers();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.storeListener.remove();
@@ -35128,7 +35137,6 @@
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
 	  getInitialState: function getInitialState() {
-	    debugger;
 	    return { user: UserStore.find(this.props.params.userId) };
 	  },
 	  componentDidMount: function componentDidMount() {
@@ -35644,7 +35652,7 @@
 	  render: function render() {
 	    return React.createElement(
 	      'header',
-	      { className: 'navbar' },
+	      { className: 'navbar group' },
 	      React.createElement(
 	        'nav',
 	        { className: 'navbar-content' },
@@ -35997,12 +36005,14 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
 	var UserStore = __webpack_require__(282);
 	var UserActions = __webpack_require__(284);
 	
 	var CommentIndexItem = React.createClass({
 	  displayName: 'CommentIndexItem',
 	  render: function render() {
+	    var userUrl = 'users/' + this.props.user.id;
 	
 	    return React.createElement(
 	      'li',
@@ -36010,8 +36020,12 @@
 	      React.createElement(
 	        'div',
 	        null,
-	        this.props.user.username,
-	        ' says:',
+	        React.createElement(
+	          Link,
+	          { to: userUrl },
+	          this.props.user.username,
+	          ' says: '
+	        ),
 	        this.props.comment.body
 	      )
 	    );
@@ -36029,10 +36043,12 @@
 	var React = __webpack_require__(1);
 	var CommentAvatarIndexItem = __webpack_require__(299);
 	var UserStore = __webpack_require__(282);
+	var UserActions = __webpack_require__(284);
 	
 	var CommentAvatarIndex = React.createClass({
 	  displayName: 'CommentAvatarIndex',
 	  render: function render() {
+	    UserActions.fetchAllUsers();
 	
 	    var allCommentAvatarIndexItems = this.props.comments.map(function (comment, key) {
 	      return React.createElement(CommentAvatarIndexItem, { key: key, comment: comment, user: UserStore.find(comment.user_id) });
@@ -36054,12 +36070,17 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var UserStore = __webpack_require__(282);
+	var UserActions = __webpack_require__(284);
 	var Link = __webpack_require__(175).Link;
 	
 	var CommentAvatarIndexItem = React.createClass({
 	  displayName: 'CommentAvatarIndexItem',
 	  getInitialState: function getInitialState(e) {
-	    return { comment: null };
+	    return { comment: '' };
+	  },
+	  componentWillMount: function componentWillMount() {
+	    UserActions.fetchAllUsers();
 	  },
 	  commentShow: function commentShow(e) {
 	    e.preventDefault();
@@ -36070,31 +36091,37 @@
 	    this.setState({ comment: null });
 	  },
 	  render: function render() {
-	    debugger;
+	    var hiddenComment = void 0;
 	    var percentage = this.props.comment.track_percentage * 480;
-	    var userUrl = '/users/' + this.props.user.id;
-	    var commentDiv = void 0;
+	    console.log(UserStore.all());
+	    var userUrl = '/users/' + this.props.comment.user_id;
 	    if (this.state.comment) {
-	      commentDiv = React.createElement(
+	      hiddenComment = React.createElement(
 	        'div',
-	        null,
+	        { className: 'hidden-comment' },
 	        React.createElement(
 	          Link,
-	          { to: userUrl },
+	          { className: 'username-link', to: userUrl },
 	          this.props.user.username
 	        ),
-	        ': ',
+	        '  ',
 	        this.state.comment
 	      );
 	    }
 	    return React.createElement(
 	      'div',
 	      { onMouseLeave: this.commentHide },
-	      React.createElement('img', { onMouseEnter: this.commentShow, style: { transform: 'translateX(' + percentage + 'px)' }, className: 'comment-avatar-image', src: this.props.user.avatar_image_url }),
+	      React.createElement('img', {
+	        onMouseEnter: this.commentShow,
+	        style: { transform: 'translateX(' + percentage + 'px)' },
+	        className: 'comment-avatar-image',
+	        src: this.props.user ? this.props.user.avatar_image_url : "" }),
 	      React.createElement(
 	        'div',
-	        { style: { transform: 'translateX(' + percentage + 'px)' }, className: 'comment-avatar-comment' },
-	        commentDiv
+	        {
+	          style: { transform: 'translateX(' + percentage + 'px)' },
+	          className: 'comment-avatar-comment' },
+	        hiddenComment
 	      )
 	    );
 	  }

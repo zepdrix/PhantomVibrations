@@ -1,0 +1,45 @@
+.username-link {
+  color: lightgrey;
+  font-weight: 600;
+}
+
+.track-avatar-comments-container {
+  position: relative;
+  top: 260px;
+  margin-left: 30px;
+  /*background-color: grey;*/
+  width: 500px;
+  height: 40px;
+}
+
+
+.comment-avatar-index {
+  position: relative;
+  height: 20px;
+}
+
+.comment-avatar-image {
+  position: absolute;
+  left:0px;
+  top: 0px;
+  height: 20px;
+  width: 20px;
+  padding-bottom: 20px;
+}
+
+.comment-avatar-container {
+  position
+  height: 40px;
+  width: 80px;
+}
+
+.comment-avatar-comment {
+  position: absolute;
+  left: 0px;
+  top: 25px;
+  font-size: 12px;
+}
+
+.hidden-comment {
+  color: #BABABA;
+}

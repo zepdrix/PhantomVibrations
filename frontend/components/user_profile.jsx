@@ -8,7 +8,6 @@ const CSSHelper = require('../helpers/css.js');
 var UserProfile = React.createClass({
 
   getInitialState () {
-    debugger
     return { user: UserStore.find(this.props.params.userId) };
   },
 

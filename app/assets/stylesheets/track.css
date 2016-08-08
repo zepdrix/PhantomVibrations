@@ -57,3 +57,27 @@
 	border-left: 60px solid #FC6F0A;
 	border-bottom: 30px solid transparent;
 }
+
+
+.track-show .track-title {
+  margin-left: 10px;
+  float: left;
+  font-size: 25px;
+}
+
+.track-show .username, .user-info .username {
+  padding-top: 15px;
+  margin: 10px;
+  float: left;
+  font-size: 17px;
+}
+
+.track-show .track-image {
+  height: 300px;
+  width: 300px;
+  margin-top: 25px;
+  margin-right: 20px;
+  display: block;
+  float: right;
+  border: 1px solid grey;
+}

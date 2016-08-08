@@ -70,7 +70,7 @@ var NavBar = React.createClass({
 
   render () {
     return (
-      <header className="navbar">
+      <header className="navbar group">
         <nav className="navbar-content">
           { this.navLeft() }
           { this.navRight() }
