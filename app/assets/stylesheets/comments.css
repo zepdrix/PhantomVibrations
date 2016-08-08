@@ -28,7 +28,6 @@
 }
 
 .comment-avatar-container {
-  position
   height: 40px;
   width: 80px;
 }
@@ -41,5 +40,6 @@
 }
 
 .hidden-comment {
-  color: #BABABA;
+  color: #A1A1A1;
+
 }
