@@ -10,12 +10,20 @@ class Api::TracksController < ApplicationController
     end
   end
 
-  def edit
+  def update
+    @track = Track.find(params[:id])
 
+    if @track.update(track_params)
+      render "api/tracks/show"
+    else
+      render json: @track.errors.full_messages, status: 422
+    end
   end
 
   def destroy
-
+    @track = Track.find(params[:id])
+    @track.destroy
+    render json: @track
   end
 
   def show
@@ -28,8 +36,13 @@ class Api::TracksController < ApplicationController
   end
 
   def index
-    @tracks = Track.all
-    render "api/tracks/index"
+    if params[:user_id]
+      @tracks = Track.where("user_id = ?", params[:user_id].to_i)
+      render "api/tracks/index"
+    else
+      @tracks = Track.all
+      render "api/tracks/index"
+    end
   end
 
   private

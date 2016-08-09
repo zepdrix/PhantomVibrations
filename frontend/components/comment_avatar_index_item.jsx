@@ -8,9 +8,6 @@ var CommentAvatarIndexItem = React.createClass({
     return { comment: '' };
   },
 
-  componentWillMount () {
-    UserActions.fetchAllUsers();
-  },
 
   commentShow (e) {
     e.preventDefault();
@@ -25,11 +22,10 @@ var CommentAvatarIndexItem = React.createClass({
 
   render () {
     let hiddenComment;
-    let percentage = this.props.comment.track_percentage * 480;
-    console.log(UserStore.all());
+    let percentage = this.props.comment.track_percentage * this.props.width;
     let userUrl = `/users/${this.props.comment.user_id}`;
     if (this.state.comment) {
-      hiddenComment= <div className="hidden-comment"><Link className="username-link" to={ userUrl }>{ this.props.user.username }</Link>  { this.state.comment }</div>;
+      hiddenComment= <div className="hidden-comment"><Link className="username-link" to={ userUrl }>{ this.props.comment.username }</Link>  { this.state.comment }</div>;
     }
     return(
       <div onMouseLeave={ this.commentHide }>
@@ -37,7 +33,7 @@ var CommentAvatarIndexItem = React.createClass({
           onMouseEnter={ this.commentShow }
           style={{transform: 'translateX(' + percentage + 'px)'}}
           className="comment-avatar-image"
-          src={ this.props.user ? this.props.user.avatar_image_url : ""}/>
+          src={ this.props.comment.avatar_image_url }/>
 
         <div
           style={{transform: 'translateX(' + percentage + 'px)'}}

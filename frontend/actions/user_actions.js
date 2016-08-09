@@ -15,9 +15,9 @@ module.exports = {
       this.receiveAllUsers);
   },
 
-  updateUser (user) {
+  updateUser (formData) {
     UserApiUtil.updateUser(
-      user,
+      formData,
       this.receiveUser,
       ErrorActions.setErrors);
   },

@@ -4,6 +4,8 @@ const Link = require('react-router').Link;
 const TrackStore = require('../stores/track_store.js');
 const CSSHelper = require('../helpers/css.js');
 const TrackChange = require('../helpers/track_change.js');
+const WindowSizeConstants = require('../constants/window_size_constants.js');
+const CommentAvatarIndex = require('./comment_avatar_index.jsx');
 
 const styleHelper = () => {
   let arr = [195, 89];
@@ -16,10 +18,23 @@ const styleHelper = () => {
 
   randomArray.push(arr[0]);
   return randomArray;
-
 };
 
 var TrackIndexItem = React.createClass({
+  getInitialState () {
+    return { percentage: 0 };
+  },
+
+  componentDidMount () {
+    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+  },
+
+  renderPlaybar () {
+    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id) {
+      setInterval( ()=> {this.setState({ percentage: (TrackStore.currentTime() / TrackStore.currentTrack().duration) * 420 });},100);
+    }
+  },
+
   clickHandler (e) {
     this.context.router.push(`/tracks/${this.props.track.id}`);
   },
@@ -36,11 +51,17 @@ var TrackIndexItem = React.createClass({
   render () {
     let rbg1 = CSSHelper.styleHelper(125, 15);
     let rbg2 = [rbg1[1], rbg1[0], rbg1[2]];
-
+    
     let trackUrl = `/tracks/${this.props.track.id}`;
     let trackImageUrl = this.props.track.image_url;
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
+
+    var percentage = 0;
+    if (TrackStore.isCurrentTrack() && (TrackStore.currentTrack().id === this.props.track.id)) {
+        percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * 420;
+      }
+
     return(
       <li className="track-item" >
         <div >
@@ -66,6 +87,14 @@ var TrackIndexItem = React.createClass({
               className="track-item track-title">
               { this.props.track.title }
             </Link>
+          </div>
+
+          <div className="track-list playnode-container">
+            <div className="track-list playnode-played" style={{width: this.state.percentage + 'px'}}></div>
+          </div>
+
+          <div className="track-index-avatar-comments-container">
+            <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_INDEX_WIDTH } comments={ this.props.track.comments}/>
           </div>
 
           <div className="track-audio-el">

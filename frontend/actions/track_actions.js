@@ -11,6 +11,31 @@ module.exports = {
       ErrorActions.setErrors);
   },
 
+  updateTrack (formData) {
+    TrackApiUtil.updateTrack(
+      formData,
+      this.receiveTrack);
+  },
+
+  deleteTrack (id) {
+    TrackApiUtil.deleteTrack(
+      id,
+      this.removeTrack);
+
+  },
+
+  fetchTrack (id) {
+    TrackApiUtil.fetchTrack(
+      id,
+      this.receiveTrack);
+  },
+
+  fetchUserTracks (user_id) {
+    TrackApiUtil.fetchUserTracks(
+      user_id,
+      this.receiveTracks);
+  },
+
   fetchAllTracks () {
     TrackApiUtil.fetchAllTracks(
       this.receiveTracks);
@@ -35,6 +60,12 @@ module.exports = {
       actionType: TrackConstants.RECEIVE_CURRENT_TRACK,
       track: track
     });
-  }
+  },
 
+  removeTrack (track) {
+    AppDispatcher.dispatch({
+      actionType: TrackConstants.REMOVE_TRACK,
+      track: track
+    });
+  }
 };

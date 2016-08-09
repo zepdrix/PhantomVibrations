@@ -26,7 +26,7 @@ var CommentForm = React.createClass({
     let trackPercentage;
     if (TrackStore.isCurrentTrack()) {
       let currentTrack = TrackStore.currentTrack();
-      trackPercentage = currentTrack.currentTime / currentTrack.seekable.end(0);
+      trackPercentage = currentTrack.currentTime / currentTrack.duration;
     } else {
       trackPercentage = Math.random();
     }

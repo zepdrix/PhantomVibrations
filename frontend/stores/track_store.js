@@ -7,6 +7,10 @@ const TrackStore = new Store(AppDispatcher);
 
 var _tracks = {};
 
+var _playQueue = [];
+
+var _currentTrackIndex = 0;
+
 var _currentTrack = {};
 
 TrackStore.all = function () {
@@ -53,6 +57,10 @@ const _resetCurrentTrack = function (track) {
   _currentTrack = track;
 };
 
+const _removeTrack = function (track) {
+  delete _tracks[track.id];
+};
+
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case TrackConstants.RECEIVE_TRACK:
@@ -65,6 +73,10 @@ TrackStore.__onDispatch = function (payload) {
       break;
     case TrackConstants.RECEIVE_CURRENT_TRACK:
       _resetCurrentTrack(payload.track);
+      this.__emitChange();
+      break;
+    case TrackConstants.REMOVE_TRACK:
+      _removeTrack(payload.track);
       this.__emitChange();
       break;
   }

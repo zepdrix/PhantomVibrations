@@ -5,12 +5,12 @@ const TrackActions = require('../actions/track_actions.js');
 const SessionStore = require('../stores/session_store.js');
 const SessionActions = require('../actions/session_actions.js');
 const UserActions = require('../actions/user_actions.js');
-const UserStore = require('../stores/user_store.js');
 const CSSHelper = require('../helpers/css.js');
 const TrackChange = require('../helpers/track_change.js');
 const CommentForm = require('./comment_form.jsx');
 const CommentIndex = require('./comment_index.jsx');
 const CommentAvatarIndex = require('./comment_avatar_index.jsx');
+const WindowSizeConstants = require('../constants/window_size_constants.js');
 
 var TrackShow = React.createClass({
   getInitialState () {
@@ -20,14 +20,10 @@ var TrackShow = React.createClass({
   },
 
   componentDidMount () {
-    this.trackListener = TrackStore.addListener(this.onChange);
-    this.sessionListener = SessionStore.addListener(this.onChange);
-    TrackActions.fetchAllTracks();
+    this.trackListener = TrackStore.addListener(this.onChangeTrack);
+    this.sessionListener = SessionStore.addListener(this.onChangeSession);
+    TrackActions.fetchTrack(this.props.params.trackId);
     SessionActions.fetchCurrentUser();
-  },
-
-  componentWillMount () {
-    UserActions.fetchAllUsers();
   },
 
   componentWillUnmount () {
@@ -41,6 +37,16 @@ var TrackShow = React.createClass({
 
   playTrack (e) {
     TrackChange.playTrack(e);
+  },
+
+  onChangeTrack () {
+    let track = TrackStore.find(this.props.params.trackId);
+    this.setState({ track });
+  },
+
+  onChangeSession () {
+    let currentUser = SessionStore.currentUser();
+    this.setState({ currentUser });
   },
 
   onChange () {
@@ -62,10 +68,10 @@ var TrackShow = React.createClass({
   },
 
   render () {
+
     let rbg1 = CSSHelper.styleHelper();
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-    console.log(UserStore.all());
-
+    debugger
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
       return(
@@ -97,11 +103,10 @@ var TrackShow = React.createClass({
 
             <div>
               <img className="track-image" src={ this.state.track.image_url }/>
-
             </div>
 
-            <div className="track-avatar-comments-container">
-              <CommentAvatarIndex  comments={ this.state.track.comments}/>
+            <div className="track-show-avatar-comments-container">
+              <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_SHOW_WIDTH } comments={ this.state.track.comments}/>
             </div>
           </div>
 

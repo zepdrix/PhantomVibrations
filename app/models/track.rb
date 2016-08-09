@@ -41,7 +41,8 @@ class Track < ActiveRecord::Base
     :comments,
     class_name: 'Comment',
     foreign_key: :track_id,
-    primary_key: :id
+    primary_key: :id,
+    dependent: :destroy
   )
 
 end

@@ -31,14 +31,16 @@ class User < ActiveRecord::Base
     :tracks,
     class_name: 'Track',
     foreign_key: :user_id,
-    primary_key: :id
+    primary_key: :id,
+    dependent: :destroy
   )
 
   has_many(
     :comments,
     class_name: 'Comment',
     foreign_key: :user_id,
-    primary_key: :id
+    primary_key: :id,
+    dependent: :destroy
     )
 
   def self.find_by_credentials(username, password)

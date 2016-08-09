@@ -15,6 +15,7 @@ var CurrentUserProfile = React.createClass({
   },
 
   getInitialState () {
+
     let potentialUser = SessionStore.currentUser();
     let user = SessionStore.isUserLoggedIn() ? potentialUser : {};
     return {
@@ -40,7 +41,6 @@ var CurrentUserProfile = React.createClass({
   },
 
   redirectIfUserSaved () {
-    UserActions.fetchAllUsers();
     this.context.router.push(`/users/${SessionStore.currentUser().id}`);
   },
 
@@ -94,7 +94,7 @@ var CurrentUserProfile = React.createClass({
               onChange={ this.handleUsername }/>
           </div>
 
-          <img className="avatar-preview"
+          <img className="form-image"
             src={ this.state.avatarImageUrl }/>
           <div className="user-edit" >Avatar Image</div>
           <input type="file" className="input" onChange={ this.handleImage }/>

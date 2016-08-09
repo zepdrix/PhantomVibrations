@@ -1,39 +1,38 @@
 const React = require('react');
-const TrackActions = require('../actions/track_actions.js');
 const TrackStore = require('../stores/track_store.js');
+const TrackActions = require('../actions/track_actions.js');
 const ErrorStore = require('../stores/error_store.js');
 const FormConstants = require('../constants/form_constants.js');
 
-var TrackForm = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
 
+var TrackEditForm = React.createClass({
+    contextTypes: {
+      router: React.PropTypes.object.isRequired
+    },
 
   getInitialState () {
+    let track = TrackStore.find(parseInt(this.props.params.trackId));
+    let trackDescription = '';
+    let trackImageUrl = '';
+    if (track.description) {
+      trackDescription = track.description;
+    }
+    if (track.image_url) {
+      trackImageUrl = track.image_url;
+    }
     return {
-      title: '',
-      description: '',
-      imageFile: null,
-      imageUrl: null,
-      audioFile: '',
-      audioUrl: null };
+      title: track.title,
+      description: trackDescription,
+      imageUrl: trackImageUrl,
+      imageFile: null };
   },
 
   componentDidMount () {
-    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
     this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
   },
 
-  componentWillUnmount () {
-    this.errorListener.remove();
-    this.trackListener.remove();
-  },
-
-  redirectIfTrackSaved() {
-    console.log(TrackStore.all());
-    TrackActions.fetchAllTracks();
-    this.context.router.push("/");
+  redirectIfTrackSaved () {
+    this.context.router.push(`/tracks`);
   },
 
   handleTitle (e) {
@@ -55,22 +54,7 @@ var TrackForm = React.createClass({
     if (file) {
       fileReader.readAsDataURL(file);
     }
-
   },
-
-  handleAudio (e) {
-    let file = e.currentTarget.files[0];
-    let fileReader = new FileReader();
-
-    fileReader.onloadend = function () {
-      this.setState({ audioFile: file, audioUrl: fileReader.result });
-    }.bind(this);
-
-    if (file) {
-      fileReader.readAsDataURL(file);
-    }
-  },
-
 
   handleSubmit (e) {
     e.preventDefault();
@@ -78,17 +62,17 @@ var TrackForm = React.createClass({
 
     formData.append("track[title]", this.state.title);
     formData.append("track[description]", this.state.description);
-    formData.append("track[audio]", this.state.audioFile);
+    formData.append("track[id]", this.props.params.trackId);
 
     if (this.state.imageFile) {
       formData.append("track[image]", this.state.imageFile);
     }
 
-    TrackActions.createTrack(formData);
+    TrackActions.updateTrack(formData);
   },
 
   formErrors () {
-    let errors = ErrorStore.errors(FormConstants.CREATE_TRACK_FORM) || [];
+    let errors = ErrorStore.errors(FormConstants.EDIT_TRACK_FORM) || [];
     if (errors.length > 0) {
       let errorMessages = errors.map( (error, key) => {
         return <li className="form-error" key={ key }>{ error }</li>;
@@ -101,8 +85,8 @@ var TrackForm = React.createClass({
   render () {
     return(
       <div>
-        <form className="create-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
-          <div className="create-track-form-title">Upload a Track</div>
+        <form className="edit-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
+          <div className="edit-track-form-title">Edit Track</div>
           { this.formErrors() }
           <div className="login-input">
             <div className="form-label">Title
@@ -118,29 +102,20 @@ var TrackForm = React.createClass({
             </div>
             <textarea className="input"
 
-              placeholder="Track Description"
+
               value={ this.state.description }
               onChange={ this.handleDescription }/>
           </div>
 
           <div className="login-input">
-            <div className="form-label">Upload a track image!
+            <div className="form-label">Update your track image!
             </div>
             <input type="file" onChange={ this.handleImage }/>
             <br/>
             <img className="form-image" src={ this.state.imageUrl }/>
           </div>
 
-          <div className="login-input">
-            <div className="form-label">Upload a song!
-            </div>
-            <input type="file" onChange={ this.handleAudio }/>
-            <br/>
-            <audio src={ this.state.audioUrl } preload="auto" controls>
-            </audio>
-          </div>
-
-          <button className="create-track-button form-hover">Submit</button>
+          <button className="create-track-button form-hover">Update</button>
         </form>
       </div>
     );
@@ -148,4 +123,9 @@ var TrackForm = React.createClass({
 });
 
 
-module.exports = TrackForm;
+
+
+
+
+
+module.exports = TrackEditForm;

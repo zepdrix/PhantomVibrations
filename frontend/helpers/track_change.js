@@ -18,5 +18,4 @@ module.exports = {
   pauseTrack (e) {
     TrackStore.currentTrack().pause();
   }
-
 };

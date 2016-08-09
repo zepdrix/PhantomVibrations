@@ -29,5 +29,30 @@
 }
 
 .nav-bar-right {
+  position: relative;
   float: right;
+}
+
+.notifications {
+  display: none;
+  position: absolute;
+  left: -1px;
+  font-size: 14px;
+  white-space: nowrap;
+  background: #fff;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  overflow: hidden;
+
+}
+
+.notifications > li {
+
+}
+
+.nav-bar-right:hover .notifications {
+  display: block;
 }

@@ -3,7 +3,7 @@
   font-weight: 600;
 }
 
-.track-avatar-comments-container {
+.track-show-avatar-comments-container {
   position: relative;
   top: 260px;
   margin-left: 30px;
@@ -12,6 +12,23 @@
   height: 40px;
 }
 
+.track-index-avatar-comments-container {
+  position: relative;
+  float: right;
+  /*margin-left: 30px;*/
+  /*background-color: grey;*/
+  width: 420px;
+  height: 40px;
+}
+
+.track-avatar-comments-container {
+  position: relative;
+  top: 260px;
+  margin-left: 30px;
+  /*background-color: grey;*/
+  width: 500px;
+  height: 40px;
+}
 
 .comment-avatar-index {
   position: relative;

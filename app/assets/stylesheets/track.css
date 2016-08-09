@@ -2,6 +2,7 @@
 .track-avatar-img {
   float: left;
   height: 160px;
+  object-fit: cover;
   width: 160px;
   box-shadow: 0px 0px 30px #BABABA;
 }
@@ -79,5 +80,29 @@
   margin-right: 20px;
   display: block;
   float: right;
+  object-fit: cover;
   border: 1px solid grey;
+}
+
+.track-list.playnode-container {
+  /*float: right;*/
+  width: 420px;
+  height: 16px;
+  background-color: white;
+  float: right;
+}
+
+.playnode .words {
+  float: left;
+}
+
+.track-list.playnode-played {
+  height: 16px;
+  width: 0px;
+  background-color: orange;
+}
+
+.user-area > img {
+  height: 80px;
+  width: 80px;
 }

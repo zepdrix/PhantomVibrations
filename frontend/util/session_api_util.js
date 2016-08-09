@@ -8,6 +8,7 @@ module.exports = {
       data: { user: user },
       dataType: "json",
       success: (resp) => {
+
         successCb(resp);
       },
       error(xhr) {
@@ -16,12 +17,12 @@ module.exports = {
     });
   },
 
-  fetchCurrentUser (cb) {
+  fetchCurrentUser (successCb) {
     $.ajax({
       url: "api/session",
       method: "GET",
       success(user) {
-        cb(user);
+        successCb(user);
       },
       error: (xhr) => {
         console.log("Error in SessionApiUtil#fetchCurrentUser");

@@ -12,7 +12,6 @@ var UserPage = React.createClass({
   componentDidMount () {
     this.storeListener = TrackStore.addListener(this.onChange);
     TrackActions.fetchAllTracks();
-    UserActions.fetchAllUsers();
   },
 
   componentWillUnmount () {
@@ -24,7 +23,7 @@ var UserPage = React.createClass({
   },
 
   render () {
-
+    
     return(
       <div className="user-page section">
         <div className="user-page-header">

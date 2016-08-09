@@ -10,17 +10,17 @@ var PlayBar = React.createClass({
   },
 
   componentDidMount () {
-    this.trackListener = TrackStore.addListener(this.onChange);
+    this.trackListener = TrackStore.addListener(this.onTrackChange);
   },
 
-  onChange () {
-
+  onTrackChange () {
     this.setState({ currentTrack: TrackStore.currentTrack() });
+    setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
+
   },
 
   handlePlay (e) {
     e.preventDefault();
-
     setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
     this.state.currentTrack.play();
   },

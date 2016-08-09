@@ -7,7 +7,7 @@ var CommentIndex = React.createClass({
   render () {
 
     let allCommentIndexItems = this.props.comments.map( (comment, key) => {
-      return <CommentIndexItem key={ key } comment={ comment } user={ UserStore.find(comment.user_id) } />;
+      return <CommentIndexItem key={ key } comment={ comment } />;
     });
 
     return(

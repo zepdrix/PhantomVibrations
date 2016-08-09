@@ -6,7 +6,7 @@ var TrackIndex = React.createClass({
     let allTrackIndexItems = this.props.tracks.map( (track, key) => {
       return <TrackIndexItem key={ key } track={ track }/>;
     });
-
+    
     return (
       <div className="track-index">
         <ul className="track-index list">{ allTrackIndexItems }</ul>

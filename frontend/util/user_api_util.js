@@ -7,7 +7,6 @@ module.exports = {
       url: `api/users/${id}`,
       method: "GET",
       success: (resp) => {
-        debugger
         successCb(resp);
       },
       error: (resp) => {

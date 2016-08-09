@@ -8,12 +8,17 @@ const CSSHelper = require('../helpers/css.js');
 var UserProfile = React.createClass({
 
   getInitialState () {
-    return { user: UserStore.find(this.props.params.userId) };
+    let user = UserStore.find(parseInt(this.props.params.userId));
+    if (user === []) {
+
+    }
+    return { user: UserStore.find(parseInt(this.props.params.userId)) };
   },
 
   componentDidMount () {
+    debugger
     this.userListener = UserStore.addListener(this.onChange);
-    UserActions.fetchUser(this.props.params.userId);
+    UserActions.fetchUser(parseInt(this.props.params.userId));
   },
 
   componentWillUnmount () {
@@ -25,13 +30,13 @@ var UserProfile = React.createClass({
   },
 
   onChange () {
-    this.setState({ user: UserStore.find(this.props.params.userId) });
+    this.setState({ user: UserStore.find(parseInt(this.props.params.userId)) });
   },
 
   render () {
     let rbg1 = CSSHelper.styleHelper();
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-
+    debugger
     if (this.state.user) {
 
       let username = this.state.user.username;

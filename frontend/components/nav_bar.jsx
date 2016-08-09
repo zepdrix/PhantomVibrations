@@ -21,19 +21,24 @@ var NavBar = React.createClass({
     this.setState({ currentUser: SessionStore.currentUser() });
   },
 
+  goToTracks (e) {
+    e.preventDefault();
+    this.context.router.push('/tracks');
+  },
+
   navLeft () {
     if (SessionStore.isUserLoggedIn()) {
       return(
         <div>
           <Link to='/' className="navbar-home nav-bar-left">Home</Link>
-          <a href="#"className="navbar-collection nav-bar-left">Collection</a>
+          <a onClick={ this.goToTracks } className="navbar-collection nav-bar-left">Collection</a>
         </div>
       );
     } else {
       return(
         <div>
           <Link to='/' className="navbar-home nav-bar-left">Home</Link>
-          <a href="#"className="navbar-collection nav-bar-left">Collection</a>
+          <a href="/"className="navbar-collection nav-bar-left">Collection</a>
         </div>
       );
     }
@@ -52,7 +57,11 @@ var NavBar = React.createClass({
         <div>
           <button className="navbar-logout nav-bar-right" onClick={ this.logout }>Log Out</button>
           <Link to='/upload' className="navbar-upload nav-bar-right">Upload</Link>
-          <Link to={ userEditUrl } className="navbar-words nav-bar-right">Sup, { this.state.currentUser.username }</Link>
+          <Link to={ userEditUrl } className="navbar-words nav-bar-right group">Sup, { this.state.currentUser.username }</Link>
+          <ul className="navbar-words  group nav-bar-right notifications">
+            <li><Link to={ userEditUrl }>Profile</Link></li>
+            <li><Link to={ userEditUrl }>Tracks</Link></li>
+          </ul>
         </div>
       );
     } else {
