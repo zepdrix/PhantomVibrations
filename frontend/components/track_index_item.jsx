@@ -2,36 +2,55 @@ const React = require('react');
 const Link = require('react-router').Link;
 
 const TrackStore = require('../stores/track_store.js');
-const CSSHelper = require('../helpers/css.js');
 const TrackChange = require('../helpers/track_change.js');
 const WindowSizeConstants = require('../constants/window_size_constants.js');
 const CommentAvatarIndex = require('./comment_avatar_index.jsx');
 
-const styleHelper = () => {
-  let arr = [195, 89];
-  let randomArray = [];
-  arr.push(Math.floor(Math.random()* 106) + 89);
-  for (var i = 0; i < 2; i++) {
-    let j = Math.floor(Math.random()* (2 - i));
-    randomArray.push(arr.splice(j, 1)[0]);
-  }
 
-  randomArray.push(arr[0]);
-  return randomArray;
-};
 
 var TrackIndexItem = React.createClass({
   getInitialState () {
-    return { percentage: 0 };
+    let percentage = TrackStore.getPercentage(this.props.track.id);
+    return { percentage: percentage };
+  },
+
+  componentWillMount () {
+  //   this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+    this.renderPlaybar();
+
   },
 
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+    this.renderPlaybar();
+  },
+
+  componentWillUnmount () {
+    this.currentTrackListener.remove();
+    if (this.setRefreshIntervalId) {
+      clearInterval(this.setRefreshIntervalId);
+    }
   },
 
   renderPlaybar () {
-    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id) {
-      setInterval( ()=> {this.setState({ percentage: (TrackStore.currentTime() / TrackStore.currentTrack().duration) * 420 });},100);
+    if ((parseInt(TrackStore.currentTrack().id) === this.props.track.id)) {
+      if (TrackStore.currentTrack.paused) {
+        this.setState({ percentage: TrackStore.getPercentage(this.props.track.id) });
+      } else {
+        clearInterval(this.setRefreshIntervalId);
+
+        this.setRefreshIntervalId = setInterval( ()=> {this.setState({ percentage: (TrackStore.currentTime() / TrackStore.currentTrack().duration) });},100);
+      }
+
+    } else if (!!TrackStore.getPercentage(this.props.track.id)) {
+
+      clearInterval(this.setRefreshIntervalId);
+
+
+      this.setState({ percentage: TrackStore.getPercentage(this.props.track.id) });
+    } else {
+
+      this.setState({ percentage: 0 });
     }
   },
 
@@ -40,27 +59,24 @@ var TrackIndexItem = React.createClass({
   },
 
   onClick (e) {
-    TrackChange.playTrack(e);
-  },
+    console.log(e.clientX, e.pageX, e.screenX);
 
-  playTrack (e) {
     e.preventDefault();
+    TrackChange.playTrack(e);
 
   },
 
   render () {
-    let rbg1 = CSSHelper.styleHelper(125, 15);
-    let rbg2 = [rbg1[1], rbg1[0], rbg1[2]];
-    
+
     let trackUrl = `/tracks/${this.props.track.id}`;
     let trackImageUrl = this.props.track.image_url;
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
-
-    var percentage = 0;
-    if (TrackStore.isCurrentTrack() && (TrackStore.currentTrack().id === this.props.track.id)) {
-        percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * 420;
-      }
+    //
+    // var percentage = 0;
+    // if (TrackStore.isCurrentTrack() && (TrackStore.currentTrack().id === this.props.track.id)) {
+    //     percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * 420;
+    //   }
 
     return(
       <li className="track-item" >
@@ -90,7 +106,7 @@ var TrackIndexItem = React.createClass({
           </div>
 
           <div className="track-list playnode-container">
-            <div className="track-list playnode-played" style={{width: this.state.percentage + 'px'}}></div>
+            <div className="track-list playnode-played" style={{width: (this.state.percentage * 420) + 'px'}}></div>
           </div>
 
           <div className="track-index-avatar-comments-container">

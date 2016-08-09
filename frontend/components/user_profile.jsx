@@ -16,7 +16,6 @@ var UserProfile = React.createClass({
   },
 
   componentDidMount () {
-    debugger
     this.userListener = UserStore.addListener(this.onChange);
     UserActions.fetchUser(parseInt(this.props.params.userId));
   },
@@ -36,7 +35,7 @@ var UserProfile = React.createClass({
   render () {
     let rbg1 = CSSHelper.styleHelper();
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-    debugger
+
     if (this.state.user) {
 
       let username = this.state.user.username;

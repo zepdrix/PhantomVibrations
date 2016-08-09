@@ -8,7 +8,6 @@ var CommentAvatarIndexItem = React.createClass({
     return { comment: '' };
   },
 
-
   commentShow (e) {
     e.preventDefault();
     this.setState({ comment: this.props.comment.body });

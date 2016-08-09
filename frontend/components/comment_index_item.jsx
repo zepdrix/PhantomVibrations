@@ -12,6 +12,7 @@ var CommentIndexItem = React.createClass({
       <li>
         <div>
           <Link to={ userUrl } >{ this.props.comment.username } says: </Link>
+          <br/>
           { this.props.comment.body }
         </div>
       </li>

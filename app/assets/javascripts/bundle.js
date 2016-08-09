@@ -55,26 +55,26 @@
 	    hashHistory = ReactRouter.hashHistory;
 	
 	var TrackIndex = __webpack_require__(238),
-	    TrackEditForm = __webpack_require__(304),
-	    TrackForm = __webpack_require__(272),
-	    TrackShow = __webpack_require__(273),
-	    LoginForm = __webpack_require__(291),
-	    SignupForm = __webpack_require__(292),
-	    HomePage = __webpack_require__(293),
-	    UserPage = __webpack_require__(294),
-	    UserProfile = __webpack_require__(295),
-	    UserTracks = __webpack_require__(301),
-	    CurrentUserProfile = __webpack_require__(296),
-	    App = __webpack_require__(297);
+	    TrackEditForm = __webpack_require__(279),
+	    TrackForm = __webpack_require__(280),
+	    TrackShow = __webpack_require__(281),
+	    LoginForm = __webpack_require__(293),
+	    SignupForm = __webpack_require__(294),
+	    HomePage = __webpack_require__(295),
+	    UserPage = __webpack_require__(296),
+	    UserProfile = __webpack_require__(297),
+	    UserTracks = __webpack_require__(298),
+	    CurrentUserProfile = __webpack_require__(301),
+	    App = __webpack_require__(302);
 	
 	var SessionApiUtil = __webpack_require__(269),
-	    SessionActions = __webpack_require__(276),
+	    SessionActions = __webpack_require__(284),
 	    TrackApiUtil = __webpack_require__(266),
 	    TrackActions = __webpack_require__(265),
 	    TrackStore = __webpack_require__(240),
-	    SessionStore = __webpack_require__(274),
-	    SetupApp = __webpack_require__(300),
-	    TimeChange = __webpack_require__(288);
+	    SessionStore = __webpack_require__(282),
+	    SetupApp = __webpack_require__(305),
+	    TimeChange = __webpack_require__(292);
 	
 	window.SessionApiUtil = SessionApiUtil;
 	window.SessionActions = SessionActions;
@@ -27165,63 +27165,73 @@
 	var Link = __webpack_require__(175).Link;
 	
 	var TrackStore = __webpack_require__(240);
-	var CSSHelper = __webpack_require__(263);
 	var TrackChange = __webpack_require__(264);
-	var WindowSizeConstants = __webpack_require__(305);
-	var CommentAvatarIndex = __webpack_require__(289);
-	
-	var styleHelper = function styleHelper() {
-	  var arr = [195, 89];
-	  var randomArray = [];
-	  arr.push(Math.floor(Math.random() * 106) + 89);
-	  for (var i = 0; i < 2; i++) {
-	    var j = Math.floor(Math.random() * (2 - i));
-	    randomArray.push(arr.splice(j, 1)[0]);
-	  }
-	
-	  randomArray.push(arr[0]);
-	  return randomArray;
-	};
+	var WindowSizeConstants = __webpack_require__(272);
+	var CommentAvatarIndex = __webpack_require__(273);
 	
 	var TrackIndexItem = React.createClass({
 	  displayName: 'TrackIndexItem',
 	  getInitialState: function getInitialState() {
-	    return { percentage: 0 };
+	    var percentage = TrackStore.getPercentage(this.props.track.id);
+	    return { percentage: percentage };
+	  },
+	  componentWillMount: function componentWillMount() {
+	    //   this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+	    this.renderPlaybar();
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+	    this.renderPlaybar();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.currentTrackListener.remove();
+	    if (this.setRefreshIntervalId) {
+	      clearInterval(this.setRefreshIntervalId);
+	    }
 	  },
 	  renderPlaybar: function renderPlaybar() {
 	    var _this = this;
 	
 	    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id) {
-	      setInterval(function () {
-	        _this.setState({ percentage: TrackStore.currentTime() / TrackStore.currentTrack().duration * 420 });
-	      }, 100);
+	      if (TrackStore.currentTrack.paused) {
+	        this.setState({ percentage: TrackStore.getPercentage(this.props.track.id) });
+	      } else {
+	        clearInterval(this.setRefreshIntervalId);
+	
+	        this.setRefreshIntervalId = setInterval(function () {
+	          _this.setState({ percentage: TrackStore.currentTime() / TrackStore.currentTrack().duration });
+	        }, 100);
+	      }
+	    } else if (!!TrackStore.getPercentage(this.props.track.id)) {
+	
+	      clearInterval(this.setRefreshIntervalId);
+	
+	      this.setState({ percentage: TrackStore.getPercentage(this.props.track.id) });
+	    } else {
+	
+	      this.setState({ percentage: 0 });
 	    }
 	  },
 	  clickHandler: function clickHandler(e) {
 	    this.context.router.push('/tracks/' + this.props.track.id);
 	  },
 	  onClick: function onClick(e) {
+	    console.log(e.clientX, e.pageX, e.screenX);
+	
+	    e.preventDefault();
 	    TrackChange.playTrack(e);
 	  },
-	  playTrack: function playTrack(e) {
-	    e.preventDefault();
-	  },
 	  render: function render() {
-	    var rbg1 = CSSHelper.styleHelper(125, 15);
-	    var rbg2 = [rbg1[1], rbg1[0], rbg1[2]];
 	
 	    var trackUrl = '/tracks/' + this.props.track.id;
 	    var trackImageUrl = this.props.track.image_url;
 	    var userUrl = '/users/' + this.props.track.user_id;
 	    var userImageUrl = this.props.track.user.image_url;
-	
-	    var percentage = 0;
-	    if (TrackStore.isCurrentTrack() && TrackStore.currentTrack().id === this.props.track.id) {
-	      percentage = this.state.currentTrack.currentTime / this.state.currentTrack.duration * 420;
-	    }
+	    //
+	    // var percentage = 0;
+	    // if (TrackStore.isCurrentTrack() && (TrackStore.currentTrack().id === this.props.track.id)) {
+	    //     percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * 420;
+	    //   }
 	
 	    return React.createElement(
 	      'li',
@@ -27261,7 +27271,7 @@
 	        React.createElement(
 	          'div',
 	          { className: 'track-list playnode-container' },
-	          React.createElement('div', { className: 'track-list playnode-played', style: { width: this.state.percentage + 'px' } })
+	          React.createElement('div', { className: 'track-list playnode-played', style: { width: this.state.percentage * 420 + 'px' } })
 	        ),
 	        React.createElement(
 	          'div',
@@ -27299,11 +27309,13 @@
 	
 	var _tracks = {};
 	
-	var _playQueue = [];
-	
-	var _currentTrackIndex = 0;
+	// var _playQueue = {};
+	// var _currentQueueIndex = -1;
 	
 	var _currentTrack = {};
+	var _trackStates = {};
+	
+	var refreshIntervalId;
 	
 	TrackStore.all = function () {
 	  var tracks = [];
@@ -27327,7 +27339,7 @@
 	};
 	
 	TrackStore.isCurrentTrack = function () {
-	  return !!_currentTrack.src;
+	  return !!_currentTrack.id;
 	};
 	
 	var _resetTrack = function _resetTrack(track) {
@@ -27335,21 +27347,92 @@
 	};
 	
 	var _resetAllTracks = function _resetAllTracks(tracks) {
-	  _tracks = {};
+	
+	  Object.keys(_tracks).forEach(function (trackId) {
+	    if (trackId !== _currentTrack.id) {
+	      delete _tracks[trackId];
+	    }
+	  });
+	
 	  tracks.forEach(function (track) {
-	    _tracks[track.id] = track;
+	    if (track.id !== _currentTrack.id) {
+	      _tracks[track.id] = track;
+	    }
 	  });
 	};
 	
-	var _resetCurrentTrack = function _resetCurrentTrack(track) {
-	  if (!!_currentTrack.src) {
-	    _currentTrack.pause();
-	  }
-	  _currentTrack = track;
-	};
+	// const _resetCurrentTrack = function (track) {
+	//   if (!!_currentTrack.id) {
+	//     _currentTrack.pause();
+	//   }
+	//   _trackStates[track.id] = 0;
+	//   _currentTrack = track;
+	// };
 	
 	var _removeTrack = function _removeTrack(track) {
 	  delete _tracks[track.id];
+	};
+	
+	// CURRENT_TRACK
+	//
+	// _currentTrack
+	//
+	// CURRENT_TRACK_STATE
+	//
+	// _trackStates[_playQueue[_currentQueueIndex]]
+	//
+	// CURRENT_TRACK_ID
+	//
+	// _playQueue[_currentQueueIndex]
+	//
+	// UPDATE_PERCENTAGE_WHILE_PLAYING
+	//
+	//
+	// STOP_UPDATING_PERCENTAGE_WHEN_PAUSED
+	//
+	// clearInterval(refreshIntervalId)
+	//
+	//
+	TrackStore.playCurrentTrack = function () {
+	  // refreshIntervalId = setInterval( () => {
+	  //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
+	  //   }, 25);
+	  _currentTrack.play();
+	};
+	
+	TrackStore.setCurrentPercentage = function (percentage) {};
+	
+	TrackStore.getPercentage = function (trackId) {
+	  return _trackStates[trackId];
+	};
+	
+	TrackStore.pauseCurrentTrack = function () {
+	  // clearInterval(refreshIntervalId);
+	  _currentTrack.pause();
+	};
+	
+	var _resetCurrentTrack = function _resetCurrentTrack(track) {
+	  if (!!_currentTrack.id) {
+	    _currentTrack.pause();
+	
+	    _trackStates[parseInt(_currentTrack.id)] = _currentTrack.currentTime / _currentTrack.duration;
+	  }
+	
+	  _currentTrack = track;
+	
+	  if (_trackStates[_currentTrack.id]) {
+	    _currentTrack.onloadedmetadata = function () {
+	      _currentTrack.currentTime = _trackStates[parseInt(track.id)] * track.duration;
+	      TrackStore.playCurrentTrack();
+	    };
+	  } else {
+	    _trackStates[_currentTrack.id] = 0;
+	    TrackStore.playCurrentTrack();
+	  }
+	};
+	
+	TrackStore.getStates = function () {
+	  return _trackStates;
 	};
 	
 	TrackStore.__onDispatch = function (payload) {
@@ -34184,18 +34267,18 @@
 	
 	module.exports = {
 	  playTrack: function playTrack(e) {
-	    e.preventDefault();
 	
 	    var track = new Audio();
 	    var currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
 	    track.id = currentTrack.id;
 	    track.title = currentTrack.title;
-	    track.autoplay = true;
+	    // track.autoplay = true;
 	    track.src = currentTrack.audio_url;
 	    TrackActions.resetCurrentTrack(track);
+	    // TrackStore.playCurrentTrack();
 	  },
 	  pauseTrack: function pauseTrack(e) {
-	    TrackStore.currentTrack().pause();
+	    TrackActions.pauseCurrentTrack();
 	  }
 	};
 
@@ -34301,7 +34384,6 @@
 	      url: "api/tracks/" + id,
 	      method: "DELETE",
 	      success: function success(resp) {
-	        debugger;
 	        successCb(resp);
 	      },
 	      error: function error(xhr) {
@@ -34522,6 +34604,414 @@
 
 /***/ },
 /* 272 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  TRACK_SHOW_WIDTH: 480,
+	  TRACK_INDEX_WIDTH: 260
+	};
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var CommentAvatarIndexItem = __webpack_require__(274);
+	var UserStore = __webpack_require__(275);
+	var UserActions = __webpack_require__(277);
+	
+	var CommentAvatarIndex = React.createClass({
+	  displayName: 'CommentAvatarIndex',
+	  render: function render() {
+	    var _this = this;
+	
+	    var allCommentAvatarIndexItems = this.props.comments.map(function (comment, key) {
+	      return React.createElement(CommentAvatarIndexItem, { key: key, comment: comment, user: UserStore.find(comment.user_id), width: _this.props.width });
+	    });
+	    return React.createElement(
+	      'div',
+	      { className: 'comment-avatar-index' },
+	      allCommentAvatarIndexItems
+	    );
+	  }
+	});
+	
+	module.exports = CommentAvatarIndex;
+
+/***/ },
+/* 274 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var UserStore = __webpack_require__(275);
+	var UserActions = __webpack_require__(277);
+	var Link = __webpack_require__(175).Link;
+	
+	var CommentAvatarIndexItem = React.createClass({
+	  displayName: 'CommentAvatarIndexItem',
+	  getInitialState: function getInitialState(e) {
+	    return { comment: '' };
+	  },
+	  commentShow: function commentShow(e) {
+	    e.preventDefault();
+	    this.setState({ comment: this.props.comment.body });
+	  },
+	  commentHide: function commentHide(e) {
+	    e.preventDefault();
+	    this.setState({ comment: null });
+	  },
+	  render: function render() {
+	    var hiddenComment = void 0;
+	    var percentage = this.props.comment.track_percentage * this.props.width;
+	    var userUrl = '/users/' + this.props.comment.user_id;
+	    if (this.state.comment) {
+	      hiddenComment = React.createElement(
+	        'div',
+	        { className: 'hidden-comment' },
+	        React.createElement(
+	          Link,
+	          { className: 'username-link', to: userUrl },
+	          this.props.comment.username
+	        ),
+	        '  ',
+	        this.state.comment
+	      );
+	    }
+	    return React.createElement(
+	      'div',
+	      { onMouseLeave: this.commentHide },
+	      React.createElement('img', {
+	        onMouseEnter: this.commentShow,
+	        style: { transform: 'translateX(' + percentage + 'px)' },
+	        className: 'comment-avatar-image',
+	        src: this.props.comment.avatar_image_url }),
+	      React.createElement(
+	        'div',
+	        {
+	          style: { transform: 'translateX(' + percentage + 'px)' },
+	          className: 'comment-avatar-comment' },
+	        hiddenComment
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = CommentAvatarIndexItem;
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(241).Store;
+	
+	var AppDispatcher = __webpack_require__(259),
+	    UserConstants = __webpack_require__(276);
+	
+	var UserStore = new Store(AppDispatcher);
+	
+	var _users = {};
+	
+	UserStore.all = function () {
+	  var users = [];
+	
+	  Object.keys(_users).forEach(function (userId) {
+	    users.push(_users[userId]);
+	  });
+	  return users;
+	};
+	
+	UserStore.find = function (id) {
+	  return _users[id];
+	};
+	
+	var _resetUser = function _resetUser(user) {
+	  _users[user.id] = user;
+	};
+	
+	var _resetAllUsers = function _resetAllUsers(users) {
+	  _users = {};
+	
+	  users.forEach(function (user) {
+	    _users[user.id] = user;
+	  });
+	};
+	
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case UserConstants.RECEIVE_USER:
+	      _resetUser(payload.user);
+	      this.__emitChange();
+	      break;
+	    case UserConstants.RECEIVE_USERS:
+	      _resetAllUsers(payload.users);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = UserStore;
+
+/***/ },
+/* 276 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  RECEIVE_USER: "RECEIVE_USER",
+	  RECEIVE_USERS: "RECEIVE_USERS"
+	};
+
+/***/ },
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var UserApiUtil = __webpack_require__(278),
+	    UserConstants = __webpack_require__(276),
+	    AppDispatcher = __webpack_require__(259),
+	    ErrorActions = __webpack_require__(268);
+	
+	module.exports = {
+	  fetchUser: function fetchUser(id) {
+	    UserApiUtil.fetchUser(id, this.receiveUser);
+	  },
+	  fetchAllUsers: function fetchAllUsers() {
+	    UserApiUtil.fetchAllUsers(this.receiveAllUsers);
+	  },
+	  updateUser: function updateUser(formData) {
+	    UserApiUtil.updateUser(formData, this.receiveUser, ErrorActions.setErrors);
+	  },
+	  receiveUser: function receiveUser(user) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USER,
+	      user: user
+	    });
+	  },
+	  receiveAllUsers: function receiveAllUsers(users) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_USERS,
+	      users: users
+	    });
+	  }
+	};
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var FormConstants = __webpack_require__(267);
+	
+	module.exports = {
+	  fetchUser: function fetchUser(id, successCb) {
+	    $.ajax({
+	      url: "api/users/" + id,
+	      method: "GET",
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in UserApiUtil#fetchUser");
+	      }
+	    });
+	  },
+	  updateUser: function updateUser(formData, successCb, errorCb) {
+	    $.ajax({
+	      url: "api/users/" + formData.get('user[id]'),
+	      method: "PATCH",
+	      contentType: false,
+	      processData: false,
+	      data: formData,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(xhr) {
+	        errorCb(FormConstants.EDIT_USER_FORM, xhr.responseJSON, xhr.responseText);
+	      }
+	    });
+	  },
+	  fetchAllUsers: function fetchAllUsers(successCb) {
+	    $.ajax({
+	      url: "api/users",
+	      method: "GET",
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(resp) {
+	        console.log("Error in UserApiUtil#fetchAllUsers");
+	      }
+	    });
+	  }
+	};
+
+/***/ },
+/* 279 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var TrackStore = __webpack_require__(240);
+	var TrackActions = __webpack_require__(265);
+	var ErrorStore = __webpack_require__(271);
+	var FormConstants = __webpack_require__(267);
+	
+	var TrackEditForm = React.createClass({
+	  displayName: 'TrackEditForm',
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    var track = TrackStore.find(parseInt(this.props.params.trackId));
+	    var trackDescription = '';
+	    var trackImageUrl = '';
+	    if (track.description) {
+	      trackDescription = track.description;
+	    }
+	    if (track.image_url) {
+	      trackImageUrl = track.image_url;
+	    }
+	    return {
+	      title: track.title,
+	      description: trackDescription,
+	      imageUrl: trackImageUrl,
+	      imageFile: null };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
+	  },
+	  redirectIfTrackSaved: function redirectIfTrackSaved() {
+	    this.context.router.push('/tracks');
+	  },
+	  handleTitle: function handleTitle(e) {
+	    this.setState({ title: e.target.value });
+	  },
+	  handleDescription: function handleDescription(e) {
+	    this.setState({ description: e.target.value });
+	  },
+	  handleImage: function handleImage(e) {
+	    var file = e.currentTarget.files[0];
+	    var fileReader = new FileReader();
+	
+	    fileReader.onloadend = function () {
+	      this.setState({ imageFile: file, imageUrl: fileReader.result });
+	    }.bind(this);
+	
+	    if (file) {
+	      fileReader.readAsDataURL(file);
+	    }
+	  },
+	  handleSubmit: function handleSubmit(e) {
+	    e.preventDefault();
+	    var formData = new FormData();
+	
+	    formData.append("track[title]", this.state.title);
+	    formData.append("track[description]", this.state.description);
+	    formData.append("track[id]", this.props.params.trackId);
+	
+	    if (this.state.imageFile) {
+	      formData.append("track[image]", this.state.imageFile);
+	    }
+	
+	    TrackActions.updateTrack(formData);
+	  },
+	  formErrors: function formErrors() {
+	    var errors = ErrorStore.errors(FormConstants.EDIT_TRACK_FORM) || [];
+	    if (errors.length > 0) {
+	      var errorMessages = errors.map(function (error, key) {
+	        return React.createElement(
+	          'li',
+	          { className: 'form-error', key: key },
+	          error
+	        );
+	      });
+	
+	      return React.createElement(
+	        'ul',
+	        null,
+	        errorMessages
+	      );
+	    }
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'edit-track-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
+	        React.createElement(
+	          'div',
+	          { className: 'edit-track-form-title' },
+	          'Edit Track'
+	        ),
+	        this.formErrors(),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement(
+	            'div',
+	            { className: 'form-label' },
+	            'Title'
+	          ),
+	          React.createElement('input', { className: 'input',
+	            placeholder: 'Track Title',
+	            value: this.state.title,
+	            onChange: this.handleTitle })
+	        ),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement(
+	            'div',
+	            { className: 'form-label' },
+	            'Description'
+	          ),
+	          React.createElement('textarea', { className: 'input',
+	
+	            value: this.state.description,
+	            onChange: this.handleDescription })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input' },
+	          React.createElement(
+	            'div',
+	            { className: 'form-label' },
+	            'Update your track image!'
+	          ),
+	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
+	          React.createElement('br', null),
+	          React.createElement('img', { className: 'form-image', src: this.state.imageUrl })
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'create-track-button form-hover' },
+	          'Update'
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = TrackEditForm;
+
+/***/ },
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34701,7 +35191,7 @@
 	module.exports = TrackForm;
 
 /***/ },
-/* 273 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34710,27 +35200,29 @@
 	var Link = __webpack_require__(175).Link;
 	var TrackStore = __webpack_require__(240);
 	var TrackActions = __webpack_require__(265);
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
 	var UserActions = __webpack_require__(277);
 	var CSSHelper = __webpack_require__(263);
 	var TrackChange = __webpack_require__(264);
-	var CommentForm = __webpack_require__(281);
-	var CommentIndex = __webpack_require__(286);
-	var CommentAvatarIndex = __webpack_require__(289);
-	var WindowSizeConstants = __webpack_require__(305);
+	var CommentForm = __webpack_require__(285);
+	var CommentIndex = __webpack_require__(290);
+	var CommentAvatarIndex = __webpack_require__(273);
+	var WindowSizeConstants = __webpack_require__(272);
 	
 	var TrackShow = React.createClass({
 	  displayName: 'TrackShow',
 	  getInitialState: function getInitialState() {
 	    var track = TrackStore.find(this.props.params.trackId);
 	    var currentUser = SessionStore.currentUser();
-	    return { track: track, currentUser: currentUser };
+	    var rbg1 = CSSHelper.styleHelper();
+	    return { track: track, currentUser: currentUser, rbg1: rbg1 };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onChangeTrack);
 	    this.sessionListener = SessionStore.addListener(this.onChangeSession);
 	    TrackActions.fetchTrack(this.props.params.trackId);
+	
 	    SessionActions.fetchCurrentUser();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -34751,11 +35243,6 @@
 	    var currentUser = SessionStore.currentUser();
 	    this.setState({ currentUser: currentUser });
 	  },
-	  onChange: function onChange() {
-	    var track = TrackStore.find(this.props.params.trackId);
-	    var currentUser = SessionStore.currentUser();
-	    this.setState({ track: track, currentUser: currentUser });
-	  },
 	  playIcon: function playIcon() {
 	    if (parseInt(TrackStore.currentTrack().id) === this.state.track.id && !TrackStore.currentTrack().paused) {
 	      return React.createElement('div', { className: 'pause-icon', id: this.state.track.id, onClick: this.pauseCurrentTrack });
@@ -34767,12 +35254,11 @@
 	
 	    var rbg1 = CSSHelper.styleHelper();
 	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-	    debugger;
 	    if (this.state.track) {
 	      var userUrl = '/users/' + this.state.track.user_id;
 	      return React.createElement(
 	        'div',
-	        { className: 'track-show' },
+	        { className: 'track-show-main' },
 	        React.createElement(
 	          'div',
 	          { className: 'track-show banner-area', style: { background: '-webkit-linear-gradient(135deg, rgba(' + rbg1[0] + ', ' + rbg1[1] + ', ' + rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
@@ -34825,22 +35311,33 @@
 	          { className: 'track-show comment-area' },
 	          React.createElement(
 	            'div',
-	            { className: 'user-area' },
-	            React.createElement('img', { src: this.state.track.user.avatar_image_url })
+	            { className: 'comment-container' },
+	            React.createElement('img', { className: 'comment-form-image', src: this.state.currentUser.avatar_image_url }),
+	            React.createElement(
+	              'div',
+	              { className: 'comment-form' },
+	              React.createElement(CommentForm, { track: this.state.track })
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'comment-user-area' },
+	              React.createElement('img', { src: this.state.track.user.avatar_image_url }),
+	              React.createElement('br', null),
+	              React.createElement(
+	                'div',
+	                { className: 'comment-username' },
+	                this.state.track.user.username
+	              )
+	            )
 	          ),
 	          React.createElement(
 	            'div',
-	            { className: 'track-show comment-form' },
-	            React.createElement(CommentForm, { track: this.state.track })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'track-show description' },
+	            { className: 'description' },
 	            this.state.track.description
 	          ),
 	          React.createElement(
 	            'div',
-	            { className: 'track-show comment-index' },
+	            { className: 'comment-index' },
 	            React.createElement(CommentIndex, { comments: this.state.track.comments })
 	          )
 	        )
@@ -34854,7 +35351,7 @@
 	module.exports = TrackShow;
 
 /***/ },
-/* 274 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34862,7 +35359,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    SessionConstants = __webpack_require__(275);
+	    SessionConstants = __webpack_require__(283);
 	
 	var SessionStore = new Store(AppDispatcher);
 	
@@ -34900,7 +35397,7 @@
 	module.exports = SessionStore;
 
 /***/ },
-/* 275 */
+/* 283 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34911,13 +35408,13 @@
 	};
 
 /***/ },
-/* 276 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var SessionApiUtil = __webpack_require__(269),
-	    SessionConstants = __webpack_require__(275),
+	    SessionConstants = __webpack_require__(283),
 	    AppDispatcher = __webpack_require__(259),
 	    ErrorActions = __webpack_require__(268);
 	
@@ -34949,165 +35446,14 @@
 	};
 
 /***/ },
-/* 277 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var UserApiUtil = __webpack_require__(278),
-	    UserConstants = __webpack_require__(279),
-	    AppDispatcher = __webpack_require__(259),
-	    ErrorActions = __webpack_require__(268);
-	
-	module.exports = {
-	  fetchUser: function fetchUser(id) {
-	    UserApiUtil.fetchUser(id, this.receiveUser);
-	  },
-	  fetchAllUsers: function fetchAllUsers() {
-	    UserApiUtil.fetchAllUsers(this.receiveAllUsers);
-	  },
-	  updateUser: function updateUser(formData) {
-	    UserApiUtil.updateUser(formData, this.receiveUser, ErrorActions.setErrors);
-	  },
-	  receiveUser: function receiveUser(user) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_USER,
-	      user: user
-	    });
-	  },
-	  receiveAllUsers: function receiveAllUsers(users) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.RECEIVE_USERS,
-	      users: users
-	    });
-	  }
-	};
-
-/***/ },
-/* 278 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var FormConstants = __webpack_require__(267);
-	
-	module.exports = {
-	  fetchUser: function fetchUser(id, successCb) {
-	    $.ajax({
-	      url: "api/users/" + id,
-	      method: "GET",
-	      success: function success(resp) {
-	        successCb(resp);
-	      },
-	      error: function error(resp) {
-	        console.log("Error in UserApiUtil#fetchUser");
-	      }
-	    });
-	  },
-	  updateUser: function updateUser(formData, successCb, errorCb) {
-	    $.ajax({
-	      url: "api/users/" + formData.get('user[id]'),
-	      method: "PATCH",
-	      contentType: false,
-	      processData: false,
-	      data: formData,
-	      success: function success(resp) {
-	        successCb(resp);
-	      },
-	      error: function error(xhr) {
-	        errorCb(FormConstants.EDIT_USER_FORM, xhr.responseJSON, xhr.responseText);
-	      }
-	    });
-	  },
-	  fetchAllUsers: function fetchAllUsers(successCb) {
-	    $.ajax({
-	      url: "api/users",
-	      method: "GET",
-	      success: function success(resp) {
-	        successCb(resp);
-	      },
-	      error: function error(resp) {
-	        console.log("Error in UserApiUtil#fetchAllUsers");
-	      }
-	    });
-	  }
-	};
-
-/***/ },
-/* 279 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	  RECEIVE_USER: "RECEIVE_USER",
-	  RECEIVE_USERS: "RECEIVE_USERS"
-	};
-
-/***/ },
-/* 280 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Store = __webpack_require__(241).Store;
-	
-	var AppDispatcher = __webpack_require__(259),
-	    UserConstants = __webpack_require__(279);
-	
-	var UserStore = new Store(AppDispatcher);
-	
-	var _users = {};
-	
-	UserStore.all = function () {
-	  var users = [];
-	
-	  Object.keys(_users).forEach(function (userId) {
-	    users.push(_users[userId]);
-	  });
-	  return users;
-	};
-	
-	UserStore.find = function (id) {
-	  return _users[id];
-	};
-	
-	var _resetUser = function _resetUser(user) {
-	  _users[user.id] = user;
-	};
-	
-	var _resetAllUsers = function _resetAllUsers(users) {
-	  _users = {};
-	
-	  users.forEach(function (user) {
-	    _users[user.id] = user;
-	  });
-	};
-	
-	UserStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case UserConstants.RECEIVE_USER:
-	      _resetUser(payload.user);
-	      this.__emitChange();
-	      break;
-	    case UserConstants.RECEIVE_USERS:
-	      _resetAllUsers(payload.users);
-	      this.__emitChange();
-	      break;
-	  }
-	};
-	
-	module.exports = UserStore;
-
-/***/ },
-/* 281 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentActions = __webpack_require__(282);
-	var CommentStore = __webpack_require__(285);
+	var CommentActions = __webpack_require__(286);
+	var CommentStore = __webpack_require__(289);
 	var ErrorStore = __webpack_require__(271);
 	var FormConstants = __webpack_require__(267);
 	var TrackStore = __webpack_require__(240);
@@ -35172,13 +35518,13 @@
 	module.exports = CommentForm;
 
 /***/ },
-/* 282 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var CommentApiUtil = __webpack_require__(283);
-	var CommentConstants = __webpack_require__(284);
+	var CommentApiUtil = __webpack_require__(287);
+	var CommentConstants = __webpack_require__(288);
 	var AppDispatcher = __webpack_require__(259);
 	var ErrorStore = __webpack_require__(271);
 	
@@ -35204,7 +35550,7 @@
 	};
 
 /***/ },
-/* 283 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -35253,7 +35599,7 @@
 	};
 
 /***/ },
-/* 284 */
+/* 288 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35264,7 +35610,7 @@
 	};
 
 /***/ },
-/* 285 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35272,7 +35618,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    CommentConstants = __webpack_require__(284);
+	    CommentConstants = __webpack_require__(288);
 	
 	var CommentStore = new Store(AppDispatcher);
 	
@@ -35317,14 +35663,14 @@
 	module.exports = CommentStore;
 
 /***/ },
-/* 286 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentIndexItem = __webpack_require__(287);
-	var UserStore = __webpack_require__(280);
+	var CommentIndexItem = __webpack_require__(291);
+	var UserStore = __webpack_require__(275);
 	
 	var CommentIndex = React.createClass({
 	  displayName: 'CommentIndex',
@@ -35349,16 +35695,16 @@
 	module.exports = CommentIndex;
 
 /***/ },
-/* 287 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var UserStore = __webpack_require__(280);
+	var UserStore = __webpack_require__(275);
 	var UserActions = __webpack_require__(277);
-	var TimeChange = __webpack_require__(288);
+	var TimeChange = __webpack_require__(292);
 	
 	var CommentIndexItem = React.createClass({
 	  displayName: 'CommentIndexItem',
@@ -35376,6 +35722,7 @@
 	          this.props.comment.username,
 	          ' says: '
 	        ),
+	        React.createElement('br', null),
 	        this.props.comment.body
 	      )
 	    );
@@ -35385,7 +35732,7 @@
 	module.exports = CommentIndexItem;
 
 /***/ },
-/* 288 */
+/* 292 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35417,98 +35764,7 @@
 	};
 
 /***/ },
-/* 289 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var CommentAvatarIndexItem = __webpack_require__(290);
-	var UserStore = __webpack_require__(280);
-	var UserActions = __webpack_require__(277);
-	
-	var CommentAvatarIndex = React.createClass({
-	  displayName: 'CommentAvatarIndex',
-	  render: function render() {
-	    var _this = this;
-	
-	    var allCommentAvatarIndexItems = this.props.comments.map(function (comment, key) {
-	      return React.createElement(CommentAvatarIndexItem, { key: key, comment: comment, user: UserStore.find(comment.user_id), width: _this.props.width });
-	    });
-	    return React.createElement(
-	      'div',
-	      { className: 'comment-avatar-index' },
-	      allCommentAvatarIndexItems
-	    );
-	  }
-	});
-	
-	module.exports = CommentAvatarIndex;
-
-/***/ },
-/* 290 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(280);
-	var UserActions = __webpack_require__(277);
-	var Link = __webpack_require__(175).Link;
-	
-	var CommentAvatarIndexItem = React.createClass({
-	  displayName: 'CommentAvatarIndexItem',
-	  getInitialState: function getInitialState(e) {
-	    return { comment: '' };
-	  },
-	  commentShow: function commentShow(e) {
-	    e.preventDefault();
-	    this.setState({ comment: this.props.comment.body });
-	  },
-	  commentHide: function commentHide(e) {
-	    e.preventDefault();
-	    this.setState({ comment: null });
-	  },
-	  render: function render() {
-	    var hiddenComment = void 0;
-	    var percentage = this.props.comment.track_percentage * this.props.width;
-	    var userUrl = '/users/' + this.props.comment.user_id;
-	    if (this.state.comment) {
-	      hiddenComment = React.createElement(
-	        'div',
-	        { className: 'hidden-comment' },
-	        React.createElement(
-	          Link,
-	          { className: 'username-link', to: userUrl },
-	          this.props.comment.username
-	        ),
-	        '  ',
-	        this.state.comment
-	      );
-	    }
-	    return React.createElement(
-	      'div',
-	      { onMouseLeave: this.commentHide },
-	      React.createElement('img', {
-	        onMouseEnter: this.commentShow,
-	        style: { transform: 'translateX(' + percentage + 'px)' },
-	        className: 'comment-avatar-image',
-	        src: this.props.comment.avatar_image_url }),
-	      React.createElement(
-	        'div',
-	        {
-	          style: { transform: 'translateX(' + percentage + 'px)' },
-	          className: 'comment-avatar-comment' },
-	        hiddenComment
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = CommentAvatarIndexItem;
-
-/***/ },
-/* 291 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35516,8 +35772,8 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
 	var FormConstants = __webpack_require__(267);
 	
 	var LoginForm = React.createClass({
@@ -35648,15 +35904,15 @@
 	module.exports = LoginForm;
 
 /***/ },
-/* 292 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
 	
 	var SignupForm = React.createClass({
 	  displayName: 'SignupForm',
@@ -35733,7 +35989,7 @@
 	module.exports = SignupForm;
 
 /***/ },
-/* 293 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35780,7 +36036,7 @@
 	module.exports = HomePage;
 
 /***/ },
-/* 294 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35829,14 +36085,14 @@
 	module.exports = UserPage;
 
 /***/ },
-/* 295 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var UserStore = __webpack_require__(280);
+	var UserStore = __webpack_require__(275);
 	var UserActions = __webpack_require__(277);
 	var TrackIndex = __webpack_require__(238);
 	var CSSHelper = __webpack_require__(263);
@@ -35849,7 +36105,6 @@
 	    return { user: UserStore.find(parseInt(this.props.params.userId)) };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    debugger;
 	    this.userListener = UserStore.addListener(this.onChange);
 	    UserActions.fetchUser(parseInt(this.props.params.userId));
 	  },
@@ -35865,7 +36120,7 @@
 	  render: function render() {
 	    var rbg1 = CSSHelper.styleHelper();
 	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-	    debugger;
+	
 	    if (this.state.user) {
 	
 	      var username = this.state.user.username;
@@ -35921,7 +36176,158 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 296 */
+/* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
+	var TrackStore = __webpack_require__(240);
+	var TrackActions = __webpack_require__(265);
+	var UserTrackIndex = __webpack_require__(299);
+	
+	var UserTracks = React.createClass({
+	  displayName: 'UserTracks',
+	  getInitialState: function getInitialState() {
+	    return {
+	      currentUser: SessionStore.currentUser(),
+	      userTracks: TrackStore.all() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.sessionListener = SessionStore.addListener(this.onSessionChange);
+	    this.trackListener = TrackStore.addListener(this.onTrackChange);
+	    TrackActions.fetchUserTracks(this.state.currentUser.id);
+	    SessionActions.fetchCurrentUser();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.sessionListener.remove();
+	    this.trackListener.remove();
+	  },
+	  onTrackChange: function onTrackChange() {
+	    this.setState({ userTracks: TrackStore.all() });
+	  },
+	  onSessionChange: function onSessionChange() {
+	    this.setState({ currentUser: SessionStore.currentUser() });
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'usertracks group' },
+	      React.createElement(UserTrackIndex, { tracks: this.state.userTracks })
+	    );
+	  }
+	});
+	
+	module.exports = UserTracks;
+
+/***/ },
+/* 299 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var UserTrackIndexItem = __webpack_require__(300);
+	
+	var UserTrackIndex = React.createClass({
+	  displayName: 'UserTrackIndex',
+	  render: function render() {
+	
+	    if (!!this.props.tracks) {
+	      var allUserTrackIndexItems = this.props.tracks.map(function (track, key) {
+	        return React.createElement(UserTrackIndexItem, { track: track, key: key });
+	      });
+	      return React.createElement(
+	        'div',
+	        { className: 'usertrack-index' },
+	        React.createElement(
+	          'div',
+	          null,
+	          'Your Tracks'
+	        ),
+	        allUserTrackIndexItems
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        'You have no tracks!'
+	      );
+	    }
+	  }
+	});
+	
+	module.exports = UserTrackIndex;
+
+/***/ },
+/* 300 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
+	var TrackStore = __webpack_require__(240);
+	var TrackActions = __webpack_require__(265);
+	var SessionStore = __webpack_require__(282);
+	
+	var UserTrackIndexItem = React.createClass({
+	  displayName: 'UserTrackIndexItem',
+	
+	  contextTypes: {
+	    router: React.PropTypes.object.isRequired
+	  },
+	
+	  handleDeleteSubmit: function handleDeleteSubmit(e) {
+	    e.preventDefault();
+	    TrackActions.deleteTrack(this.props.track.id);
+	  },
+	  render: function render() {
+	    debugger;
+	    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id && this.props.track.user_id === SessionStore.currentUser().id) {
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'div',
+	          null,
+	          this.props.track.title,
+	          ': You can\'t edit a song while it\'s currently playing!'
+	        )
+	      );
+	    } else {
+	      if (this.props.track.user_id === SessionStore.currentUser().id) {
+	
+	        var editTrackUrl = 'tracks/' + this.props.track.id + '/edit';
+	
+	        return React.createElement(
+	          'div',
+	          null,
+	          React.createElement(
+	            Link,
+	            { to: editTrackUrl },
+	            'Edit'
+	          ),
+	          React.createElement(
+	            'button',
+	            { onClick: this.handleDeleteSubmit },
+	            'Delete'
+	          ),
+	          this.props.track.title
+	        );
+	      } else {
+	        return React.createElement('div', null);
+	      }
+	    }
+	  }
+	});
+	
+	module.exports = UserTrackIndexItem;
+
+/***/ },
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35929,9 +36335,9 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
-	var UserStore = __webpack_require__(280);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
+	var UserStore = __webpack_require__(275);
 	var UserActions = __webpack_require__(277);
 	var FormConstants = __webpack_require__(267);
 	
@@ -36055,21 +36461,21 @@
 	module.exports = CurrentUserProfile;
 
 /***/ },
-/* 297 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LoginForm = __webpack_require__(291);
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
+	var LoginForm = __webpack_require__(293);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
 	var Link = __webpack_require__(175).Link;
 	
-	var NavBar = __webpack_require__(298);
-	var PlayBar = __webpack_require__(299);
-	var HomePage = __webpack_require__(293);
-	var UserPage = __webpack_require__(294);
+	var NavBar = __webpack_require__(303);
+	var PlayBar = __webpack_require__(304);
+	var HomePage = __webpack_require__(295);
+	var UserPage = __webpack_require__(296);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -36098,15 +36504,15 @@
 	module.exports = App;
 
 /***/ },
-/* 298 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
+	var SessionStore = __webpack_require__(282);
+	var SessionActions = __webpack_require__(284);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -36125,10 +36531,6 @@
 	  updateUser: function updateUser() {
 	    this.setState({ currentUser: SessionStore.currentUser() });
 	  },
-	  goToTracks: function goToTracks(e) {
-	    e.preventDefault();
-	    this.context.router.push('/tracks');
-	  },
 	  navLeft: function navLeft() {
 	    if (SessionStore.isUserLoggedIn()) {
 	      return React.createElement(
@@ -36140,8 +36542,8 @@
 	          'Home'
 	        ),
 	        React.createElement(
-	          'a',
-	          { onClick: this.goToTracks, className: 'navbar-collection nav-bar-left' },
+	          Link,
+	          { to: '/tracks', className: 'navbar-collection nav-bar-left' },
 	          'Collection'
 	        )
 	      );
@@ -36250,7 +36652,7 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 299 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36339,315 +36741,18 @@
 	module.exports = PlayBar;
 
 /***/ },
-/* 300 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var SessionActions = __webpack_require__(276);
+	var SessionActions = __webpack_require__(284);
 	
 	module.exports = function () {
 	  var user = window.phantomVibes.user;
 	  if (typeof user !== "undefined") {
 	    SessionActions.receiveCurrentUser(user);
 	  }
-	};
-
-/***/ },
-/* 301 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(274);
-	var SessionActions = __webpack_require__(276);
-	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
-	var UserTrackIndex = __webpack_require__(302);
-	
-	var UserTracks = React.createClass({
-	  displayName: 'UserTracks',
-	  getInitialState: function getInitialState() {
-	    debugger;
-	    return {
-	      currentUser: SessionStore.currentUser(),
-	      userTracks: TrackStore.all() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.sessionListener = SessionStore.addListener(this.onSessionChange);
-	    this.trackListener = TrackStore.addListener(this.onTrackChange);
-	    TrackActions.fetchUserTracks(this.state.currentUser.id);
-	    SessionActions.fetchCurrentUser();
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.sessionListener.remove();
-	    this.trackListener.remove();
-	  },
-	  onTrackChange: function onTrackChange() {
-	    this.setState({ userTracks: TrackStore.all() });
-	  },
-	  onSessionChange: function onSessionChange() {
-	    this.setState({ currentUser: SessionStore.currentUser() });
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'usertracks group' },
-	      React.createElement(UserTrackIndex, { tracks: this.state.userTracks })
-	    );
-	  }
-	});
-	
-	module.exports = UserTracks;
-
-/***/ },
-/* 302 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var UserTrackIndexItem = __webpack_require__(303);
-	
-	var UserTrackIndex = React.createClass({
-	  displayName: 'UserTrackIndex',
-	  render: function render() {
-	
-	    if (!!this.props.tracks) {
-	      var allUserTrackIndexItems = this.props.tracks.map(function (track, key) {
-	        return React.createElement(UserTrackIndexItem, { track: track, key: key });
-	      });
-	      return React.createElement(
-	        'div',
-	        { className: 'usertrack-index' },
-	        React.createElement(
-	          'div',
-	          null,
-	          'Your Tracks'
-	        ),
-	        allUserTrackIndexItems
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        'You have no tracks!'
-	      );
-	    }
-	  }
-	});
-	
-	module.exports = UserTrackIndex;
-
-/***/ },
-/* 303 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var Link = __webpack_require__(175).Link;
-	var TrackActions = __webpack_require__(265);
-	
-	var UserTrackIndexItem = React.createClass({
-	  displayName: 'UserTrackIndexItem',
-	
-	  contextTypes: {
-	    router: React.PropTypes.object.isRequired
-	  },
-	
-	  handleDeleteSubmit: function handleDeleteSubmit(e) {
-	    e.preventDefault();
-	    TrackActions.deleteTrack(this.props.track.id);
-	  },
-	  render: function render() {
-	    var editTrackUrl = 'tracks/' + this.props.track.id + '/edit';
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        Link,
-	        { to: editTrackUrl },
-	        'Edit'
-	      ),
-	      React.createElement(
-	        'button',
-	        { onClick: this.handleDeleteSubmit },
-	        'Delete'
-	      ),
-	      this.props.track.title
-	    );
-	  }
-	});
-	
-	module.exports = UserTrackIndexItem;
-
-/***/ },
-/* 304 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
-	var ErrorStore = __webpack_require__(271);
-	var FormConstants = __webpack_require__(267);
-	
-	var TrackEditForm = React.createClass({
-	  displayName: 'TrackEditForm',
-	
-	  contextTypes: {
-	    router: React.PropTypes.object.isRequired
-	  },
-	
-	  getInitialState: function getInitialState() {
-	    var track = TrackStore.find(parseInt(this.props.params.trackId));
-	    var trackDescription = '';
-	    var trackImageUrl = '';
-	    if (track.description) {
-	      trackDescription = track.description;
-	    }
-	    if (track.image_url) {
-	      trackImageUrl = track.image_url;
-	    }
-	    return {
-	      title: track.title,
-	      description: trackDescription,
-	      imageUrl: trackImageUrl,
-	      imageFile: null };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
-	  },
-	  redirectIfTrackSaved: function redirectIfTrackSaved() {
-	    this.context.router.push('/tracks');
-	  },
-	  handleTitle: function handleTitle(e) {
-	    this.setState({ title: e.target.value });
-	  },
-	  handleDescription: function handleDescription(e) {
-	    this.setState({ description: e.target.value });
-	  },
-	  handleImage: function handleImage(e) {
-	    var file = e.currentTarget.files[0];
-	    var fileReader = new FileReader();
-	
-	    fileReader.onloadend = function () {
-	      this.setState({ imageFile: file, imageUrl: fileReader.result });
-	    }.bind(this);
-	
-	    if (file) {
-	      fileReader.readAsDataURL(file);
-	    }
-	  },
-	  handleSubmit: function handleSubmit(e) {
-	    e.preventDefault();
-	    var formData = new FormData();
-	
-	    formData.append("track[title]", this.state.title);
-	    formData.append("track[description]", this.state.description);
-	    formData.append("track[id]", this.props.params.trackId);
-	
-	    if (this.state.imageFile) {
-	      formData.append("track[image]", this.state.imageFile);
-	    }
-	
-	    TrackActions.updateTrack(formData);
-	  },
-	  formErrors: function formErrors() {
-	    var errors = ErrorStore.errors(FormConstants.EDIT_TRACK_FORM) || [];
-	    if (errors.length > 0) {
-	      var errorMessages = errors.map(function (error, key) {
-	        return React.createElement(
-	          'li',
-	          { className: 'form-error', key: key },
-	          error
-	        );
-	      });
-	
-	      return React.createElement(
-	        'ul',
-	        null,
-	        errorMessages
-	      );
-	    }
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'form',
-	        { className: 'edit-track-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
-	        React.createElement(
-	          'div',
-	          { className: 'edit-track-form-title' },
-	          'Edit Track'
-	        ),
-	        this.formErrors(),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Title'
-	          ),
-	          React.createElement('input', { className: 'input',
-	            placeholder: 'Track Title',
-	            value: this.state.title,
-	            onChange: this.handleTitle })
-	        ),
-	        React.createElement('br', null),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Description'
-	          ),
-	          React.createElement('textarea', { className: 'input',
-	
-	            value: this.state.description,
-	            onChange: this.handleDescription })
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Update your track image!'
-	          ),
-	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
-	          React.createElement('br', null),
-	          React.createElement('img', { className: 'form-image', src: this.state.imageUrl })
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'create-track-button form-hover' },
-	          'Update'
-	        )
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = TrackEditForm;
-
-/***/ },
-/* 305 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	  TRACK_SHOW_WIDTH: 480,
-	  TRACK_INDEX_WIDTH: 260
 	};
 
 /***/ }

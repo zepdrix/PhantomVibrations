@@ -41,7 +41,6 @@ module.exports = {
       url: `api/tracks/${id}`,
       method: "DELETE",
       success: (resp) => {
-        debugger
         successCb(resp);
       },
       error(xhr) {

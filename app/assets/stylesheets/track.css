@@ -35,7 +35,7 @@
   padding: 5px;
 }
 
-.track-show {
+.track-show-main {
   width: 900px;
   margin: 0 auto;
   margin-top: 75px;
@@ -46,6 +46,7 @@
   transition: 1s;
   height: 350px;
   box-shadow: 0px 0px 30px black;
+  margin-bottom: 35px;
 }
 
 .track-show .play-icon {
@@ -88,7 +89,7 @@
   /*float: right;*/
   width: 420px;
   height: 16px;
-  background-color: white;
+  background-color: transparent;;
   float: right;
 }
 

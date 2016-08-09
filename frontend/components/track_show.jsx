@@ -16,13 +16,15 @@ var TrackShow = React.createClass({
   getInitialState () {
     let track = TrackStore.find(this.props.params.trackId);
     let currentUser = SessionStore.currentUser();
-    return { track, currentUser };
+    let rbg1 = CSSHelper.styleHelper();
+    return { track, currentUser, rbg1 };
   },
 
   componentDidMount () {
     this.trackListener = TrackStore.addListener(this.onChangeTrack);
     this.sessionListener = SessionStore.addListener(this.onChangeSession);
     TrackActions.fetchTrack(this.props.params.trackId);
+
     SessionActions.fetchCurrentUser();
   },
 
@@ -39,6 +41,7 @@ var TrackShow = React.createClass({
     TrackChange.playTrack(e);
   },
 
+
   onChangeTrack () {
     let track = TrackStore.find(this.props.params.trackId);
     this.setState({ track });
@@ -49,11 +52,7 @@ var TrackShow = React.createClass({
     this.setState({ currentUser });
   },
 
-  onChange () {
-    let track = TrackStore.find(this.props.params.trackId);
-    let currentUser = SessionStore.currentUser();
-    this.setState({ track, currentUser });
-  },
+
 
   playIcon () {
     if (parseInt(TrackStore.currentTrack().id) === this.state.track.id && !TrackStore.currentTrack().paused) {
@@ -71,11 +70,10 @@ var TrackShow = React.createClass({
 
     let rbg1 = CSSHelper.styleHelper();
     let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
-    debugger
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
       return(
-        <div className="track-show">
+        <div className="track-show-main">
           <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(rbg1[0])+', '+(rbg1[1])+', '+(rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
             <div className="track-show top-left">
               { this.playIcon() }
@@ -112,19 +110,25 @@ var TrackShow = React.createClass({
 
 
           <div className="track-show comment-area">
-            <div className="user-area">
-              <img src={ this.state.track.user.avatar_image_url }/>
+            <div className="comment-container">
+              <img className="comment-form-image" src={ this.state.currentUser.avatar_image_url }/>
+              <div className="comment-form">
+                <CommentForm track={ this.state.track }/>
+              </div>
+
+              <div className="comment-user-area">
+                <img src={ this.state.track.user.avatar_image_url }/>
+                <br/>
+                <div className="comment-username">{ this.state.track.user.username }</div>
+              </div>
             </div>
 
-            <div className="track-show comment-form">
-              <CommentForm track={ this.state.track }/>
-            </div>
 
-            <div className="track-show description">
+            <div className="description">
               { this.state.track.description }
             </div>
 
-            <div className="track-show comment-index">
+            <div className="comment-index">
               <CommentIndex  comments={ this.state.track.comments}/>
             </div>
           </div>

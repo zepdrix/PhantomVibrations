@@ -47,11 +47,12 @@
 .comment-avatar-image:hover {
   position: absolute;
   left:-2px;
-  top: -2px;
+  top: -6px;
   height: 24px;
   width: 24px;
   padding-bottom: 20px;
   transition: 0.3s;
+  /*z-index: 9999;*/
 }
 
 .comment-avatar-container {
@@ -68,5 +69,80 @@
 
 .hidden-comment {
   color: #A1A1A1;
+}
 
+.track-show.comment-area {
+  display: block;
+  position: relative;
+  width: 700px;
+  height: 400px;
+}
+
+.track-show .comment-form-image {
+  height: 30px;
+  width: 30px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+
+}
+
+.track-show .comment-container {
+  box-shadow: 0px 0px 30px lightgrey;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  height: 30px;
+}
+
+.track-show .comment-form {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background: white;
+  height: 30px;
+  float: right;
+  margin-bottom: 30px;
+  width: 670px;
+}
+
+.track-show .comment-user-area {
+  background: yellow;
+  width: 200px;
+  height: 340px;
+  margin-right: 0px;
+  display: block;
+  float: left;
+  box-shadow: 0px 0px 30px lightgrey;
+  text-align: center;
+
+  background-color: #FFFBE8;
+  background: linear-gradient(to top, rgba(0,0,0,0), rgba(255,251,232,1));
+
+}
+
+.track-show .comment-user-area img{
+  margin: 20px;
+  height: 158px;
+  width: 158px;
+  border-radius: 50%;
+}
+
+.track-show .description {
+  float: right;
+  width: 460px;
+  margin-bottom: 30px;
+  padding: 5px 10px;
+  box-shadow: 0px 0px 30px lightgrey;
+  background-color: #FFFBE8;
+}
+
+.comment-index.list > li {
+  padding: 5px 10px;
+  background-color: #FFFBE8;
+  display: block;
+  height: 100%;
+  float: right;
+  margin-bottom: 30px;
+  width: 460px;
+  box-shadow: 0px 0px 30px lightgrey;
 }

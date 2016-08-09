@@ -21,17 +21,13 @@ var NavBar = React.createClass({
     this.setState({ currentUser: SessionStore.currentUser() });
   },
 
-  goToTracks (e) {
-    e.preventDefault();
-    this.context.router.push('/tracks');
-  },
 
   navLeft () {
     if (SessionStore.isUserLoggedIn()) {
       return(
         <div>
           <Link to='/' className="navbar-home nav-bar-left">Home</Link>
-          <a onClick={ this.goToTracks } className="navbar-collection nav-bar-left">Collection</a>
+          <Link to='/tracks' className="navbar-collection nav-bar-left">Collection</Link>
         </div>
       );
     } else {

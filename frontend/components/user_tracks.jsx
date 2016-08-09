@@ -8,7 +8,6 @@ const UserTrackIndex = require('./user_track_index.jsx');
 var UserTracks = React.createClass({
 
   getInitialState () {
-    debugger
     return {
       currentUser: SessionStore.currentUser(),
       userTracks: TrackStore.all()};

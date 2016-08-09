@@ -15,12 +15,12 @@ class Api::CommentsController < ApplicationController
   end
 
   def index
-    @comments = Comment.all
+    @comments = Comment.all.sort { |x,y| x.created_at - y.created_at }
     render "api/comments/index"
   end
 
   def show
-    @comment = Comment.find(params[:id])
+    @comment = Comment.find(params[:id]).sort { |x,y| x.track_percentage - y.track_percentage }
   end
 
   private

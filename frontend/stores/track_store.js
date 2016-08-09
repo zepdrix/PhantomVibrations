@@ -7,11 +7,13 @@ const TrackStore = new Store(AppDispatcher);
 
 var _tracks = {};
 
-var _playQueue = [];
-
-var _currentTrackIndex = 0;
+// var _playQueue = {};
+// var _currentQueueIndex = -1;
 
 var _currentTrack = {};
+var _trackStates = {};
+
+var refreshIntervalId;
 
 TrackStore.all = function () {
   let tracks = [];
@@ -35,7 +37,7 @@ TrackStore.currentTime = function () {
 };
 
 TrackStore.isCurrentTrack = function () {
-  return !!_currentTrack.src;
+  return !!_currentTrack.id;
 };
 
 const _resetTrack = function (track) {
@@ -43,23 +45,139 @@ const _resetTrack = function (track) {
 };
 
 const _resetAllTracks = function (tracks) {
-  _tracks = {};
+  
+  Object.keys(_tracks).forEach( (trackId) => {
+    if (trackId !== _currentTrack.id) {
+      delete _tracks[trackId];
+    }
+  });
+
   tracks.forEach( (track) => {
-    _tracks[track.id] = track;
+    if (track.id !== _currentTrack.id) {
+      _tracks[track.id] = track;
+    }
   });
 };
 
-const _resetCurrentTrack = function (track) {
-  if (!!_currentTrack.src) {
-    _currentTrack.pause();
-
-  }
-  _currentTrack = track;
-};
+// const _resetCurrentTrack = function (track) {
+//   if (!!_currentTrack.id) {
+//     _currentTrack.pause();
+//   }
+//   _trackStates[track.id] = 0;
+//   _currentTrack = track;
+// };
 
 const _removeTrack = function (track) {
   delete _tracks[track.id];
 };
+
+
+
+
+
+
+// CURRENT_TRACK
+//
+// _currentTrack
+//
+// CURRENT_TRACK_STATE
+//
+// _trackStates[_playQueue[_currentQueueIndex]]
+//
+// CURRENT_TRACK_ID
+//
+// _playQueue[_currentQueueIndex]
+//
+// UPDATE_PERCENTAGE_WHILE_PLAYING
+//
+//
+// STOP_UPDATING_PERCENTAGE_WHEN_PAUSED
+//
+// clearInterval(refreshIntervalId)
+//
+//
+TrackStore.playCurrentTrack = function () {
+  // refreshIntervalId = setInterval( () => {
+  //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
+  //   }, 25);
+  _currentTrack.play();
+};
+
+TrackStore.setCurrentPercentage = function (percentage) {
+
+};
+
+
+TrackStore.getPercentage = function (trackId) {
+  return _trackStates[trackId];
+};
+
+
+TrackStore.pauseCurrentTrack = function () {
+  // clearInterval(refreshIntervalId);
+  _currentTrack.pause();
+};
+
+const _resetCurrentTrack = function (track) {
+  if (!!_currentTrack.id) {
+    _currentTrack.pause();
+
+    _trackStates[parseInt(_currentTrack.id)] = _currentTrack.currentTime / _currentTrack.duration;
+
+  }
+
+  _currentTrack = track;
+
+  if (_trackStates[_currentTrack.id]) {
+    _currentTrack.onloadedmetadata = () => {
+    _currentTrack.currentTime = _trackStates[parseInt(track.id)] * track.duration;
+    TrackStore.playCurrentTrack();
+  };
+  } else {
+    _trackStates[_currentTrack.id] = 0;
+    TrackStore.playCurrentTrack();
+
+  }
+
+};
+
+TrackStore.getStates = function () {
+  return _trackStates;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
