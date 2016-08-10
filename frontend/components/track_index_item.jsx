@@ -22,9 +22,9 @@ var TrackIndexItem = React.createClass({
     return { percentage: percentage, playing: playing };
   },
 
-  componentWillMount () {
-    this.renderPlaybar();
-  },
+  // componentWillMount () {
+  //   this.renderPlaybar();
+  // },
 
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
@@ -33,27 +33,39 @@ var TrackIndexItem = React.createClass({
   },
 
   componentWillUnmount () {
+    // debugger
     this.currentTrackListener.remove();
-    clearInterval(this.setRefreshIntervalId);
+    if (this.setRefreshIntervalId) {
+      console.log('cleared intervalId: ' + this.setRefreshIntervalId + ' in ' + this.props.track.id);
+      clearInterval(this.setRefreshIntervalId);
+    }
   },
 
   setNewPercentage () {
     let newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+    console.log(this.props.track.id);
     this.setState({ percentage: newPercentage });
 
   },
 
   renderPlaybar () {
     let currentTrack = TrackStore.currentTrack();
-
+    // debugger
     if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
-      this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+      // debugger
+      if (!this.setRefreshIntervalId) {
+        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+
+      }
+      // clearInterval(this.setRefreshIntervalId);
+
+      console.log('new intervalId: ' + this.setRefreshIntervalId + ' in ' + this.props.track.id);
     } else {
       if (this.setRefreshIntervalId) {
         clearInterval(this.setRefreshIntervalId);
       }
       this.setNewPercentage();
-      this.setState({ playing: false });
+      // this.setState({ playing: false });
     }
   },
 

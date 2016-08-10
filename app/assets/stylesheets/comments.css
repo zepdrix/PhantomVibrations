@@ -37,6 +37,7 @@
 
 .comment-avatar-image {
   position: absolute;
+  object-fit: cover;
   left:0px;
   top: 0px;
   height: 20px;
@@ -122,6 +123,8 @@
 
 .track-show .comment-user-area img{
   margin: 20px;
+  object-fit: cover;
+  
   height: 158px;
   width: 158px;
   border-radius: 50%;

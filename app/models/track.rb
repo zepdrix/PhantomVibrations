@@ -28,7 +28,7 @@ class Track < ActiveRecord::Base
   validates_attachment_content_type :image, content_type: /\Aimage\/.*\Z/
 
   has_attached_file :audio, default_url: 'nocturne.ogg'
-  validates_attachment_content_type :audio, content_type: ['audio/mpeg', 'audio/mp3', 'audio/m4a']
+  validates_attachment_content_type :audio, content_type: /\Aaudio\/.*\Z/
 
   belongs_to(
     :user,

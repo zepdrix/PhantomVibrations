@@ -20,7 +20,5 @@ module.exports = {
       TrackActions.resetCurrentTrack(track);
     }
   },
-  pauseTrack (e) {
-    TrackActions.pauseCurrentTrack();
-  }
+
 };

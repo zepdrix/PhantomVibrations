@@ -27183,33 +27183,47 @@
 	
 	    return { percentage: percentage, playing: playing };
 	  },
-	  componentWillMount: function componentWillMount() {
-	    this.renderPlaybar();
-	  },
+	
+	
+	  // componentWillMount () {
+	  //   this.renderPlaybar();
+	  // },
+	
 	  componentDidMount: function componentDidMount() {
 	    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
 	    TrackActions.fetchTrack(this.props.track.id);
 	    this.renderPlaybar();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
+	    // debugger
 	    this.currentTrackListener.remove();
-	    clearInterval(this.setRefreshIntervalId);
+	    if (this.setRefreshIntervalId) {
+	      console.log('cleared intervalId: ' + this.setRefreshIntervalId + ' in ' + this.props.track.id);
+	      clearInterval(this.setRefreshIntervalId);
+	    }
 	  },
 	  setNewPercentage: function setNewPercentage() {
 	    var newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+	    console.log(this.props.track.id);
 	    this.setState({ percentage: newPercentage });
 	  },
 	  renderPlaybar: function renderPlaybar() {
 	    var currentTrack = TrackStore.currentTrack();
-	
+	    // debugger
 	    if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
-	      this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+	      // debugger
+	      if (!this.setRefreshIntervalId) {
+	        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+	      }
+	      // clearInterval(this.setRefreshIntervalId);
+	
+	      console.log('new intervalId: ' + this.setRefreshIntervalId + ' in ' + this.props.track.id);
 	    } else {
 	      if (this.setRefreshIntervalId) {
 	        clearInterval(this.setRefreshIntervalId);
 	      }
 	      this.setNewPercentage();
-	      this.setState({ playing: false });
+	      // this.setState({ playing: false });
 	    }
 	  },
 	  clickHandler: function clickHandler(e) {
@@ -34287,9 +34301,6 @@
 	      track.src = currentTrack.audio_url;
 	      TrackActions.resetCurrentTrack(track);
 	    }
-	  },
-	  pauseTrack: function pauseTrack(e) {
-	    TrackActions.pauseCurrentTrack();
 	  }
 	};
 
@@ -36105,6 +36116,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var SessionStore = __webpack_require__(281);
 	var TrackIndex = __webpack_require__(238);
 	var TrackStore = __webpack_require__(240);
 	var TrackActions = __webpack_require__(264);
@@ -36135,7 +36147,9 @@
 	        React.createElement(
 	          'h2',
 	          null,
-	          'Discover New Vibrations'
+	          'Welcome, ',
+	          SessionStore.currentUser().username,
+	          '! Discover New Vibrations'
 	        )
 	      ),
 	      React.createElement('br', null),
