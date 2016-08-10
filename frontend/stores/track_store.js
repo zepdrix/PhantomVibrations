@@ -45,18 +45,25 @@ const _resetTrack = function (track) {
 };
 
 const _resetAllTracks = function (tracks) {
-  
-  Object.keys(_tracks).forEach( (trackId) => {
-    if (trackId !== _currentTrack.id) {
-      delete _tracks[trackId];
-    }
-  });
+
+  _tracks = {};
 
   tracks.forEach( (track) => {
-    if (track.id !== _currentTrack.id) {
       _tracks[track.id] = track;
     }
-  });
+  );
+
+  // Object.keys(_tracks).forEach( (trackId) => {
+  //   if (!_trackStates.hasOwnProperty(trackId)) {
+  //     delete _tracks[trackId];
+  //   }
+  // });
+  //
+  // tracks.forEach( (track) => {
+  //   if (!_trackStates.hasOwnProperty(track.id.toString())) {
+  //     _tracks[track.id] = track;
+  //   }
+  // });
 };
 
 // const _resetCurrentTrack = function (track) {
@@ -96,7 +103,7 @@ const _removeTrack = function (track) {
 // clearInterval(refreshIntervalId)
 //
 //
-TrackStore.playCurrentTrack = function () {
+const _playCurrentTrack = function () {
   // refreshIntervalId = setInterval( () => {
   //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
   //   }, 25);
@@ -113,7 +120,7 @@ TrackStore.getPercentage = function (trackId) {
 };
 
 
-TrackStore.pauseCurrentTrack = function () {
+const _pauseCurrentTrack = function () {
   // clearInterval(refreshIntervalId);
   _currentTrack.pause();
 };
@@ -131,11 +138,11 @@ const _resetCurrentTrack = function (track) {
   if (_trackStates[_currentTrack.id]) {
     _currentTrack.onloadedmetadata = () => {
     _currentTrack.currentTime = _trackStates[parseInt(track.id)] * track.duration;
-    TrackStore.playCurrentTrack();
+    _playCurrentTrack();
   };
   } else {
     _trackStates[_currentTrack.id] = 0;
-    TrackStore.playCurrentTrack();
+    _playCurrentTrack();
 
   }
 
@@ -191,6 +198,14 @@ TrackStore.__onDispatch = function (payload) {
       break;
     case TrackConstants.RECEIVE_CURRENT_TRACK:
       _resetCurrentTrack(payload.track);
+      this.__emitChange();
+      break;
+    case TrackConstants.PAUSE_CURRENT_TRACK:
+      _pauseCurrentTrack(payload.track);
+      this.__emitChange();
+      break;
+    case TrackConstants.PLAY_CURRENT_TRACK:
+      _playCurrentTrack(payload.track);
       this.__emitChange();
       break;
     case TrackConstants.REMOVE_TRACK:

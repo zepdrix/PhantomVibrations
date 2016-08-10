@@ -61,6 +61,46 @@
 }
 
 
+
+.track-show > .pause-icon {
+  display: block;
+  float: left;
+  margin-top: 30px;
+  margin-left: 24px;
+  margin-right: 26px;
+  width: 10px;
+  height: 60px;
+  border-right: 20px solid #FC6F0A;
+  border-left: 20px solid #FC6F0A;
+}
+
+.track-item .play-icon {
+  display: block;
+  float: left;
+  margin-top: 15px;
+  margin-left: 20px;
+  margin-right: 0px;
+  color: black;
+  border-top: 10px solid transparent;
+  border-left: 20px solid #FC6F0A;
+  border-bottom: 10px solid transparent;
+  /*background-image: url(<%= asset_path 'play.svg' %>)*/
+}
+
+
+.pause-icon-small {
+  display: block;
+  float: left;
+  margin-top: 16px;
+  margin-left: 20px;
+  margin-right: 4px;
+  width: 4px;
+  height: 16px;
+  border-right: 6px solid #FC6F0A;
+  border-left: 6px solid #FC6F0A;
+}
+
+
 .track-show .track-title {
   margin-left: 10px;
   float: left;

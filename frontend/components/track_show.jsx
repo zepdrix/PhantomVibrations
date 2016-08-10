@@ -25,6 +25,7 @@ var TrackShow = React.createClass({
     this.sessionListener = SessionStore.addListener(this.onChangeSession);
     TrackActions.fetchTrack(this.props.params.trackId);
 
+
     SessionActions.fetchCurrentUser();
   },
 
@@ -67,14 +68,12 @@ var TrackShow = React.createClass({
   },
 
   render () {
-
-    let rbg1 = CSSHelper.styleHelper();
-    let rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
+    let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
       return(
         <div className="track-show-main">
-          <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(rbg1[0])+', '+(rbg1[1])+', '+(rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
+          <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(this.state.rbg1[0])+', '+(this.state.rbg1[1])+', '+(this.state.rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
             <div className="track-show top-left">
               { this.playIcon() }
 

@@ -15,10 +15,10 @@ var UserTrackIndexItem = React.createClass({
   },
 
   render () {
-    debugger
+
     if ((parseInt(TrackStore.currentTrack().id) === this.props.track.id) && (this.props.track.user_id === SessionStore.currentUser().id)) {
       return(
-        <div>
+        <div className="usertracks-index-item">
           <div>{ this.props.track.title }: You can't edit a song while it's currently playing!</div>
         </div>
       );
@@ -30,7 +30,7 @@ var UserTrackIndexItem = React.createClass({
 
 
         return(
-          <div>
+          <div className="usertracks-index-item">
             <Link to={ editTrackUrl }>Edit</Link>
             <button onClick={ this.handleDeleteSubmit }>Delete</button>
 

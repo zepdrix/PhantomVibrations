@@ -55,6 +55,13 @@ module.exports = {
     });
   },
 
+  removeTrack (track) {
+    AppDispatcher.dispatch({
+      actionType: TrackConstants.REMOVE_TRACK,
+      track: track
+    });
+  },
+
   resetCurrentTrack (track) {
     AppDispatcher.dispatch({
       actionType: TrackConstants.RECEIVE_CURRENT_TRACK,
@@ -62,10 +69,18 @@ module.exports = {
     });
   },
 
-  removeTrack (track) {
+  pauseCurrentTrack (track) {
     AppDispatcher.dispatch({
-      actionType: TrackConstants.REMOVE_TRACK,
+      actionType: TrackConstants.PAUSE_CURRENT_TRACK,
       track: track
     });
-  }
+  },
+
+  playCurrentTrack (track) {
+    AppDispatcher.dispatch({
+      actionType: TrackConstants.PLAY_CURRENT_TRACK,
+      track: track
+    });
+  },
+
 };

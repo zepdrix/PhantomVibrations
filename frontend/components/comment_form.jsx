@@ -15,6 +15,7 @@ var CommentForm = React.createClass({
   },
 
   componentDidMount () {
+  
   },
 
   handleBody (e) {
@@ -24,7 +25,7 @@ var CommentForm = React.createClass({
 
   handleSubmit (e) {
     let trackPercentage;
-    if (TrackStore.isCurrentTrack()) {
+    if (TrackStore.currentTrack().id === this.props.track.id) {
       let currentTrack = TrackStore.currentTrack();
       trackPercentage = currentTrack.currentTime / currentTrack.duration;
     } else {
@@ -45,7 +46,7 @@ var CommentForm = React.createClass({
 
   render () {
     console.log(TrackStore.currentTrack());
-    // debugger
+
     return(
       <div>
         <form className="comment-form" onSubmit={ this.handleSubmit }>

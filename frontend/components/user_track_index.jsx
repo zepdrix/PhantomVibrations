@@ -12,8 +12,8 @@ var UserTrackIndex = React.createClass({
         return <UserTrackIndexItem track={ track } key={ key }/>;
       });
       return(
-        <div className="usertrack-index">
-          <div>Your Tracks</div>
+        <div className="usertracks-index">
+          <div className="usertracks-header">Your Tracks</div>
           { allUserTrackIndexItems }
         </div>
       );

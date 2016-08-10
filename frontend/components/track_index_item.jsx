@@ -11,7 +11,7 @@ const CommentAvatarIndex = require('./comment_avatar_index.jsx');
 var TrackIndexItem = React.createClass({
   getInitialState () {
     let percentage = TrackStore.getPercentage(this.props.track.id);
-    return { percentage: percentage };
+    return { percentage: percentage, playing: false };
   },
 
   componentWillMount () {
@@ -34,12 +34,12 @@ var TrackIndexItem = React.createClass({
 
   renderPlaybar () {
     if ((parseInt(TrackStore.currentTrack().id) === this.props.track.id)) {
-      if (TrackStore.currentTrack.paused) {
-        this.setState({ percentage: TrackStore.getPercentage(this.props.track.id) });
+      if (TrackStore.currentTrack().paused) {
+        this.setState({ percentage: TrackStore.getPercentage(this.props.track.id), playing: false });
       } else {
         clearInterval(this.setRefreshIntervalId);
-
-        this.setRefreshIntervalId = setInterval( ()=> {this.setState({ percentage: (TrackStore.currentTime() / TrackStore.currentTrack().duration) });},100);
+        this.setState({ playing: true });
+        this.setRefreshIntervalId = setInterval( ()=> {this.setState({ percentage: (TrackStore.currentTime() / TrackStore.currentTrack().duration) });},30);
       }
 
     } else if (!!TrackStore.getPercentage(this.props.track.id)) {
@@ -47,10 +47,10 @@ var TrackIndexItem = React.createClass({
       clearInterval(this.setRefreshIntervalId);
 
 
-      this.setState({ percentage: TrackStore.getPercentage(this.props.track.id) });
+      this.setState({ percentage: TrackStore.getPercentage(this.props.track.id), playing: false });
     } else {
-
-      this.setState({ percentage: 0 });
+      clearInterval(this.setRefreshIntervalId);
+      this.setState({ percentage: 0, playing: false });
     }
   },
 
@@ -59,15 +59,22 @@ var TrackIndexItem = React.createClass({
   },
 
   onClick (e) {
-    console.log(e.clientX, e.pageX, e.screenX);
+    // console.log(e.clientX, e.pageX, e.screenX);
 
     e.preventDefault();
     TrackChange.playTrack(e);
+    this.setState({ playing: !this.state.playing});
 
   },
 
   render () {
-
+    let iconClass;
+    // debugger
+    if (this.state.playing) {
+      iconClass = "pause-icon-small";
+    } else {
+      iconClass = "play-icon";
+    }
     let trackUrl = `/tracks/${this.props.track.id}`;
     let trackImageUrl = this.props.track.image_url;
     let userUrl = `/users/${this.props.track.user_id}`;
@@ -87,7 +94,7 @@ var TrackIndexItem = React.createClass({
               </Link>
           </div>
 
-          <div className="play-icon" id={ this.props.track.id } onClick={ this.onClick }/>
+          <div className={ iconClass } id={ this.props.track.id } onClick={ this.onClick }/>
 
           <div className="track-user-info">
             <Link
