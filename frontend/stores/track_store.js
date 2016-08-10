@@ -10,7 +10,7 @@ var _tracks = {};
 // var _playQueue = {};
 // var _currentQueueIndex = -1;
 
-var _currentTrack = {};
+var _currentTrack = new Audio();
 var _trackStates = {};
 
 var refreshIntervalId;
@@ -107,45 +107,44 @@ const _playCurrentTrack = function () {
   // refreshIntervalId = setInterval( () => {
   //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
   //   }, 25);
+  _currentTrack.addEventListener('timeupdate', _setCurrentPercentage);
   _currentTrack.play();
 };
 
-TrackStore.setCurrentPercentage = function (percentage) {
-
+const _setCurrentPercentage = function () {
+  _trackStates[_currentTrack.dataset.id] = _currentTrack.currentTime / _currentTrack.duration;
 };
 
 
-TrackStore.getPercentage = function (trackId) {
-  return _trackStates[trackId];
+TrackStore.getPlaybackPercentage = function (trackId) {
+  if (_trackStates[trackId]) {
+    return _trackStates[trackId];
+  } else {
+    return 0;
+  }
 };
 
 
 const _pauseCurrentTrack = function () {
   // clearInterval(refreshIntervalId);
+  _setCurrentPercentage();
+  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
   _currentTrack.pause();
 };
 
 const _resetCurrentTrack = function (track) {
-  if (!!_currentTrack.id) {
-    _currentTrack.pause();
-
-    _trackStates[parseInt(_currentTrack.id)] = _currentTrack.currentTime / _currentTrack.duration;
-
+  if (!!_currentTrack.dataset.id) {
+    _pauseCurrentTrack();
   }
 
   _currentTrack = track;
-
-  if (_trackStates[_currentTrack.id]) {
-    _currentTrack.onloadedmetadata = () => {
-    _currentTrack.currentTime = _trackStates[parseInt(track.id)] * track.duration;
+  _currentTrack.onloadedmetadata = () => {
+    let trackId = _currentTrack.dataset.id;
+    let prevPlaybackPercentage = TrackStore.getPlaybackPercentage(trackId);
+    let startAt = prevPlaybackPercentage * _currentTrack.duration;
+    _currentTrack.currentTime = startAt;
     _playCurrentTrack();
   };
-  } else {
-    _trackStates[_currentTrack.id] = 0;
-    _playCurrentTrack();
-
-  }
-
 };
 
 TrackStore.getStates = function () {

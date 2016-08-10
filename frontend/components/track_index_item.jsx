@@ -10,47 +10,55 @@ const CommentAvatarIndex = require('./comment_avatar_index.jsx');
 
 var TrackIndexItem = React.createClass({
   getInitialState () {
-    let percentage = TrackStore.getPercentage(this.props.track.id);
-    return { percentage: percentage, playing: false };
-  },
+    let percentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+    let currentTrack = TrackStore.currentTrack();
+    let playing = false;
 
-  componentWillMount () {
-  //   this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-    this.renderPlaybar();
+    if (!currentTrack.paused && currentTrack.dataset.id == this.props.track.id) {
+      playing = true;
+    }
 
+    return { percentage: percentage, playing: playing };
   },
+  //
+  // componentWillMount () {
+  //   this.renderPlaybar();
+  // },
 
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+    // if (this.setRefreshIntervalId) {
+    //   clearInterval(this.setRefreshIntervalId);
+    // }
     this.renderPlaybar();
   },
 
   componentWillUnmount () {
     this.currentTrackListener.remove();
-    if (this.setRefreshIntervalId) {
-      clearInterval(this.setRefreshIntervalId);
+    clearInterval(this.setRefreshIntervalId);
+  },
+
+  setNewPercentage () {
+    let newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+    try {
+      this.setState({ percentage: newPercentage });
+    } catch (e) {
+      debugger
     }
   },
 
   renderPlaybar () {
-    if ((parseInt(TrackStore.currentTrack().id) === this.props.track.id)) {
-      if (TrackStore.currentTrack().paused) {
-        this.setState({ percentage: TrackStore.getPercentage(this.props.track.id), playing: false });
-      } else {
-        clearInterval(this.setRefreshIntervalId);
-        this.setState({ playing: true });
-        this.setRefreshIntervalId = setInterval( ()=> {this.setState({ percentage: (TrackStore.currentTime() / TrackStore.currentTrack().duration) });},30);
-      }
 
-    } else if (!!TrackStore.getPercentage(this.props.track.id)) {
+    let currentTrack = TrackStore.currentTrack();
 
-      clearInterval(this.setRefreshIntervalId);
-
-
-      this.setState({ percentage: TrackStore.getPercentage(this.props.track.id), playing: false });
+    if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
+      this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
     } else {
-      clearInterval(this.setRefreshIntervalId);
-      this.setState({ percentage: 0, playing: false });
+      if (this.setRefreshIntervalId) {
+        clearInterval(this.setRefreshIntervalId);
+      }
+      this.setNewPercentage();
+      this.setState({ playing: false });
     }
   },
 
@@ -59,17 +67,16 @@ var TrackIndexItem = React.createClass({
   },
 
   onClick (e) {
-    // console.log(e.clientX, e.pageX, e.screenX);
-
     e.preventDefault();
-    TrackChange.playTrack(e);
-    this.setState({ playing: !this.state.playing});
+    this.setState({ playing: !this.state.playing}, () => {
+      TrackChange.playTrack(this.props.track.id);
+    });
 
   },
 
   render () {
     let iconClass;
-    // debugger
+
     if (this.state.playing) {
       iconClass = "pause-icon-small";
     } else {
@@ -79,11 +86,6 @@ var TrackIndexItem = React.createClass({
     let trackImageUrl = this.props.track.image_url;
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
-    //
-    // var percentage = 0;
-    // if (TrackStore.isCurrentTrack() && (TrackStore.currentTrack().id === this.props.track.id)) {
-    //     percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * 420;
-    //   }
 
     return(
       <li className="track-item" >

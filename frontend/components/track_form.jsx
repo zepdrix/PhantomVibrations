@@ -9,7 +9,6 @@ var TrackForm = React.createClass({
     router: React.PropTypes.object.isRequired
   },
 
-
   getInitialState () {
     return {
       title: '',

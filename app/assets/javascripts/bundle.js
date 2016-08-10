@@ -55,9 +55,9 @@
 	    hashHistory = ReactRouter.hashHistory;
 	
 	var TrackIndex = __webpack_require__(238),
-	    TrackEditForm = __webpack_require__(279),
-	    TrackForm = __webpack_require__(280),
-	    TrackShow = __webpack_require__(281),
+	    TrackEditForm = __webpack_require__(278),
+	    TrackForm = __webpack_require__(279),
+	    TrackShow = __webpack_require__(280),
 	    LoginForm = __webpack_require__(293),
 	    SignupForm = __webpack_require__(294),
 	    HomePage = __webpack_require__(295),
@@ -67,12 +67,12 @@
 	    CurrentUserProfile = __webpack_require__(301),
 	    App = __webpack_require__(302);
 	
-	var SessionApiUtil = __webpack_require__(269),
-	    SessionActions = __webpack_require__(284),
-	    TrackApiUtil = __webpack_require__(266),
-	    TrackActions = __webpack_require__(265),
+	var SessionApiUtil = __webpack_require__(268),
+	    SessionActions = __webpack_require__(283),
+	    TrackApiUtil = __webpack_require__(265),
+	    TrackActions = __webpack_require__(264),
 	    TrackStore = __webpack_require__(240),
-	    SessionStore = __webpack_require__(282),
+	    SessionStore = __webpack_require__(281),
 	    SetupApp = __webpack_require__(305),
 	    TimeChange = __webpack_require__(292);
 	
@@ -27165,66 +27165,76 @@
 	var Link = __webpack_require__(175).Link;
 	
 	var TrackStore = __webpack_require__(240);
-	var TrackChange = __webpack_require__(264);
-	var WindowSizeConstants = __webpack_require__(272);
-	var CommentAvatarIndex = __webpack_require__(273);
+	var TrackChange = __webpack_require__(263);
+	var WindowSizeConstants = __webpack_require__(271);
+	var CommentAvatarIndex = __webpack_require__(272);
 	
 	var TrackIndexItem = React.createClass({
 	  displayName: 'TrackIndexItem',
 	  getInitialState: function getInitialState() {
-	    var percentage = TrackStore.getPercentage(this.props.track.id);
-	    return { percentage: percentage, playing: false };
+	    var percentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+	    var currentTrack = TrackStore.currentTrack();
+	    var playing = false;
+	
+	    if (!currentTrack.paused && currentTrack.dataset.id == this.props.track.id) {
+	      playing = true;
+	    }
+	
+	    return { percentage: percentage, playing: playing };
 	  },
-	  componentWillMount: function componentWillMount() {
-	    //   this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-	    this.renderPlaybar();
-	  },
+	
+	  //
+	  // componentWillMount () {
+	  //   this.renderPlaybar();
+	  // },
+	
 	  componentDidMount: function componentDidMount() {
 	    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
+	    // if (this.setRefreshIntervalId) {
+	    //   clearInterval(this.setRefreshIntervalId);
+	    // }
 	    this.renderPlaybar();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.currentTrackListener.remove();
-	    if (this.setRefreshIntervalId) {
-	      clearInterval(this.setRefreshIntervalId);
+	    clearInterval(this.setRefreshIntervalId);
+	  },
+	  setNewPercentage: function setNewPercentage() {
+	    var newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+	    try {
+	      this.setState({ percentage: newPercentage });
+	    } catch (e) {
+	      debugger;
 	    }
 	  },
 	  renderPlaybar: function renderPlaybar() {
-	    var _this = this;
 	
-	    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id) {
-	      if (TrackStore.currentTrack().paused) {
-	        this.setState({ percentage: TrackStore.getPercentage(this.props.track.id), playing: false });
-	      } else {
-	        clearInterval(this.setRefreshIntervalId);
-	        this.setState({ playing: true });
-	        this.setRefreshIntervalId = setInterval(function () {
-	          _this.setState({ percentage: TrackStore.currentTime() / TrackStore.currentTrack().duration });
-	        }, 30);
-	      }
-	    } else if (!!TrackStore.getPercentage(this.props.track.id)) {
+	    var currentTrack = TrackStore.currentTrack();
 	
-	      clearInterval(this.setRefreshIntervalId);
-	
-	      this.setState({ percentage: TrackStore.getPercentage(this.props.track.id), playing: false });
+	    if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
+	      this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
 	    } else {
-	      clearInterval(this.setRefreshIntervalId);
-	      this.setState({ percentage: 0, playing: false });
+	      if (this.setRefreshIntervalId) {
+	        clearInterval(this.setRefreshIntervalId);
+	      }
+	      this.setNewPercentage();
+	      this.setState({ playing: false });
 	    }
 	  },
 	  clickHandler: function clickHandler(e) {
 	    this.context.router.push('/tracks/' + this.props.track.id);
 	  },
 	  onClick: function onClick(e) {
-	    // console.log(e.clientX, e.pageX, e.screenX);
+	    var _this = this;
 	
 	    e.preventDefault();
-	    TrackChange.playTrack(e);
-	    this.setState({ playing: !this.state.playing });
+	    this.setState({ playing: !this.state.playing }, function () {
+	      TrackChange.playTrack(_this.props.track.id);
+	    });
 	  },
 	  render: function render() {
 	    var iconClass = void 0;
-	    // debugger
+	
 	    if (this.state.playing) {
 	      iconClass = "pause-icon-small";
 	    } else {
@@ -27234,11 +27244,6 @@
 	    var trackImageUrl = this.props.track.image_url;
 	    var userUrl = '/users/' + this.props.track.user_id;
 	    var userImageUrl = this.props.track.user.image_url;
-	    //
-	    // var percentage = 0;
-	    // if (TrackStore.isCurrentTrack() && (TrackStore.currentTrack().id === this.props.track.id)) {
-	    //     percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * 420;
-	    //   }
 	
 	    return React.createElement(
 	      'li',
@@ -27319,7 +27324,7 @@
 	// var _playQueue = {};
 	// var _currentQueueIndex = -1;
 	
-	var _currentTrack = {};
+	var _currentTrack = new Audio();
 	var _trackStates = {};
 	
 	var refreshIntervalId;
@@ -27410,38 +27415,42 @@
 	  // refreshIntervalId = setInterval( () => {
 	  //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
 	  //   }, 25);
+	  _currentTrack.addEventListener('timeupdate', _setCurrentPercentage);
 	  _currentTrack.play();
 	};
 	
-	TrackStore.setCurrentPercentage = function (percentage) {};
+	var _setCurrentPercentage = function _setCurrentPercentage() {
+	  _trackStates[_currentTrack.dataset.id] = _currentTrack.currentTime / _currentTrack.duration;
+	};
 	
-	TrackStore.getPercentage = function (trackId) {
-	  return _trackStates[trackId];
+	TrackStore.getPlaybackPercentage = function (trackId) {
+	  if (_trackStates[trackId]) {
+	    return _trackStates[trackId];
+	  } else {
+	    return 0;
+	  }
 	};
 	
 	var _pauseCurrentTrack = function _pauseCurrentTrack() {
 	  // clearInterval(refreshIntervalId);
+	  _setCurrentPercentage();
+	  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
 	  _currentTrack.pause();
 	};
 	
 	var _resetCurrentTrack = function _resetCurrentTrack(track) {
-	  if (!!_currentTrack.id) {
-	    _currentTrack.pause();
-	
-	    _trackStates[parseInt(_currentTrack.id)] = _currentTrack.currentTime / _currentTrack.duration;
+	  if (!!_currentTrack.dataset.id) {
+	    _pauseCurrentTrack();
 	  }
 	
 	  _currentTrack = track;
-	
-	  if (_trackStates[_currentTrack.id]) {
-	    _currentTrack.onloadedmetadata = function () {
-	      _currentTrack.currentTime = _trackStates[parseInt(track.id)] * track.duration;
-	      _playCurrentTrack();
-	    };
-	  } else {
-	    _trackStates[_currentTrack.id] = 0;
+	  _currentTrack.onloadedmetadata = function () {
+	    var trackId = _currentTrack.dataset.id;
+	    var prevPlaybackPercentage = TrackStore.getPlaybackPercentage(trackId);
+	    var startAt = prevPlaybackPercentage * _currentTrack.duration;
+	    _currentTrack.currentTime = startAt;
 	    _playCurrentTrack();
-	  }
+	  };
 	};
 	
 	TrackStore.getStates = function () {
@@ -34258,40 +34267,16 @@
 
 /***/ },
 /* 263 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	  styleHelper: function styleHelper() {
-	    var arr = [151, 64];
-	    var randomArray = [];
-	    arr.push(Math.floor(Math.random() * 87) + 64);
-	    for (var i = 0; i < 2; i++) {
-	      var j = Math.floor(Math.random() * (2 - i));
-	      randomArray.push(arr.splice(j, 1)[0]);
-	    }
-	
-	    randomArray.push(arr[0]);
-	    return randomArray;
-	  }
-	};
-	
-	var trackshowBackgroundGradient = "style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 75%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 82%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}";
-
-/***/ },
-/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
+	var TrackActions = __webpack_require__(264);
 	
 	module.exports = {
-	  playTrack: function playTrack(e) {
-	
-	    if (e.currentTarget.id === TrackStore.currentTrack().id) {
+	  playTrack: function playTrack(id) {
+	    if (id == TrackStore.currentTrack().dataset.id) {
 	      if (TrackStore.currentTrack().paused) {
 	        TrackActions.playCurrentTrack();
 	      } else {
@@ -34300,13 +34285,11 @@
 	    } else {
 	
 	      var track = new Audio();
-	      var currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
-	      track.id = currentTrack.id;
+	      var currentTrack = TrackStore.find(id);
+	      track.dataset.id = currentTrack.id;
 	      track.title = currentTrack.title;
-	      // track.autoplay = true;
 	      track.src = currentTrack.audio_url;
 	      TrackActions.resetCurrentTrack(track);
-	      // TrackStore.playCurrentTrack();
 	    }
 	  },
 	  pauseTrack: function pauseTrack(e) {
@@ -34315,15 +34298,15 @@
 	};
 
 /***/ },
-/* 265 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var TrackApiUtil = __webpack_require__(266),
+	var TrackApiUtil = __webpack_require__(265),
 	    TrackConstants = __webpack_require__(262),
 	    AppDispatcher = __webpack_require__(259),
-	    ErrorActions = __webpack_require__(268);
+	    ErrorActions = __webpack_require__(267);
 	
 	module.exports = {
 	  createTrack: function createTrack(track) {
@@ -34383,12 +34366,12 @@
 	};
 
 /***/ },
-/* 266 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var FormConstants = __webpack_require__(267);
+	var FormConstants = __webpack_require__(266);
 	
 	module.exports = {
 	  createTrack: function createTrack(formData, successCb, errorCb) {
@@ -34475,7 +34458,7 @@
 	};
 
 /***/ },
-/* 267 */
+/* 266 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34489,15 +34472,15 @@
 	};
 
 /***/ },
-/* 268 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var SessionApiUtil = __webpack_require__(269);
-	var ErrorConstants = __webpack_require__(270);
+	var SessionApiUtil = __webpack_require__(268);
+	var ErrorConstants = __webpack_require__(269);
 	var AppDispatcher = __webpack_require__(259);
-	var ErrorStore = __webpack_require__(271);
+	var ErrorStore = __webpack_require__(270);
 	
 	module.exports = {
 	  setErrors: function setErrors(form, errors) {
@@ -34515,12 +34498,12 @@
 	};
 
 /***/ },
-/* 269 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var FormConstants = __webpack_require__(267);
+	var FormConstants = __webpack_require__(266);
 	
 	module.exports = {
 	  createUser: function createUser(user, successCb, errorCb) {
@@ -34580,7 +34563,7 @@
 	};
 
 /***/ },
-/* 270 */
+/* 269 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34591,7 +34574,7 @@
 	};
 
 /***/ },
-/* 271 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34599,7 +34582,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    ErrorConstants = __webpack_require__(270);
+	    ErrorConstants = __webpack_require__(269);
 	
 	var ErrorStore = new Store(AppDispatcher);
 	
@@ -34647,7 +34630,7 @@
 	module.exports = ErrorStore;
 
 /***/ },
-/* 272 */
+/* 271 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34658,15 +34641,15 @@
 	};
 
 /***/ },
-/* 273 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentAvatarIndexItem = __webpack_require__(274);
-	var UserStore = __webpack_require__(275);
-	var UserActions = __webpack_require__(277);
+	var CommentAvatarIndexItem = __webpack_require__(273);
+	var UserStore = __webpack_require__(274);
+	var UserActions = __webpack_require__(276);
 	
 	var CommentAvatarIndex = React.createClass({
 	  displayName: 'CommentAvatarIndex',
@@ -34687,14 +34670,14 @@
 	module.exports = CommentAvatarIndex;
 
 /***/ },
-/* 274 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(275);
-	var UserActions = __webpack_require__(277);
+	var UserStore = __webpack_require__(274);
+	var UserActions = __webpack_require__(276);
 	var Link = __webpack_require__(175).Link;
 	
 	var CommentAvatarIndexItem = React.createClass({
@@ -34749,7 +34732,7 @@
 	module.exports = CommentAvatarIndexItem;
 
 /***/ },
-/* 275 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34757,7 +34740,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    UserConstants = __webpack_require__(276);
+	    UserConstants = __webpack_require__(275);
 	
 	var UserStore = new Store(AppDispatcher);
 	
@@ -34804,7 +34787,7 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 276 */
+/* 275 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34815,15 +34798,15 @@
 	};
 
 /***/ },
-/* 277 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var UserApiUtil = __webpack_require__(278),
-	    UserConstants = __webpack_require__(276),
+	var UserApiUtil = __webpack_require__(277),
+	    UserConstants = __webpack_require__(275),
 	    AppDispatcher = __webpack_require__(259),
-	    ErrorActions = __webpack_require__(268);
+	    ErrorActions = __webpack_require__(267);
 	
 	module.exports = {
 	  fetchUser: function fetchUser(id) {
@@ -34850,12 +34833,12 @@
 	};
 
 /***/ },
-/* 278 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var FormConstants = __webpack_require__(267);
+	var FormConstants = __webpack_require__(266);
 	
 	module.exports = {
 	  fetchUser: function fetchUser(id, successCb) {
@@ -34900,16 +34883,16 @@
 	};
 
 /***/ },
-/* 279 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
-	var ErrorStore = __webpack_require__(271);
-	var FormConstants = __webpack_require__(267);
+	var TrackActions = __webpack_require__(264);
+	var ErrorStore = __webpack_require__(270);
+	var FormConstants = __webpack_require__(266);
 	
 	var TrackEditForm = React.createClass({
 	  displayName: 'TrackEditForm',
@@ -34992,61 +34975,58 @@
 	  },
 	  render: function render() {
 	    return React.createElement(
-	      'div',
-	      null,
+	      'form',
+	      { className: 'edit-track-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
 	      React.createElement(
-	        'form',
-	        { className: 'edit-track-form', encType: 'multipart/form-data', onSubmit: this.handleSubmit },
+	        'h3',
+	        { className: 'edit-track-form-title' },
+	        'Edit Track'
+	      ),
+	      this.formErrors(),
+	      React.createElement(
+	        'fieldset',
+	        { className: 'login-input' },
+	        React.createElement(
+	          'label',
+	          { 'for': 'track-title', className: 'form-label' },
+	          'Title'
+	        ),
+	        React.createElement('input', { id: 'track-title', className: 'input',
+	          placeholder: 'Track Title',
+	          value: this.state.title,
+	          onChange: this.handleTitle
+	        })
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'div',
+	        { className: 'login-input' },
+	        React.createElement(
+	          'label',
+	          { className: 'form-label' },
+	          'Description'
+	        ),
+	        React.createElement('textarea', { className: 'input',
+	          value: this.state.description,
+	          onChange: this.handleDescription
+	        })
+	      ),
+	      React.createElement(
+	        'fieldset',
+	        { className: 'login-input' },
 	        React.createElement(
 	          'div',
-	          { className: 'edit-track-form-title' },
-	          'Edit Track'
+	          { className: 'form-label' },
+	          'Update your track image!'
 	        ),
-	        this.formErrors(),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Title'
-	          ),
-	          React.createElement('input', { className: 'input',
-	            placeholder: 'Track Title',
-	            value: this.state.title,
-	            onChange: this.handleTitle })
-	        ),
+	        React.createElement('input', { type: 'file', onChange: this.handleImage }),
 	        React.createElement('br', null),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Description'
-	          ),
-	          React.createElement('textarea', { className: 'input',
-	
-	            value: this.state.description,
-	            onChange: this.handleDescription })
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Update your track image!'
-	          ),
-	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
-	          React.createElement('br', null),
-	          React.createElement('img', { className: 'form-image', src: this.state.imageUrl })
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'create-track-button form-hover' },
-	          'Update'
-	        )
+	        React.createElement('img', { className: 'form-image', src: this.state.imageUrl })
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'create-track-button form-hover' },
+	        'Update'
 	      )
 	    );
 	  }
@@ -35055,16 +35035,16 @@
 	module.exports = TrackEditForm;
 
 /***/ },
-/* 280 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var TrackActions = __webpack_require__(265);
+	var TrackActions = __webpack_require__(264);
 	var TrackStore = __webpack_require__(240);
-	var ErrorStore = __webpack_require__(271);
-	var FormConstants = __webpack_require__(267);
+	var ErrorStore = __webpack_require__(270);
+	var FormConstants = __webpack_require__(266);
 	
 	var TrackForm = React.createClass({
 	  displayName: 'TrackForm',
@@ -35235,7 +35215,7 @@
 	module.exports = TrackForm;
 
 /***/ },
-/* 281 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35243,16 +35223,16 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
-	var UserActions = __webpack_require__(277);
-	var CSSHelper = __webpack_require__(263);
-	var TrackChange = __webpack_require__(264);
+	var TrackActions = __webpack_require__(264);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
+	var UserActions = __webpack_require__(276);
+	var CSSHelper = __webpack_require__(284);
+	var TrackChange = __webpack_require__(263);
 	var CommentForm = __webpack_require__(285);
 	var CommentIndex = __webpack_require__(290);
-	var CommentAvatarIndex = __webpack_require__(273);
-	var WindowSizeConstants = __webpack_require__(272);
+	var CommentAvatarIndex = __webpack_require__(272);
+	var WindowSizeConstants = __webpack_require__(271);
 	
 	var TrackShow = React.createClass({
 	  displayName: 'TrackShow',
@@ -35260,7 +35240,13 @@
 	    var track = TrackStore.find(this.props.params.trackId);
 	    var currentUser = SessionStore.currentUser();
 	    var rbg1 = CSSHelper.styleHelper();
-	    return { track: track, currentUser: currentUser, rbg1: rbg1 };
+	    var playing = false;
+	    var currentTrack = TrackStore.currentTrack();
+	
+	    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
+	      playing = true;
+	    }
+	    return { track: track, currentUser: currentUser, rbg1: rbg1, playing: playing };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onChangeTrack);
@@ -35277,7 +35263,13 @@
 	    TrackStore.currentTrack().pause();
 	  },
 	  playTrack: function playTrack(e) {
-	    TrackChange.playTrack(e);
+	    var _this = this;
+	
+	    e.preventDefault();
+	    debugger;
+	    this.setState({ playing: !this.state.playing }, function () {
+	      TrackChange.playTrack(_this.state.track.id);
+	    });
 	  },
 	  onChangeTrack: function onChangeTrack() {
 	    var track = TrackStore.find(this.props.params.trackId);
@@ -35393,7 +35385,7 @@
 	module.exports = TrackShow;
 
 /***/ },
-/* 282 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35401,7 +35393,7 @@
 	var Store = __webpack_require__(241).Store;
 	
 	var AppDispatcher = __webpack_require__(259),
-	    SessionConstants = __webpack_require__(283);
+	    SessionConstants = __webpack_require__(282);
 	
 	var SessionStore = new Store(AppDispatcher);
 	
@@ -35439,7 +35431,7 @@
 	module.exports = SessionStore;
 
 /***/ },
-/* 283 */
+/* 282 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35450,15 +35442,15 @@
 	};
 
 /***/ },
-/* 284 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var SessionApiUtil = __webpack_require__(269),
-	    SessionConstants = __webpack_require__(283),
+	var SessionApiUtil = __webpack_require__(268),
+	    SessionConstants = __webpack_require__(282),
 	    AppDispatcher = __webpack_require__(259),
-	    ErrorActions = __webpack_require__(268);
+	    ErrorActions = __webpack_require__(267);
 	
 	module.exports = {
 	  createUser: function createUser(user) {
@@ -35488,6 +35480,29 @@
 	};
 
 /***/ },
+/* 284 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  styleHelper: function styleHelper() {
+	    var arr = [151, 64];
+	    var randomArray = [];
+	    arr.push(Math.floor(Math.random() * 87) + 64);
+	    for (var i = 0; i < 2; i++) {
+	      var j = Math.floor(Math.random() * (2 - i));
+	      randomArray.push(arr.splice(j, 1)[0]);
+	    }
+	
+	    randomArray.push(arr[0]);
+	    return randomArray;
+	  }
+	};
+	
+	var trackshowBackgroundGradient = "style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 75%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 82%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}";
+
+/***/ },
 /* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -35496,8 +35511,8 @@
 	var React = __webpack_require__(1);
 	var CommentActions = __webpack_require__(286);
 	var CommentStore = __webpack_require__(289);
-	var ErrorStore = __webpack_require__(271);
-	var FormConstants = __webpack_require__(267);
+	var ErrorStore = __webpack_require__(270);
+	var FormConstants = __webpack_require__(266);
 	var TrackStore = __webpack_require__(240);
 	
 	var CommentForm = React.createClass({
@@ -35568,7 +35583,7 @@
 	var CommentApiUtil = __webpack_require__(287);
 	var CommentConstants = __webpack_require__(288);
 	var AppDispatcher = __webpack_require__(259);
-	var ErrorStore = __webpack_require__(271);
+	var ErrorStore = __webpack_require__(270);
 	
 	module.exports = {
 	  createComment: function createComment(comment) {
@@ -35597,7 +35612,7 @@
 
 	"use strict";
 	
-	var FormConstants = __webpack_require__(267);
+	var FormConstants = __webpack_require__(266);
 	
 	module.exports = {
 	  createComment: function createComment(comment, successCb) {
@@ -35712,7 +35727,7 @@
 	
 	var React = __webpack_require__(1);
 	var CommentIndexItem = __webpack_require__(291);
-	var UserStore = __webpack_require__(275);
+	var UserStore = __webpack_require__(274);
 	
 	var CommentIndex = React.createClass({
 	  displayName: 'CommentIndex',
@@ -35744,8 +35759,8 @@
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var UserStore = __webpack_require__(275);
-	var UserActions = __webpack_require__(277);
+	var UserStore = __webpack_require__(274);
+	var UserActions = __webpack_require__(276);
 	var TimeChange = __webpack_require__(292);
 	
 	var CommentIndexItem = React.createClass({
@@ -35813,10 +35828,10 @@
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
-	var FormConstants = __webpack_require__(267);
+	var ErrorStore = __webpack_require__(270);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
+	var FormConstants = __webpack_require__(266);
 	
 	var LoginForm = React.createClass({
 	  displayName: 'LoginForm',
@@ -35952,9 +35967,9 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
+	var ErrorStore = __webpack_require__(270);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
 	
 	var SignupForm = React.createClass({
 	  displayName: 'SignupForm',
@@ -36039,7 +36054,7 @@
 	var React = __webpack_require__(1);
 	var TrackIndex = __webpack_require__(238);
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
+	var TrackActions = __webpack_require__(264);
 	
 	var HomePage = React.createClass({
 	  displayName: 'HomePage',
@@ -36086,8 +36101,8 @@
 	var React = __webpack_require__(1);
 	var TrackIndex = __webpack_require__(238);
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
-	var UserActions = __webpack_require__(277);
+	var TrackActions = __webpack_require__(264);
+	var UserActions = __webpack_require__(276);
 	
 	var UserPage = React.createClass({
 	  displayName: 'UserPage',
@@ -36134,10 +36149,10 @@
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var UserStore = __webpack_require__(275);
-	var UserActions = __webpack_require__(277);
+	var UserStore = __webpack_require__(274);
+	var UserActions = __webpack_require__(276);
 	var TrackIndex = __webpack_require__(238);
-	var CSSHelper = __webpack_require__(263);
+	var CSSHelper = __webpack_require__(284);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -36224,10 +36239,10 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
+	var TrackActions = __webpack_require__(264);
 	var UserTrackIndex = __webpack_require__(299);
 	
 	var UserTracks = React.createClass({
@@ -36312,8 +36327,8 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var TrackStore = __webpack_require__(240);
-	var TrackActions = __webpack_require__(265);
-	var SessionStore = __webpack_require__(282);
+	var TrackActions = __webpack_require__(264);
+	var SessionStore = __webpack_require__(281);
 	
 	var UserTrackIndexItem = React.createClass({
 	  displayName: 'UserTrackIndexItem',
@@ -36347,17 +36362,18 @@
 	        return React.createElement(
 	          'div',
 	          { className: 'usertracks-index-item' },
+	          this.props.track.title,
+	          React.createElement('br', null),
 	          React.createElement(
 	            Link,
 	            { to: editTrackUrl },
-	            'Edit'
+	            'Edit '
 	          ),
 	          React.createElement(
 	            'button',
 	            { onClick: this.handleDeleteSubmit },
-	            'Delete'
-	          ),
-	          this.props.track.title
+	            'Delete '
+	          )
 	        );
 	      } else {
 	        return React.createElement('div', null);
@@ -36376,12 +36392,12 @@
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var ErrorStore = __webpack_require__(271);
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
-	var UserStore = __webpack_require__(275);
-	var UserActions = __webpack_require__(277);
-	var FormConstants = __webpack_require__(267);
+	var ErrorStore = __webpack_require__(270);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
+	var UserStore = __webpack_require__(274);
+	var UserActions = __webpack_require__(276);
+	var FormConstants = __webpack_require__(266);
 	
 	var CurrentUserProfile = React.createClass({
 	  displayName: 'CurrentUserProfile',
@@ -36510,8 +36526,8 @@
 	
 	var React = __webpack_require__(1);
 	var LoginForm = __webpack_require__(293);
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
 	var Link = __webpack_require__(175).Link;
 	
 	var NavBar = __webpack_require__(303);
@@ -36553,8 +36569,8 @@
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var SessionStore = __webpack_require__(282);
-	var SessionActions = __webpack_require__(284);
+	var SessionStore = __webpack_require__(281);
+	var SessionActions = __webpack_require__(283);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -36701,7 +36717,7 @@
 	
 	var React = __webpack_require__(1);
 	var TrackStore = __webpack_require__(240);
-	var TrackChange = __webpack_require__(264);
+	var TrackChange = __webpack_require__(263);
 	
 	var PlayBar = React.createClass({
 	  displayName: 'PlayBar',
@@ -36788,7 +36804,7 @@
 
 	"use strict";
 	
-	var SessionActions = __webpack_require__(284);
+	var SessionActions = __webpack_require__(283);
 	
 	module.exports = function () {
 	  var user = window.phantomVibes.user;

@@ -17,7 +17,13 @@ var TrackShow = React.createClass({
     let track = TrackStore.find(this.props.params.trackId);
     let currentUser = SessionStore.currentUser();
     let rbg1 = CSSHelper.styleHelper();
-    return { track, currentUser, rbg1 };
+    let playing = false;
+    let currentTrack = TrackStore.currentTrack();
+
+    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
+      playing = true;
+    }
+    return { track, currentUser, rbg1, playing: playing };
   },
 
   componentDidMount () {
@@ -39,9 +45,12 @@ var TrackShow = React.createClass({
   },
 
   playTrack (e) {
-    TrackChange.playTrack(e);
+    e.preventDefault();
+    debugger
+    this.setState({ playing: !this.state.playing}, () => {
+      TrackChange.playTrack(this.state.track.id);
+    });
   },
-
 
   onChangeTrack () {
     let track = TrackStore.find(this.props.params.trackId);

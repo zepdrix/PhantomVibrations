@@ -31,10 +31,11 @@ var UserTrackIndexItem = React.createClass({
 
         return(
           <div className="usertracks-index-item">
-            <Link to={ editTrackUrl }>Edit</Link>
-            <button onClick={ this.handleDeleteSubmit }>Delete</button>
-
             { this.props.track.title }
+            <br/>
+            <Link to={ editTrackUrl }>Edit </Link>
+            <button onClick={ this.handleDeleteSubmit }>Delete </button>
+
           </div>
         );
       }

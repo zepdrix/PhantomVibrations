@@ -39,10 +39,7 @@ var UserTracks = React.createClass({
         <UserTrackIndex tracks={ this.state.userTracks }/>
       </div>
     );
-
   }
-
-
 });
 
 

@@ -84,40 +84,41 @@ var TrackEditForm = React.createClass({
 
   render () {
     return(
-      <div>
-        <form className="edit-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
-          <div className="edit-track-form-title">Edit Track</div>
-          { this.formErrors() }
-          <div className="login-input">
-            <div className="form-label">Title
-            </div>
-            <input className="input"
-              placeholder="Track Title"
-              value={ this.state.title }
-                onChange={ this.handleTitle }/>
+      <form className="edit-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
+        <h3 className="edit-track-form-title">Edit Track</h3>
+        { this.formErrors() }
+        <fieldset className="login-input">
+          <label for="track-title" className="form-label">
+            Title
+          </label>
+          <input id="track-title" className="input"
+            placeholder="Track Title"
+            value={ this.state.title }
+            onChange={ this.handleTitle }
+          />
+        </fieldset>
+        <br/>
+        <div className="login-input">
+          <label className="form-label">
+            Description
+          </label>
+          <textarea className="input"
+            value={ this.state.description }
+            onChange={ this.handleDescription }
+          />
+        </div>
+
+        <fieldset className="login-input">
+          <div className="form-label">
+            Update your track image!
           </div>
+          <input type="file" onChange={ this.handleImage }/>
           <br/>
-          <div className="login-input">
-            <div className="form-label">Description
-            </div>
-            <textarea className="input"
+          <img className="form-image" src={ this.state.imageUrl }/>
+        </fieldset>
 
-
-              value={ this.state.description }
-              onChange={ this.handleDescription }/>
-          </div>
-
-          <div className="login-input">
-            <div className="form-label">Update your track image!
-            </div>
-            <input type="file" onChange={ this.handleImage }/>
-            <br/>
-            <img className="form-image" src={ this.state.imageUrl }/>
-          </div>
-
-          <button className="create-track-button form-hover">Update</button>
-        </form>
-      </div>
+        <button className="create-track-button form-hover">Update</button>
+      </form>
     );
   }
 });

@@ -3,9 +3,8 @@ const TrackActions = require('../actions/track_actions.js');
 
 module.exports = {
 
-  playTrack (e) {
-    
-    if (e.currentTarget.id === TrackStore.currentTrack().id) {
+  playTrack (id) {
+    if (id == TrackStore.currentTrack().dataset.id) {
       if (TrackStore.currentTrack().paused) {
         TrackActions.playCurrentTrack();
       } else {
@@ -14,17 +13,13 @@ module.exports = {
     } else {
 
       let track = new Audio();
-      let currentTrack = TrackStore.find(parseInt(e.currentTarget.id));
-      track.id = currentTrack.id;
+      let currentTrack = TrackStore.find(id);
+      track.dataset.id = currentTrack.id;
       track.title = currentTrack.title;
-      // track.autoplay = true;
       track.src = currentTrack.audio_url;
       TrackActions.resetCurrentTrack(track);
-      // TrackStore.playCurrentTrack();
     }
-
   },
-
   pauseTrack (e) {
     TrackActions.pauseCurrentTrack();
   }
