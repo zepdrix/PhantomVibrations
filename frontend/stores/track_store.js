@@ -37,7 +37,7 @@ TrackStore.currentTime = function () {
 };
 
 TrackStore.isCurrentTrack = function () {
-  return !!_currentTrack.id;
+  return !!_currentTrack.dataset.id;
 };
 
 const _resetTrack = function (track) {

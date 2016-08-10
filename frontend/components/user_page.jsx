@@ -23,7 +23,6 @@ var UserPage = React.createClass({
   },
 
   render () {
-    
     return(
       <div className="user-page section">
         <div className="user-page-header">

@@ -1,6 +1,7 @@
 const React = require('react');
 const TrackStore = require('../stores/track_store.js');
 const TrackChange = require('../helpers/track_change.js');
+const TrackActions = require('../actions/track_actions.js');
 
 var PlayBar = React.createClass({
   getInitialState () {
@@ -15,27 +16,31 @@ var PlayBar = React.createClass({
 
   onTrackChange () {
     this.setState({ currentTrack: TrackStore.currentTrack() });
-    setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
+    // debugger
+    this.refreshIntervalId = setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
 
   },
 
   handlePlay (e) {
     e.preventDefault();
-    setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
-    this.state.currentTrack.play();
+    clearInterval(this.refreshIntervalId);
+    this.refreshIntervalId = setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
+    TrackActions.playCurrentTrack();
+
+    // this.state.currentTrack.play();
   },
 
   handlePause (e) {
     e.preventDefault();
     // TrackChange.pauseTrack(e);
-    this.state.currentTrack.pause();
+    TrackActions.pauseCurrentTrack();
   },
 
   render () {
-
     if (TrackStore.isCurrentTrack()) {
       var percentage = 0;
       // this.state.currentTrack.play();
+
       if (this.state.currentTrack) {
         let barWidth = window.innerWidth < 900 ? 900 : window.innerWidth;
         percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * barWidth;
@@ -67,10 +72,6 @@ var PlayBar = React.createClass({
         </div>
       );
     }
-
-
-    // <div className="playnode-remaining" style={{width: 'translateX(' + percentage + 'px)'}}>0</div>
-
   }
 
 });

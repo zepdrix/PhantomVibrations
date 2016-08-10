@@ -1,10 +1,12 @@
 const React = require('react');
 const Link = require('react-router').Link;
-
+const TrackActions = require('../actions/track_actions.js');
 const TrackStore = require('../stores/track_store.js');
 const TrackChange = require('../helpers/track_change.js');
+const SessionStore = require('../stores/session_store.js');
 const WindowSizeConstants = require('../constants/window_size_constants.js');
 const CommentAvatarIndex = require('./comment_avatar_index.jsx');
+const CommentForm = require('./comment_form.jsx');
 
 
 
@@ -13,23 +15,20 @@ var TrackIndexItem = React.createClass({
     let percentage = TrackStore.getPlaybackPercentage(this.props.track.id);
     let currentTrack = TrackStore.currentTrack();
     let playing = false;
-
     if (!currentTrack.paused && currentTrack.dataset.id == this.props.track.id) {
       playing = true;
     }
 
     return { percentage: percentage, playing: playing };
   },
-  //
-  // componentWillMount () {
-  //   this.renderPlaybar();
-  // },
+
+  componentWillMount () {
+    this.renderPlaybar();
+  },
 
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-    // if (this.setRefreshIntervalId) {
-    //   clearInterval(this.setRefreshIntervalId);
-    // }
+    TrackActions.fetchTrack(this.props.track.id);
     this.renderPlaybar();
   },
 
@@ -40,15 +39,11 @@ var TrackIndexItem = React.createClass({
 
   setNewPercentage () {
     let newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
-    try {
-      this.setState({ percentage: newPercentage });
-    } catch (e) {
-      debugger
-    }
+    this.setState({ percentage: newPercentage });
+
   },
 
   renderPlaybar () {
-
     let currentTrack = TrackStore.currentTrack();
 
     if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
@@ -71,7 +66,6 @@ var TrackIndexItem = React.createClass({
     this.setState({ playing: !this.state.playing}, () => {
       TrackChange.playTrack(this.props.track.id);
     });
-
   },
 
   render () {
@@ -120,6 +114,11 @@ var TrackIndexItem = React.createClass({
 
           <div className="track-index-avatar-comments-container">
             <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_INDEX_WIDTH } comments={ this.props.track.comments}/>
+          </div>
+
+
+          <div className="comment-form">
+            <CommentForm track={ this.props.track }/>
           </div>
 
           <div className="track-audio-el">

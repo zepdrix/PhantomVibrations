@@ -31,6 +31,10 @@ var TrackEditForm = React.createClass({
     this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
   },
 
+  componentWillUnmount () {
+    this.trackListener.remove();
+  },
+
   redirectIfTrackSaved () {
     this.context.router.push(`/tracks`);
   },

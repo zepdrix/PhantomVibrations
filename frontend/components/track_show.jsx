@@ -18,11 +18,8 @@ var TrackShow = React.createClass({
     let currentUser = SessionStore.currentUser();
     let rbg1 = CSSHelper.styleHelper();
     let playing = false;
-    let currentTrack = TrackStore.currentTrack();
 
-    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
-      playing = true;
-    }
+
     return { track, currentUser, rbg1, playing: playing };
   },
 
@@ -30,8 +27,6 @@ var TrackShow = React.createClass({
     this.trackListener = TrackStore.addListener(this.onChangeTrack);
     this.sessionListener = SessionStore.addListener(this.onChangeSession);
     TrackActions.fetchTrack(this.props.params.trackId);
-
-
     SessionActions.fetchCurrentUser();
   },
 
@@ -54,7 +49,13 @@ var TrackShow = React.createClass({
 
   onChangeTrack () {
     let track = TrackStore.find(this.props.params.trackId);
-    this.setState({ track });
+    let playing = false;
+    let currentTrack = TrackStore.currentTrack();
+
+    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
+      playing = true;
+    }
+    this.setState({ track, playing: playing });
   },
 
   onChangeSession () {
@@ -62,10 +63,15 @@ var TrackShow = React.createClass({
     this.setState({ currentUser });
   },
 
-
+  onClick (e) {
+    e.preventDefault();
+    this.setState({ playing: !this.state.playing}, () => {
+      TrackChange.playTrack(this.state.track.id);
+    });
+  },
 
   playIcon () {
-    if (parseInt(TrackStore.currentTrack().id) === this.state.track.id && !TrackStore.currentTrack().paused) {
+    if ((TrackStore.currentTrack().dataset.id) === this.state.track.id && !TrackStore.currentTrack().paused) {
       return(
         <div className="pause-icon" id={ this.state.track.id } onClick={ this.pauseCurrentTrack }/>
       );

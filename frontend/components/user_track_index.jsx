@@ -6,7 +6,6 @@ var UserTrackIndex = React.createClass({
 
   render () {
 
-
     if (!!this.props.tracks) {
       let allUserTrackIndexItems = this.props.tracks.map( (track, key) => {
         return <UserTrackIndexItem track={ track } key={ key }/>;

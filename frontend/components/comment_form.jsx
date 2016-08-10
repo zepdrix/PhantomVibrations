@@ -15,7 +15,7 @@ var CommentForm = React.createClass({
   },
 
   componentDidMount () {
-  
+
   },
 
   handleBody (e) {
@@ -24,15 +24,14 @@ var CommentForm = React.createClass({
   },
 
   handleSubmit (e) {
+
     let trackPercentage;
-    if (TrackStore.currentTrack().id === this.props.track.id) {
+    if (TrackStore.currentTrack().dataset.id == this.props.track.id) {
       let currentTrack = TrackStore.currentTrack();
       trackPercentage = currentTrack.currentTime / currentTrack.duration;
     } else {
       trackPercentage = Math.random();
     }
-
-    // console.log(trackPercentage);
 
     e.preventDefault();
     CommentActions.createComment({
@@ -45,7 +44,6 @@ var CommentForm = React.createClass({
   },
 
   render () {
-    console.log(TrackStore.currentTrack());
 
     return(
       <div>

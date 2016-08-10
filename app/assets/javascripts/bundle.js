@@ -27138,7 +27138,7 @@
 	  displayName: 'TrackIndex',
 	  render: function render() {
 	    var allTrackIndexItems = this.props.tracks.map(function (track, key) {
-	      return React.createElement(TrackIndexItem, { key: key, track: track });
+	      return React.createElement(TrackIndexItem, { key: track.id, track: track });
 	    });
 	
 	    return React.createElement(
@@ -27163,11 +27163,13 @@
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	
+	var TrackActions = __webpack_require__(264);
 	var TrackStore = __webpack_require__(240);
 	var TrackChange = __webpack_require__(263);
+	var SessionStore = __webpack_require__(281);
 	var WindowSizeConstants = __webpack_require__(271);
 	var CommentAvatarIndex = __webpack_require__(272);
+	var CommentForm = __webpack_require__(285);
 	
 	var TrackIndexItem = React.createClass({
 	  displayName: 'TrackIndexItem',
@@ -27175,24 +27177,18 @@
 	    var percentage = TrackStore.getPlaybackPercentage(this.props.track.id);
 	    var currentTrack = TrackStore.currentTrack();
 	    var playing = false;
-	
 	    if (!currentTrack.paused && currentTrack.dataset.id == this.props.track.id) {
 	      playing = true;
 	    }
 	
 	    return { percentage: percentage, playing: playing };
 	  },
-	
-	  //
-	  // componentWillMount () {
-	  //   this.renderPlaybar();
-	  // },
-	
+	  componentWillMount: function componentWillMount() {
+	    this.renderPlaybar();
+	  },
 	  componentDidMount: function componentDidMount() {
 	    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-	    // if (this.setRefreshIntervalId) {
-	    //   clearInterval(this.setRefreshIntervalId);
-	    // }
+	    TrackActions.fetchTrack(this.props.track.id);
 	    this.renderPlaybar();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -27201,14 +27197,9 @@
 	  },
 	  setNewPercentage: function setNewPercentage() {
 	    var newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
-	    try {
-	      this.setState({ percentage: newPercentage });
-	    } catch (e) {
-	      debugger;
-	    }
+	    this.setState({ percentage: newPercentage });
 	  },
 	  renderPlaybar: function renderPlaybar() {
-	
 	    var currentTrack = TrackStore.currentTrack();
 	
 	    if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
@@ -27292,6 +27283,11 @@
 	        ),
 	        React.createElement(
 	          'div',
+	          { className: 'comment-form' },
+	          React.createElement(CommentForm, { track: this.props.track })
+	        ),
+	        React.createElement(
+	          'div',
 	          { className: 'track-audio-el' },
 	          React.createElement(
 	            'div',
@@ -27351,7 +27347,7 @@
 	};
 	
 	TrackStore.isCurrentTrack = function () {
-	  return !!_currentTrack.id;
+	  return !!_currentTrack.dataset.id;
 	};
 	
 	var _resetTrack = function _resetTrack(track) {
@@ -34920,6 +34916,9 @@
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
 	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.trackListener.remove();
+	  },
 	  redirectIfTrackSaved: function redirectIfTrackSaved() {
 	    this.context.router.push('/tracks');
 	  },
@@ -35241,18 +35240,13 @@
 	    var currentUser = SessionStore.currentUser();
 	    var rbg1 = CSSHelper.styleHelper();
 	    var playing = false;
-	    var currentTrack = TrackStore.currentTrack();
 	
-	    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
-	      playing = true;
-	    }
 	    return { track: track, currentUser: currentUser, rbg1: rbg1, playing: playing };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onChangeTrack);
 	    this.sessionListener = SessionStore.addListener(this.onChangeSession);
 	    TrackActions.fetchTrack(this.props.params.trackId);
-	
 	    SessionActions.fetchCurrentUser();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -35273,14 +35267,28 @@
 	  },
 	  onChangeTrack: function onChangeTrack() {
 	    var track = TrackStore.find(this.props.params.trackId);
-	    this.setState({ track: track });
+	    var playing = false;
+	    var currentTrack = TrackStore.currentTrack();
+	
+	    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
+	      playing = true;
+	    }
+	    this.setState({ track: track, playing: playing });
 	  },
 	  onChangeSession: function onChangeSession() {
 	    var currentUser = SessionStore.currentUser();
 	    this.setState({ currentUser: currentUser });
 	  },
+	  onClick: function onClick(e) {
+	    var _this2 = this;
+	
+	    e.preventDefault();
+	    this.setState({ playing: !this.state.playing }, function () {
+	      TrackChange.playTrack(_this2.state.track.id);
+	    });
+	  },
 	  playIcon: function playIcon() {
-	    if (parseInt(TrackStore.currentTrack().id) === this.state.track.id && !TrackStore.currentTrack().paused) {
+	    if (TrackStore.currentTrack().dataset.id === this.state.track.id && !TrackStore.currentTrack().paused) {
 	      return React.createElement('div', { className: 'pause-icon', id: this.state.track.id, onClick: this.pauseCurrentTrack });
 	    } else {
 	      return React.createElement('div', { className: 'play-icon', id: this.state.track.id, onClick: this.playTrack });
@@ -35531,15 +35539,14 @@
 	    this.setState({ body: e.target.value });
 	  },
 	  handleSubmit: function handleSubmit(e) {
+	
 	    var trackPercentage = void 0;
-	    if (TrackStore.currentTrack().id === this.props.track.id) {
+	    if (TrackStore.currentTrack().dataset.id == this.props.track.id) {
 	      var currentTrack = TrackStore.currentTrack();
 	      trackPercentage = currentTrack.currentTime / currentTrack.duration;
 	    } else {
 	      trackPercentage = Math.random();
 	    }
-	
-	    // console.log(trackPercentage);
 	
 	    e.preventDefault();
 	    CommentActions.createComment({
@@ -35551,7 +35558,6 @@
 	    TrackActions.fetchAllTracks();
 	  },
 	  render: function render() {
-	    console.log(TrackStore.currentTrack());
 	
 	    return React.createElement(
 	      'div',
@@ -36120,7 +36126,6 @@
 	    this.setState({ tracks: TrackStore.all() });
 	  },
 	  render: function render() {
-	
 	    return React.createElement(
 	      'div',
 	      { className: 'user-page section' },
@@ -36151,6 +36156,7 @@
 	var Link = __webpack_require__(175).Link;
 	var UserStore = __webpack_require__(274);
 	var UserActions = __webpack_require__(276);
+	var TrackStore = __webpack_require__(240);
 	var TrackIndex = __webpack_require__(238);
 	var CSSHelper = __webpack_require__(284);
 	
@@ -36158,30 +36164,33 @@
 	  displayName: 'UserProfile',
 	  getInitialState: function getInitialState() {
 	    var user = UserStore.find(parseInt(this.props.params.userId));
-	    if (user === []) {}
-	    return { user: UserStore.find(parseInt(this.props.params.userId)) };
+	    var rbg1 = CSSHelper.styleHelper();
+	
+	    return { user: UserStore.find(parseInt(this.props.params.userId)), userTracks: TrackStore.all(), rbg1: rbg1 };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    this.userListener = UserStore.addListener(this.onChange);
+	    this.userListener = UserStore.addListener(this.onUserChange);
+	    this.trackListener = TrackStore.addListener(this.onTrackChange);
+	    TrackActions.fetchUserTracks(parseInt(this.props.params.userId));
 	    UserActions.fetchUser(parseInt(this.props.params.userId));
+	  },
+	  onTrackChange: function onTrackChange() {
+	    this.setState({ userTracks: TrackStore.all() });
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.userListener.remove();
+	    this.trackListener.remove();
 	  },
-	  userTracks: function userTracks() {
-	    return React.createElement(TrackIndex, { tracks: this.state.user.tracks });
-	  },
-	  onChange: function onChange() {
+	  onUserChange: function onUserChange() {
 	    this.setState({ user: UserStore.find(parseInt(this.props.params.userId)) });
 	  },
 	  render: function render() {
-	    var rbg1 = CSSHelper.styleHelper();
-	    var rbg2 = [rbg1[1], rbg1[2], rbg1[0]];
 	
+	    var rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
 	    if (this.state.user) {
 	
 	      var username = this.state.user.username;
-	      var userTracks = this.state.user.tracks;
+	      var userTracks = this.state.userTracks;
 	      var avatarUrl = this.state.user.avatar_image_url;
 	      var userUrl = '/users/' + this.state.user.id;
 	
@@ -36190,7 +36199,7 @@
 	        { className: 'user-page' },
 	        React.createElement(
 	          'div',
-	          { className: 'user-page banner-area', style: { background: '-webkit-linear-gradient(135deg, rgba(' + rbg1[0] + ', ' + rbg1[1] + ', ' + rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
+	          { className: 'user-page banner-area', style: { background: '-webkit-linear-gradient(135deg, rgba(' + this.state.rbg1[0] + ', ' + this.state.rbg1[1] + ', ' + this.state.rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
 	          React.createElement(
 	            'div',
 	            null,
@@ -36256,6 +36265,7 @@
 	    this.sessionListener = SessionStore.addListener(this.onSessionChange);
 	    this.trackListener = TrackStore.addListener(this.onTrackChange);
 	    TrackActions.fetchUserTracks(this.state.currentUser.id);
+	    // TrackActions.fetchAllTracks();
 	    SessionActions.fetchCurrentUser();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -36342,7 +36352,6 @@
 	    TrackActions.deleteTrack(this.props.track.id);
 	  },
 	  render: function render() {
-	
 	    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id && this.props.track.user_id === SessionStore.currentUser().id) {
 	      return React.createElement(
 	        'div',
@@ -36718,6 +36727,7 @@
 	var React = __webpack_require__(1);
 	var TrackStore = __webpack_require__(240);
 	var TrackChange = __webpack_require__(263);
+	var TrackActions = __webpack_require__(264);
 	
 	var PlayBar = React.createClass({
 	  displayName: 'PlayBar',
@@ -36733,7 +36743,8 @@
 	    var _this = this;
 	
 	    this.setState({ currentTrack: TrackStore.currentTrack() });
-	    setInterval(function () {
+	    // debugger
+	    this.refreshIntervalId = setInterval(function () {
 	      _this.setState({ currentTime: _this.state.currentTrack.currentTime });
 	    }, 100);
 	  },
@@ -36741,21 +36752,24 @@
 	    var _this2 = this;
 	
 	    e.preventDefault();
-	    setInterval(function () {
+	    clearInterval(this.refreshIntervalId);
+	    this.refreshIntervalId = setInterval(function () {
 	      _this2.setState({ currentTime: _this2.state.currentTrack.currentTime });
 	    }, 100);
-	    this.state.currentTrack.play();
+	    TrackActions.playCurrentTrack();
+	
+	    // this.state.currentTrack.play();
 	  },
 	  handlePause: function handlePause(e) {
 	    e.preventDefault();
 	    // TrackChange.pauseTrack(e);
-	    this.state.currentTrack.pause();
+	    TrackActions.pauseCurrentTrack();
 	  },
 	  render: function render() {
-	
 	    if (TrackStore.isCurrentTrack()) {
 	      var percentage = 0;
 	      // this.state.currentTrack.play();
+	
 	      if (this.state.currentTrack) {
 	        var barWidth = window.innerWidth < 900 ? 900 : window.innerWidth;
 	        percentage = this.state.currentTrack.currentTime / this.state.currentTrack.duration * barWidth;
@@ -36791,8 +36805,6 @@
 	    } else {
 	      return React.createElement('div', { className: 'playbar no-song' });
 	    }
-	
-	    // <div className="playnode-remaining" style={{width: 'translateX(' + percentage + 'px)'}}>0</div>
 	  }
 	});
 	
