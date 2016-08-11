@@ -83,4 +83,12 @@ module.exports = {
     });
   },
 
+  seekNewPercentage (clickPercentage) {
+    AppDispatcher.dispatch({
+      actionType: TrackConstants.SEEK_NEW_PERCENTAGE,
+      percentage: clickPercentage
+    });
+
+  }
+
 };

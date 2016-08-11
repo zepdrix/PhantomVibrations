@@ -116,6 +116,12 @@ const _setCurrentPercentage = function () {
 };
 
 
+const _seekNewPercentage = function (clickPercentage) {
+  _currentTrack.currentTime = clickPercentage * _currentTrack.duration;
+};
+
+
+
 TrackStore.getPlaybackPercentage = function (trackId) {
   if (_trackStates[trackId]) {
     return _trackStates[trackId];
@@ -205,6 +211,10 @@ TrackStore.__onDispatch = function (payload) {
       break;
     case TrackConstants.PLAY_CURRENT_TRACK:
       _playCurrentTrack(payload.track);
+      this.__emitChange();
+      break;
+    case TrackConstants.SEEK_NEW_PERCENTAGE:
+      _seekNewPercentage(payload.percentage);
       this.__emitChange();
       break;
     case TrackConstants.REMOVE_TRACK:

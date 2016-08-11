@@ -36,7 +36,7 @@ var UserProfile = React.createClass({
   },
 
   render () {
-
+    debugger
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
     if (this.state.user) {
 

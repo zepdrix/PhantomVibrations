@@ -6,7 +6,6 @@ const UserActions = require('../actions/user_actions.js');
 var CommentAvatarIndex = React.createClass({
 
   render () {
-    
     let allCommentAvatarIndexItems = this.props.comments.map( (comment, key) => {
       return <CommentAvatarIndexItem key={ key } comment={ comment } user={ UserStore.find(comment.user_id) } width={ this.props.width } />;
     });

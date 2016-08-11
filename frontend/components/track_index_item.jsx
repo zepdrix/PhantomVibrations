@@ -22,10 +22,6 @@ var TrackIndexItem = React.createClass({
     return { percentage: percentage, playing: playing };
   },
 
-  // componentWillMount () {
-  //   this.renderPlaybar();
-  // },
-
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
     TrackActions.fetchTrack(this.props.track.id);
@@ -33,39 +29,35 @@ var TrackIndexItem = React.createClass({
   },
 
   componentWillUnmount () {
-    // debugger
     this.currentTrackListener.remove();
     if (this.setRefreshIntervalId) {
-      console.log('cleared intervalId: ' + this.setRefreshIntervalId + ' in ' + this.props.track.id);
       clearInterval(this.setRefreshIntervalId);
     }
   },
 
-  setNewPercentage () {
-    let newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
-    console.log(this.props.track.id);
-    this.setState({ percentage: newPercentage });
-
+  setNewPercentage (clickPercentage) {
+    if (clickPercentage) {
+      TrackActions.seekNewPercentage(clickPercentage);
+      // this.setState({ percentage: clickPercentage });
+    } else {
+      let newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
+      this.setState({ percentage: newPercentage });
+    }
   },
 
   renderPlaybar () {
     let currentTrack = TrackStore.currentTrack();
-    // debugger
+    debugger
     if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
-      // debugger
-      if (!this.setRefreshIntervalId) {
-        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+      clearInterval(this.setRefreshIntervalId);
+      this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
 
-      }
-      // clearInterval(this.setRefreshIntervalId);
-
-      console.log('new intervalId: ' + this.setRefreshIntervalId + ' in ' + this.props.track.id);
     } else {
       if (this.setRefreshIntervalId) {
         clearInterval(this.setRefreshIntervalId);
       }
+      this.setState({ playing: false });
       this.setNewPercentage();
-      // this.setState({ playing: false });
     }
   },
 
@@ -78,6 +70,16 @@ var TrackIndexItem = React.createClass({
     this.setState({ playing: !this.state.playing}, () => {
       TrackChange.playTrack(this.props.track.id);
     });
+  },
+
+  resetPercentage (e) {
+    e.preventDefault();
+    if (this.state.playing) {
+      let clickPercentage = (e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth;
+      this.setNewPercentage(clickPercentage);
+    } else {
+      this.onClick(e);
+    }
   },
 
   render () {
@@ -120,7 +122,7 @@ var TrackIndexItem = React.createClass({
             </Link>
           </div>
 
-          <div className="track-list playnode-container">
+          <div className="track-list playnode-container" id={ this.props.track.id } onClick={ this.resetPercentage } >
             <div className="track-list playnode-played" style={{width: (this.state.percentage * 420) + 'px'}}></div>
           </div>
 

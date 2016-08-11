@@ -14,20 +14,22 @@ const WindowSizeConstants = require('../constants/window_size_constants.js');
 
 var TrackShow = React.createClass({
   getInitialState () {
-    let track = TrackStore.find(this.props.params.trackId);
+    let track = TrackStore.find(parseInt(this.props.params.trackId));
     let currentUser = SessionStore.currentUser();
     let rbg1 = CSSHelper.styleHelper();
+    let percentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
     let playing = false;
 
-
-    return { track, currentUser, rbg1, playing: playing };
+    return { track: track, currentUser: currentUser, rbg1: rbg1, playing: playing, percentage: percentage };
   },
 
   componentDidMount () {
-    this.trackListener = TrackStore.addListener(this.onChangeTrack);
+    this.trackListener = TrackStore.addListener(this.renderPlaybar);
     this.sessionListener = SessionStore.addListener(this.onChangeSession);
-    TrackActions.fetchTrack(this.props.params.trackId);
+    TrackActions.fetchTrack(parseInt(this.props.params.trackId));
     SessionActions.fetchCurrentUser();
+    this.renderPlaybar();
+
   },
 
   componentWillUnmount () {
@@ -35,62 +37,62 @@ var TrackShow = React.createClass({
     this.sessionListener.remove();
   },
 
-  pauseCurrentTrack () {
-    TrackStore.currentTrack().pause();
-  },
-
-  playTrack (e) {
-    e.preventDefault();
-    debugger
-    this.setState({ playing: !this.state.playing}, () => {
-      TrackChange.playTrack(this.state.track.id);
-    });
-  },
-
-  onChangeTrack () {
-    let track = TrackStore.find(this.props.params.trackId);
-    let playing = false;
-    let currentTrack = TrackStore.currentTrack();
-
-    if (!currentTrack.paused && currentTrack.dataset.id == this.state.track.id) {
-      playing = true;
-    }
-    this.setState({ track, playing: playing });
-  },
-
   onChangeSession () {
     let currentUser = SessionStore.currentUser();
     this.setState({ currentUser });
   },
 
+  setNewPercentage () {
+    let newPercentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
+    this.setState({ percentage: newPercentage });
+  },
+
+  renderPlaybar () {
+
+    if (!this.state.track) {
+      let currentTrack = TrackStore.currentTrack();
+      let playing = false;
+      if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
+        playing = true;
+      }
+      this.setState({track: TrackStore.find(parseInt(this.props.params.trackId)), playing: playing});
+    } else {
+      // debugger
+      let currentTrack = TrackStore.currentTrack();
+      if (currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
+        if (!this.setRefreshIntervalId) {
+          this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+        }
+      } else {
+        if (this.setRefreshIntervalId) {
+          clearInterval(this.setRefreshIntervalId);
+        }
+        this.setNewPercentage();
+      }
+    }
+
+  },
+
   onClick (e) {
     e.preventDefault();
     this.setState({ playing: !this.state.playing}, () => {
-      TrackChange.playTrack(this.state.track.id);
+      TrackChange.playTrack(parseInt(this.props.params.track.id));
     });
-  },
-
-  playIcon () {
-    if ((TrackStore.currentTrack().dataset.id) === this.state.track.id && !TrackStore.currentTrack().paused) {
-      return(
-        <div className="pause-icon" id={ this.state.track.id } onClick={ this.pauseCurrentTrack }/>
-      );
-    } else {
-      return(
-        <div className="play-icon" id={ this.state.track.id } onClick={ this.playTrack }/>
-      );
-    }
   },
 
   render () {
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
+    console.log(this.state.percentage);
+    let iconClass;
+
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
       return(
         <div className="track-show-main">
           <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(this.state.rbg1[0])+', '+(this.state.rbg1[1])+', '+(this.state.rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
             <div className="track-show top-left">
-              { this.playIcon() }
+              <div className={ iconClass } id={ this.state.track.id } onClick={ this.onClick }/>
+
 
               <div className="user-area">
                 <div className="username">

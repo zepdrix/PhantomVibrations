@@ -30,6 +30,12 @@ var PlayBar = React.createClass({
     // this.state.currentTrack.play();
   },
 
+  resetPercentage (e) {
+    e.preventDefault();
+    let clickPercentage = (e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth;
+    TrackActions.seekNewPercentage(clickPercentage);
+  },
+
   handlePause (e) {
     e.preventDefault();
     // TrackChange.pauseTrack(e);
@@ -61,7 +67,7 @@ var PlayBar = React.createClass({
             Pause
           </div>
           </div>
-          <div className="playnode-container">
+          <div className="playnode-container" onClick={ this.resetPercentage }>
             <div className="playnode-played" style={{width: percentage + 'px'}}></div>
           </div>
         </div>
