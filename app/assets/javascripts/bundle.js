@@ -27205,10 +27205,10 @@
 	  },
 	  renderPlaybar: function renderPlaybar() {
 	    var currentTrack = TrackStore.currentTrack();
-	    debugger;
 	    if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
 	      clearInterval(this.setRefreshIntervalId);
 	      this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
+	      this.setState({ playing: true });
 	    } else {
 	      if (this.setRefreshIntervalId) {
 	        clearInterval(this.setRefreshIntervalId);
@@ -27239,8 +27239,9 @@
 	  },
 	  render: function render() {
 	    var iconClass = void 0;
+	    var currentTrack = TrackStore.currentTrack();
 	
-	    if (this.state.playing) {
+	    if (!currentTrack.paused && currentTrack.dataset.id == this.props.track.id) {
 	      iconClass = "pause-icon-small";
 	    } else {
 	      iconClass = "play-icon";
@@ -34450,6 +34451,9 @@
 	// var _currentQueueIndex = -1;
 	
 	var _currentTrack = new Audio();
+	
+	_currentTrack.dataset.id = "no-track";
+	
 	var _trackStates = {};
 	
 	var refreshIntervalId;
@@ -34726,20 +34730,39 @@
 	
 	var React = __webpack_require__(1);
 	var CommentAvatarIndexItem = __webpack_require__(275);
+	var TrackStore = __webpack_require__(269);
 	var UserStore = __webpack_require__(276);
 	var UserActions = __webpack_require__(278);
 	
 	var CommentAvatarIndex = React.createClass({
 	  displayName: 'CommentAvatarIndex',
+	  componentDidMount: function componentDidMount() {
+	    this.autoShowState = true;
+	  },
+	  stopAutoShow: function stopAutoShow(e) {
+	    e.preventDefault();
+	    this.autoShowState = false;
+	  },
+	  startAutoShow: function startAutoShow(e) {
+	    e.preventDefault();
+	    this.autoShowState = true;
+	  },
 	  render: function render() {
 	    var _this = this;
 	
 	    var allCommentAvatarIndexItems = this.props.comments.map(function (comment, key) {
-	      return React.createElement(CommentAvatarIndexItem, { key: key, comment: comment, user: UserStore.find(comment.user_id), width: _this.props.width });
+	      return React.createElement(CommentAvatarIndexItem, {
+	        key: key,
+	        comment: comment,
+	        user: UserStore.find(comment.user_id),
+	        width: _this.props.width,
+	        trackId: _this.props.trackId,
+	        percentage: _this.props.percentage,
+	        autoShowState: _this.autoShowState });
 	    });
 	    return React.createElement(
 	      'div',
-	      { className: 'comment-avatar-index' },
+	      { className: 'comment-avatar-index', onMouseEnter: this.stopAutoShow, onMouseLeave: this.startAutoShow },
 	      allCommentAvatarIndexItems
 	    );
 	  }
@@ -34760,9 +34783,11 @@
 	
 	var CommentAvatarIndexItem = React.createClass({
 	  displayName: 'CommentAvatarIndexItem',
-	  getInitialState: function getInitialState(e) {
+	  getInitialState: function getInitialState() {
+	
 	    return { comment: '' };
 	  },
+	  liveCommentShow: function liveCommentShow() {},
 	  commentShow: function commentShow(e) {
 	    e.preventDefault();
 	    this.setState({ comment: this.props.comment.body });
@@ -34773,8 +34798,14 @@
 	  },
 	  render: function render() {
 	    var hiddenComment = void 0;
+	    var livePercentage = this.props.percentage;
 	    var percentage = this.props.comment.track_percentage * this.props.width;
 	    var userUrl = '/users/' + this.props.comment.user_id;
+	    // debugger
+	    // if (livePercentage < this.props.comment.track_percentage < livePercentage + 0.2) {
+	    //   this.liveCommentShow();
+	    // }
+	
 	    if (this.state.comment) {
 	      hiddenComment = React.createElement(
 	        'div',
@@ -34787,7 +34818,26 @@
 	        '  ',
 	        this.state.comment
 	      );
+	    } else if (livePercentage - 0.01 < this.props.comment.track_percentage && this.props.comment.track_percentage < livePercentage + 0.01 && this.props.autoShowState) {
+	      hiddenComment = React.createElement(
+	        'div',
+	        { className: 'hidden-comment' },
+	        React.createElement(
+	          Link,
+	          { className: 'username-link', to: userUrl },
+	          this.props.comment.username
+	        ),
+	        '  ',
+	        this.props.comment.body
+	      );
 	    }
+	    //
+	    //  else if (livePercentage < this.props.comment.track_percentage < livePercentage + 0.2) {
+	    // } else if (this.props.comment.track_percentage  < livePercentage) {
+	    //
+	    //   this.setState({ comment: '' });
+	    // }
+	
 	    return React.createElement(
 	      'div',
 	      { onMouseLeave: this.commentHide },
@@ -35413,6 +35463,8 @@
 	      formData.append("track[image]", this.state.imageFile);
 	    }
 	
+	    debugger;
+	
 	    TrackActions.createTrack(formData);
 	  },
 	  formErrors: function formErrors() {
@@ -35537,8 +35589,13 @@
 	    var currentUser = SessionStore.currentUser();
 	    var rbg1 = CSSHelper.styleHelper();
 	    var percentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
-	    var playing = false;
 	
+	    var currentTrack = TrackStore.currentTrack();
+	
+	    var playing = false;
+	    if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
+	      playing = true;
+	    }
 	    return { track: track, currentUser: currentUser, rbg1: rbg1, playing: playing, percentage: percentage };
 	  },
 	  componentDidMount: function componentDidMount() {
@@ -35551,31 +35608,46 @@
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.trackListener.remove();
 	    this.sessionListener.remove();
+	    clearInterval(this.setRefreshIntervalId);
 	  },
 	  onChangeSession: function onChangeSession() {
 	    var currentUser = SessionStore.currentUser();
 	    this.setState({ currentUser: currentUser });
 	  },
-	  setNewPercentage: function setNewPercentage() {
-	    var newPercentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
-	    this.setState({ percentage: newPercentage });
+	  setNewPercentage: function setNewPercentage(clickPercentage) {
+	    if (clickPercentage) {
+	      TrackActions.seekNewPercentage(clickPercentage);
+	      // this.setState({ percentage: clickPercentage });
+	    } else {
+	      var newPercentage = TrackStore.getPlaybackPercentage(this.props.params.trackId);
+	      this.setState({ percentage: newPercentage });
+	    }
+	  },
+	  resetPercentage: function resetPercentage(e) {
+	    e.preventDefault();
+	
+	    if (this.state.playing) {
+	      var clickPercentage = (e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth;
+	      this.setNewPercentage(clickPercentage);
+	    } else {
+	      this.onClick(e);
+	    }
 	  },
 	  renderPlaybar: function renderPlaybar() {
+	    var currentTrack = TrackStore.currentTrack();
 	
 	    if (!this.state.track) {
-	      var currentTrack = TrackStore.currentTrack();
 	      var playing = false;
 	      if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
 	        playing = true;
 	      }
 	      this.setState({ track: TrackStore.find(parseInt(this.props.params.trackId)), playing: playing });
 	    } else {
-	      // debugger
-	      var _currentTrack = TrackStore.currentTrack();
-	      if (_currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
-	        if (!this.setRefreshIntervalId) {
-	          this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
-	        }
+	
+	      if (currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
+	        clearInterval(this.setRefreshIntervalId);
+	        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 50);
+	        this.setState({ playing: true });
 	      } else {
 	        if (this.setRefreshIntervalId) {
 	          clearInterval(this.setRefreshIntervalId);
@@ -35588,14 +35660,23 @@
 	    var _this = this;
 	
 	    e.preventDefault();
+	
 	    this.setState({ playing: !this.state.playing }, function () {
-	      TrackChange.playTrack(parseInt(_this.props.params.track.id));
+	      TrackChange.playTrack(parseInt(_this.props.params.trackId));
 	    });
 	  },
 	  render: function render() {
+	    console.log('track-show rerender');
 	    var rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
-	    console.log(this.state.percentage);
 	    var iconClass = void 0;
+	    var currentTrack = TrackStore.currentTrack();
+	    var liveTrack = TrackStore.find(parseInt(this.props.params.trackId));
+	
+	    if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
+	      iconClass = "pause-icon-big";
+	    } else {
+	      iconClass = "play-icon-big";
+	    }
 	
 	    if (this.state.track) {
 	      var userUrl = '/users/' + this.state.track.user_id;
@@ -35645,8 +35726,13 @@
 	          ),
 	          React.createElement(
 	            'div',
+	            { className: 'track-show playnode-container', id: this.props.params.trackId, onClick: this.resetPercentage },
+	            React.createElement('div', { className: 'track-show playnode-played', style: { width: this.state.percentage * WindowSizeConstants.TRACK_SHOW_WIDTH + 'px' } })
+	          ),
+	          React.createElement(
+	            'div',
 	            { className: 'track-show-avatar-comments-container' },
-	            React.createElement(CommentAvatarIndex, { width: WindowSizeConstants.TRACK_SHOW_WIDTH, comments: this.state.track.comments })
+	            React.createElement(CommentAvatarIndex, { width: WindowSizeConstants.TRACK_SHOW_WIDTH, comments: liveTrack.comments, trackId: this.state.track.id, percentage: this.state.percentage })
 	          )
 	        ),
 	        React.createElement(
@@ -36217,7 +36303,7 @@
 	    this.setState({ user: UserStore.find(parseInt(this.props.params.userId)) });
 	  },
 	  render: function render() {
-	    debugger;
+	
 	    var rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
 	    if (this.state.user) {
 	
@@ -36775,7 +36861,6 @@
 	    var _this = this;
 	
 	    this.setState({ currentTrack: TrackStore.currentTrack() });
-	    // debugger
 	    this.refreshIntervalId = setInterval(function () {
 	      _this.setState({ currentTime: _this.state.currentTrack.currentTime });
 	    }, 100);
@@ -36803,7 +36888,7 @@
 	    TrackActions.pauseCurrentTrack();
 	  },
 	  render: function render() {
-	    if (TrackStore.isCurrentTrack()) {
+	    if (this.state.currentTrack.dataset.id !== "no-track") {
 	      var percentage = 0;
 	      // this.state.currentTrack.play();
 	

@@ -53,7 +53,7 @@
   width: 22px;
   padding-bottom: 20px;
   transition: 0.3s;
-  z-index: 9999;
+  /*z-index: 9998;*/
 }
 
 .comment-avatar-container {
@@ -70,6 +70,7 @@
 
 .hidden-comment {
   color: #A1A1A1;
+  z-index: 9999;
 }
 
 .track-show.comment-area {

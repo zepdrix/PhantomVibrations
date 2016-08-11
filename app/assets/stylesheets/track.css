@@ -62,7 +62,7 @@
 
 
 
-.track-show > .pause-icon {
+.track-show .pause-icon-big {
   display: block;
   float: left;
   margin-top: 30px;
@@ -132,15 +132,33 @@
   background-color: transparent;;
   float: right;
 }
-
-.playnode .words {
-  float: left;
-}
-
 .track-list.playnode-played {
   height: 16px;
   width: 0px;
   background-color: orange;
+}
+
+.track-show.playnode-container {
+  /*float: right;*/
+
+  background-color: transparent;
+  float: left;
+  position: relative;
+  top: 153px;
+  margin-left: 30px;
+  /*background-color: grey;*/
+  width: 500px;
+  height: 16px;
+}
+
+
+.track-show.playnode-played {
+  height: 16px;
+  width: 0px;
+  background-color: orange;
+}
+.playnode .words {
+  float: left;
 }
 
 .user-area > img {

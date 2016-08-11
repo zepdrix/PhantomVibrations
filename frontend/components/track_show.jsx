@@ -18,8 +18,13 @@ var TrackShow = React.createClass({
     let currentUser = SessionStore.currentUser();
     let rbg1 = CSSHelper.styleHelper();
     let percentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
-    let playing = false;
 
+    let currentTrack = TrackStore.currentTrack();
+
+    let playing = false;
+    if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
+      playing = true;
+    }
     return { track: track, currentUser: currentUser, rbg1: rbg1, playing: playing, percentage: percentage };
   },
 
@@ -35,6 +40,7 @@ var TrackShow = React.createClass({
   componentWillUnmount () {
     this.trackListener.remove();
     this.sessionListener.remove();
+    clearInterval(this.setRefreshIntervalId);
   },
 
   onChangeSession () {
@@ -42,27 +48,40 @@ var TrackShow = React.createClass({
     this.setState({ currentUser });
   },
 
-  setNewPercentage () {
-    let newPercentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
-    this.setState({ percentage: newPercentage });
+  setNewPercentage (clickPercentage) {
+    if (clickPercentage) {
+      TrackActions.seekNewPercentage(clickPercentage);
+      // this.setState({ percentage: clickPercentage });
+    } else {
+      let newPercentage = TrackStore.getPlaybackPercentage(this.props.params.trackId);
+      this.setState({ percentage: newPercentage });
+    }
   },
+  resetPercentage (e) {
+    e.preventDefault();
 
+    if (this.state.playing) {
+      let clickPercentage = (e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth;
+      this.setNewPercentage(clickPercentage);
+    } else {
+      this.onClick(e);
+    }
+  },
   renderPlaybar () {
+    let currentTrack = TrackStore.currentTrack();
 
     if (!this.state.track) {
-      let currentTrack = TrackStore.currentTrack();
       let playing = false;
       if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
         playing = true;
       }
       this.setState({track: TrackStore.find(parseInt(this.props.params.trackId)), playing: playing});
     } else {
-      // debugger
-      let currentTrack = TrackStore.currentTrack();
+
       if (currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
-        if (!this.setRefreshIntervalId) {
-          this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
-        }
+        clearInterval(this.setRefreshIntervalId);
+        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 50);
+        this.setState({ playing: true });
       } else {
         if (this.setRefreshIntervalId) {
           clearInterval(this.setRefreshIntervalId);
@@ -75,15 +94,25 @@ var TrackShow = React.createClass({
 
   onClick (e) {
     e.preventDefault();
+
     this.setState({ playing: !this.state.playing}, () => {
-      TrackChange.playTrack(parseInt(this.props.params.track.id));
+      TrackChange.playTrack(parseInt(this.props.params.trackId));
     });
   },
 
   render () {
+    console.log('track-show rerender');
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
-    console.log(this.state.percentage);
     let iconClass;
+    let currentTrack = TrackStore.currentTrack();
+    let liveTrack = TrackStore.find(parseInt(this.props.params.trackId));
+
+
+    if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
+      iconClass = "pause-icon-big";
+    } else {
+      iconClass = "play-icon-big";
+    }
 
     if (this.state.track) {
       let userUrl = `/users/${this.state.track.user_id}`;
@@ -118,9 +147,12 @@ var TrackShow = React.createClass({
             <div>
               <img className="track-image" src={ this.state.track.image_url }/>
             </div>
+            <div className="track-show playnode-container" id={ this.props.params.trackId } onClick={ this.resetPercentage } >
+              <div className="track-show playnode-played" style={{width: (this.state.percentage * WindowSizeConstants.TRACK_SHOW_WIDTH ) + 'px'}}></div>
+            </div>
 
             <div className="track-show-avatar-comments-container">
-              <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_SHOW_WIDTH } comments={ this.state.track.comments}/>
+              <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_SHOW_WIDTH } comments={ liveTrack.comments } trackId={ this.state.track.id } percentage={ this.state.percentage } />
             </div>
           </div>
 

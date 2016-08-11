@@ -3,6 +3,7 @@
     window.currentUser = <%= render("api/users/user.json.jbuilder",
       user: current_user).html_safe %>
   <% end %>
+  window.testAudio = "<%= asset_path('nocturne.ogg') %>"
 </script>
 
 <div id="content"></div>

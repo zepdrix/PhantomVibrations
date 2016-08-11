@@ -8,8 +8,6 @@ const WindowSizeConstants = require('../constants/window_size_constants.js');
 const CommentAvatarIndex = require('./comment_avatar_index.jsx');
 const CommentForm = require('./comment_form.jsx');
 
-
-
 var TrackIndexItem = React.createClass({
   getInitialState () {
     let percentage = TrackStore.getPlaybackPercentage(this.props.track.id);
@@ -47,11 +45,10 @@ var TrackIndexItem = React.createClass({
 
   renderPlaybar () {
     let currentTrack = TrackStore.currentTrack();
-    debugger
     if (currentTrack.dataset.id == this.props.track.id && this.state.playing) {
       clearInterval(this.setRefreshIntervalId);
       this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
-
+      this.setState({ playing: true });
     } else {
       if (this.setRefreshIntervalId) {
         clearInterval(this.setRefreshIntervalId);
@@ -84,8 +81,9 @@ var TrackIndexItem = React.createClass({
 
   render () {
     let iconClass;
+    let currentTrack = TrackStore.currentTrack();
 
-    if (this.state.playing) {
+    if (!currentTrack.paused && currentTrack.dataset.id == this.props.track.id) {
       iconClass = "pause-icon-small";
     } else {
       iconClass = "play-icon";

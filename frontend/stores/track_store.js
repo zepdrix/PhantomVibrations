@@ -11,6 +11,9 @@ var _tracks = {};
 // var _currentQueueIndex = -1;
 
 var _currentTrack = new Audio();
+
+_currentTrack.dataset.id = "no-track";
+
 var _trackStates = {};
 
 var refreshIntervalId;

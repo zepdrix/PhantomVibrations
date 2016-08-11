@@ -83,6 +83,8 @@ var TrackForm = React.createClass({
       formData.append("track[image]", this.state.imageFile);
     }
 
+    debugger
+
     TrackActions.createTrack(formData);
   },
 
