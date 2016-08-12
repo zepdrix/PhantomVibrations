@@ -35164,7 +35164,7 @@
 	      track_percentage: trackPercentage
 	    });
 	    this.setState({ body: '' });
-	    TrackActions.fetchAllTracks();
+	    TrackActions.fetchTrack(this.props.track.id);
 	  },
 	  render: function render() {
 	
@@ -35950,7 +35950,7 @@
 	          React.createElement(
 	            'div',
 	            { className: 'track-show-avatar-comments-container' },
-	            React.createElement(CommentAvatarIndex, { width: WindowSizeConstants.TRACK_SHOW_WIDTH, comments: liveTrack.comments, trackId: this.state.track.id, percentage: this.state.percentage })
+	            React.createElement(CommentAvatarIndex, { width: WindowSizeConstants.TRACK_SHOW_WIDTH, comments: liveTrack.comments || currentTrack.comments, trackId: this.state.track.id, percentage: this.state.percentage })
 	          )
 	        ),
 	        React.createElement(

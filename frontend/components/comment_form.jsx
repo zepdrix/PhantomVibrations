@@ -40,7 +40,7 @@ var CommentForm = React.createClass({
       track_percentage: trackPercentage
     });
     this.setState({ body: '' });
-    TrackActions.fetchAllTracks();
+    TrackActions.fetchTrack(this.props.track.id);
   },
 
   render () {

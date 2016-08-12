@@ -193,7 +193,7 @@ var TrackShow = React.createClass({
             </div>
 
             <div className="track-show-avatar-comments-container">
-              <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_SHOW_WIDTH } comments={ liveTrack.comments } trackId={ this.state.track.id } percentage={ this.state.percentage } />
+              <CommentAvatarIndex  width={ WindowSizeConstants.TRACK_SHOW_WIDTH } comments={ liveTrack.comments || currentTrack.comments } trackId={ this.state.track.id } percentage={ this.state.percentage } />
             </div>
           </div>
 
