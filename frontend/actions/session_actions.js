@@ -1,7 +1,7 @@
-const SessionApiUtil = require('../util/session_api_util.js'),
-      SessionConstants = require('../constants/session_constants.js'),
-      AppDispatcher = require('../dispatcher/dispatcher.js'),
-      ErrorActions = require('./error_actions.js');
+const SessionApiUtil = require('../util/session_api_util'),
+      SessionConstants = require('../constants/session_constants'),
+      AppDispatcher = require('../dispatcher/dispatcher'),
+      ErrorActions = require('./error_actions');
 
 module.exports = {
   createUser (user) {

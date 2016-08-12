@@ -1,7 +1,7 @@
 const React = require('react');
-const TrackStore = require('../stores/track_store.js');
-const TrackChange = require('../helpers/track_change.js');
-const TrackActions = require('../actions/track_actions.js');
+const TrackStore = require('../stores/track_store');
+const TrackChange = require('../helpers/track_change');
+const TrackActions = require('../actions/track_actions');
 
 var PlayBar = React.createClass({
   getInitialState () {

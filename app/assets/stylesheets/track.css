@@ -19,13 +19,15 @@
 .track-item.track-username {
   color: #A3A3A3;
 }
+a.track-item.track-title {
 
+
+}
 .track-item.track-title {
   color: #636363;
   font-size: 14px;
+  z-index: 11;
 }
-
-
 .track-item.track-username, .track-item.track-title {
   margin-left: 10px;
 }
@@ -100,6 +102,29 @@
   border-left: 6px solid #FC6F0A;
 }
 
+.comment-form .track-index input {
+  top: 20px;
+  left: 80px;
+  z-index: 20;
+}
+
+.track-show .comment-input {
+  padding: 7px 10px;
+  /*width: 100%;*/
+}
+.track-show .comment-input input{
+  /*padding: 4px 10px;*/
+  width: 100%;
+}
+
+.track-item .comment-input {
+  z-index: 20;
+  padding-top: 20px;
+  margin-left: 40px;
+  width: 200px;
+  height: 40px;
+  float: left;
+}
 
 .track-show .track-title {
   margin-left: 10px;
@@ -125,13 +150,20 @@
   border: 1px solid grey;
 }
 
+/*.track-index {
+  position: relative;
+
+}*/
+
 .track-list.playnode-container {
-  /*float: right;*/
+  /*top: -40px;*/
+  /*position: fixed;*/
   width: 420px;
-  height: 16px;
+  height: 40;
   background-color: transparent;;
   float: right;
 }
+
 .track-list.playnode-played {
   height: 16px;
   width: 0px;
@@ -144,7 +176,7 @@
   background-color: transparent;
   float: left;
   position: relative;
-  top: 153px;
+  top: 108px;
   margin-left: 30px;
   /*background-color: grey;*/
   width: 500px;

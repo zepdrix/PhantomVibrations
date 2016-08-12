@@ -1,6 +1,6 @@
 const React = require('react');
-const CommentIndexItem = require('./comment_index_item.jsx');
-const UserStore = require('../stores/user_store.js');
+const CommentIndexItem = require('./comment_index_item');
+const UserStore = require('../stores/user_store');
 
 var CommentIndex = React.createClass({
 

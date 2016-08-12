@@ -1,8 +1,8 @@
 const React = require('react');
 const Link = require('react-router').Link;
-const TrackStore = require('../stores/track_store.js');
-const TrackActions = require('../actions/track_actions.js');
-const SessionStore = require('../stores/session_store.js');
+const TrackStore = require('../stores/track_store');
+const TrackActions = require('../actions/track_actions');
+const SessionStore = require('../stores/session_store');
 
 var UserTrackIndexItem = React.createClass({
   contextTypes: {

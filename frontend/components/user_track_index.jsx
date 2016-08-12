@@ -1,5 +1,5 @@
 const React = require('react');
-const UserTrackIndexItem = require('./user_track_index_item.jsx');
+const UserTrackIndexItem = require('./user_track_index_item');
 
 
 var UserTrackIndex = React.createClass({
@@ -12,7 +12,7 @@ var UserTrackIndex = React.createClass({
       });
       return(
         <div className="usertracks-index">
-          <div className="usertracks-header">Your Tracks</div>
+          <div className="usertracks-header">Your Vibrations</div>
           { allUserTrackIndexItems }
         </div>
       );

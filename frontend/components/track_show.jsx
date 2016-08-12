@@ -1,16 +1,19 @@
 const React = require('react');
+const ReactDOM = require('react-dom');
 const Link = require('react-router').Link;
-const TrackStore = require('../stores/track_store.js');
-const TrackActions = require('../actions/track_actions.js');
-const SessionStore = require('../stores/session_store.js');
-const SessionActions = require('../actions/session_actions.js');
-const UserActions = require('../actions/user_actions.js');
-const CSSHelper = require('../helpers/css.js');
-const TrackChange = require('../helpers/track_change.js');
-const CommentForm = require('./comment_form.jsx');
-const CommentIndex = require('./comment_index.jsx');
-const CommentAvatarIndex = require('./comment_avatar_index.jsx');
-const WindowSizeConstants = require('../constants/window_size_constants.js');
+const TrackStore = require('../stores/track_store');
+const TrackActions = require('../actions/track_actions');
+const SessionStore = require('../stores/session_store');
+const SessionActions = require('../actions/session_actions');
+const UserActions = require('../actions/user_actions');
+const CSSHelper = require('../helpers/css');
+const TrackChange = require('../helpers/track_change');
+const Wavesurfer = require('react-wavesurfer').default;
+
+const CommentForm = require('./comment_form');
+const CommentIndex = require('./comment_index');
+const CommentAvatarIndex = require('./comment_avatar_index');
+const WindowSizeConstants = require('../constants/window_size_constants');
 
 var TrackShow = React.createClass({
   getInitialState () {
@@ -18,10 +21,12 @@ var TrackShow = React.createClass({
     let currentUser = SessionStore.currentUser();
     let rbg1 = CSSHelper.styleHelper();
     let percentage = TrackStore.getPlaybackPercentage(parseInt(this.props.params.trackId));
-
     let currentTrack = TrackStore.currentTrack();
 
     let playing = false;
+
+
+
     if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
       playing = true;
     }
@@ -34,7 +39,6 @@ var TrackShow = React.createClass({
     TrackActions.fetchTrack(parseInt(this.props.params.trackId));
     SessionActions.fetchCurrentUser();
     this.renderPlaybar();
-
   },
 
   componentWillUnmount () {
@@ -51,12 +55,14 @@ var TrackShow = React.createClass({
   setNewPercentage (clickPercentage) {
     if (clickPercentage) {
       TrackActions.seekNewPercentage(clickPercentage);
-      // this.setState({ percentage: clickPercentage });
     } else {
       let newPercentage = TrackStore.getPlaybackPercentage(this.props.params.trackId);
       this.setState({ percentage: newPercentage });
     }
   },
+
+
+
   resetPercentage (e) {
     e.preventDefault();
 
@@ -67,6 +73,7 @@ var TrackShow = React.createClass({
       this.onClick(e);
     }
   },
+
   renderPlaybar () {
     let currentTrack = TrackStore.currentTrack();
 
@@ -77,6 +84,8 @@ var TrackShow = React.createClass({
       }
       this.setState({track: TrackStore.find(parseInt(this.props.params.trackId)), playing: playing});
     } else {
+
+
 
       if (currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
         clearInterval(this.setRefreshIntervalId);
@@ -100,13 +109,24 @@ var TrackShow = React.createClass({
     });
   },
 
+  // <div className="track-show playnode-played" style={{width: (this.state.percentage * WindowSizeConstants.TRACK_SHOW_WIDTH ) + 'px'}}></div>
   render () {
-    console.log('track-show rerender');
+
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
     let iconClass;
     let currentTrack = TrackStore.currentTrack();
     let liveTrack = TrackStore.find(parseInt(this.props.params.trackId));
 
+
+
+    const waveOptions = {
+      progressColor: '#ED980E',
+      waveColor: '#c4c8dc',
+      normalize: true,
+      barWidth: 4,
+      cursorColor: 'lightgrey',
+      height: 200
+    };
 
     if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
       iconClass = "pause-icon-big";
@@ -115,6 +135,24 @@ var TrackShow = React.createClass({
     }
 
     if (this.state.track) {
+
+    //   let waveform;
+    //   let potentialWaveform = TrackStore.getWaveform(this.props.params.trackId);
+    //   if (potentialWaveform) {
+    //     waveform = potentialWaveform;
+    //   } else {
+    //     let trackPercentage = TrackStore.getPlaybackPercentage(this.props.params.trackId);
+    //
+    //     waveform = <Wavesurfer
+    //                  audioFile={this.state.track.audio_url}
+    //                  pos={ this.state.percentage * trackDuration }
+    //                  options={ waveOptions }
+    //                />;
+    //              TrackStore.setWaveform(this.props.params.trackId, waveform);
+    //   }
+
+
+      let trackDuration = TrackStore.getTrackDuration(this.props.params.trackId);
       let userUrl = `/users/${this.state.track.user_id}`;
       return(
         <div className="track-show-main">
@@ -147,8 +185,15 @@ var TrackShow = React.createClass({
             <div>
               <img className="track-image" src={ this.state.track.image_url }/>
             </div>
+
             <div className="track-show playnode-container" id={ this.props.params.trackId } onClick={ this.resetPercentage } >
-              <div className="track-show playnode-played" style={{width: (this.state.percentage * WindowSizeConstants.TRACK_SHOW_WIDTH ) + 'px'}}></div>
+              <Wavesurfer
+                audioFile={this.state.track.audio_url}
+                pos={ this.state.percentage * trackDuration }
+                options={ waveOptions }
+              />
+
+
             </div>
 
             <div className="track-show-avatar-comments-container">
@@ -177,7 +222,7 @@ var TrackShow = React.createClass({
             </div>
 
             <div className="comment-index">
-              <CommentIndex  comments={ this.state.track.comments}/>
+              <CommentIndex  comments={ liveTrack.comments}/>
             </div>
           </div>
         </div>

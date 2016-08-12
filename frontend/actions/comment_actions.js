@@ -1,7 +1,7 @@
-const CommentApiUtil = require('../util/comment_api_util.js');
-const CommentConstants = require('../constants/comment_constants.js');
-const AppDispatcher = require('../dispatcher/dispatcher.js');
-const ErrorStore = require('../stores/error_store.js');
+const CommentApiUtil = require('../util/comment_api_util');
+const CommentConstants = require('../constants/comment_constants');
+const AppDispatcher = require('../dispatcher/dispatcher');
+const ErrorStore = require('../stores/error_store');
 
 module.exports = {
   createComment (comment) {

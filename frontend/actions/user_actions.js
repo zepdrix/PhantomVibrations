@@ -1,7 +1,7 @@
-const UserApiUtil = require('../util/user_api_util.js'),
-      UserConstants = require('../constants/user_constants.js'),
-      AppDispatcher = require('../dispatcher/dispatcher.js'),
-      ErrorActions = require('./error_actions.js');
+const UserApiUtil = require('../util/user_api_util'),
+      UserConstants = require('../constants/user_constants'),
+      AppDispatcher = require('../dispatcher/dispatcher'),
+      ErrorActions = require('./error_actions');
 
 module.exports = {
   fetchUser (id) {

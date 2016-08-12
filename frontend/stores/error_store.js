@@ -1,8 +1,8 @@
 const Store = require('flux/utils').Store;
 
 
-const AppDispatcher = require('../dispatcher/dispatcher.js'),
-      ErrorConstants = require('../constants/error_constants.js');
+const AppDispatcher = require('../dispatcher/dispatcher'),
+      ErrorConstants = require('../constants/error_constants');
 
 var ErrorStore = new Store(AppDispatcher);
 
@@ -16,7 +16,7 @@ const _setErrors = function (form, jsonErrors, textErrors) {
   if (jsonErrors) {
     _errors = jsonErrors;
   }
-  
+
   if (textErrors) {
     _errors.push(textErrors);
   }
