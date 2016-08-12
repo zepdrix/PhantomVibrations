@@ -18,7 +18,11 @@ var CommentAvatarIndex = React.createClass({
   determineCommentId () {
     let commentIdx = 0;
     while (this.props.percentage > this.props.comments[commentIdx].track_percentage) {
-      commentIdx += 1;
+      if (this.props.comments[commentIdx + 1]) {
+        commentIdx += 1;
+      } else {
+        break;
+      }
     }
     return this.props.comments[commentIdx].id;
   },

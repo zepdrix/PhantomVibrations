@@ -27343,7 +27343,8 @@
 	          comments: this.props.track.comments,
 	          trackId: this.props.track.id,
 	          percentage: this.state.percentage,
-	          playing: this.state.playing })
+	          playing: this.state.playing
+	        })
 	      ),
 	      React.createElement(
 	        'div',
@@ -34804,7 +34805,11 @@
 	  determineCommentId: function determineCommentId() {
 	    var commentIdx = 0;
 	    while (this.props.percentage > this.props.comments[commentIdx].track_percentage) {
-	      commentIdx += 1;
+	      if (this.props.comments[commentIdx + 1]) {
+	        commentIdx += 1;
+	      } else {
+	        break;
+	      }
 	    }
 	    return this.props.comments[commentIdx].id;
 	  },

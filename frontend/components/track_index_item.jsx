@@ -174,7 +174,8 @@ var TrackIndexItem = React.createClass({
               comments={ this.props.track.comments}
               trackId={ this.props.track.id }
               percentage={ this.state.percentage }
-              playing={ this.state.playing } />
+              playing={ this.state.playing }
+              />
           </div>
 
 
