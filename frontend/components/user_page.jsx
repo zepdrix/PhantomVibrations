@@ -4,6 +4,7 @@ const TrackIndex = require('./track_index');
 const TrackStore = require('../stores/track_store');
 const TrackActions = require('../actions/track_actions');
 const UserActions = require('../actions/user_actions');
+const UserSuggestionIndex = require('./user_suggestion_index');
 
 var UserPage = React.createClass({
   getInitialState () {
@@ -31,6 +32,10 @@ var UserPage = React.createClass({
         </div>
         <br/>
         <TrackIndex tracks={ this.state.tracks }/>
+        <div className="user-suggestion-index">
+          <h3>Check out these artists!</h3>
+          <UserSuggestionIndex />
+        </div>
       </div>
     );
   }

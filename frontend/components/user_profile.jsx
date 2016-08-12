@@ -5,6 +5,7 @@ const UserActions = require('../actions/user_actions');
 const TrackStore = require('../stores/track_store');
 const TrackIndex = require('./track_index');
 const CSSHelper = require('../helpers/css');
+const UserSuggestionIndex = require('./user_suggestion_index');
 
 var UserProfile = React.createClass({
 
@@ -68,6 +69,11 @@ var UserProfile = React.createClass({
             <h2>{ this.state.user.username }'s Vibrations</h2>
             <br/>
             <TrackIndex tracks={ userTracks }/>
+          </div>
+
+          <div className="user-page-suggestions">
+            <h3>You'll Like:</h3>
+            <UserSuggestionIndex/>
           </div>
         </div>
 

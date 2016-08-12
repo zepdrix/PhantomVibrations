@@ -27,7 +27,11 @@ class Api::UsersController < ApplicationController
   end
 
   def index
-    @users = User.all
+    if params[:random]
+      @users = User.all.shuffle[0, 5]
+    else
+      @users = User.all
+    end
     render "api/users/index"
   end
 

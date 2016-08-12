@@ -79,7 +79,7 @@ var TrackIndexItem = React.createClass({
     e.preventDefault();
     if (this.state.playing) {
 
-      let clickPercentage = (e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth;
+      let clickPercentage = ((e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth);
       this.setNewPercentage(clickPercentage);
     } else {
       this.onClick(e);

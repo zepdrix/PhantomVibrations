@@ -22,6 +22,11 @@ module.exports = {
       ErrorActions.setErrors);
   },
 
+  fetchRandomUsers () {
+    UserApiUtil.fetchRandomUsers(
+      this.receiveRandomUsers);
+  },
+
   receiveUser (user) {
     AppDispatcher.dispatch({
       actionType: UserConstants.RECEIVE_USER,
@@ -32,6 +37,13 @@ module.exports = {
   receiveAllUsers (users) {
     AppDispatcher.dispatch({
       actionType: UserConstants.RECEIVE_USERS,
+      users: users
+    });
+  },
+
+  receiveRandomUsers (users) {
+    AppDispatcher.dispatch({
+      actionType: UserConstants.RECEIVE_RANDOM_USERS,
       users: users
     });
   }

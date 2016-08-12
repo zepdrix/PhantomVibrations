@@ -28,7 +28,7 @@ var CommentAvatarIndexItem = React.createClass({
       hiddenComment = <div className="hidden-comment">
 
                         <Link className="username-link" to={ userUrl }>
-                          { this.props.comment.username }
+                          { this.props.comment.username } 
                         </Link>
 
                         { this.state.comment }

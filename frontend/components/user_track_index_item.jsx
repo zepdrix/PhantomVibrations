@@ -15,6 +15,7 @@ var UserTrackIndexItem = React.createClass({
   },
 
   render () {
+    debugger
     if ((parseInt(TrackStore.currentTrack().id) === this.props.track.id) && (this.props.track.user_id === SessionStore.currentUser().id)) {
       return(
         <div className="usertracks-index-item">
@@ -29,11 +30,20 @@ var UserTrackIndexItem = React.createClass({
 
 
         return(
-          <div className="usertracks-index-item">
-            { this.props.track.title }
+          <div className="usertracks-index-item group">
+            <img className="usertracks-image" src={ this.props.track.image_url } />
+            <Link to={ `tracks/${this.props.track.id}` } className="usertracks-title">
+              { this.props.track.title }
+            </Link>
             <br/>
-            <Link to={ editTrackUrl }>Edit </Link>
-            <button onClick={ this.handleDeleteSubmit }>Delete </button>
+            <div className="usertracks-comments">
+              ({ this.props.track.comments.length } comments)
+            </div>
+            <br/>
+            <div className="edit-options">
+              <Link to={ editTrackUrl }>Edit  </Link>
+              <button onClick={ this.handleDeleteSubmit }>   Delete </button>
+            </div>
 
           </div>
         );

@@ -1,4 +1,5 @@
 const React = require('react');
+const Link = require('react-router').Link;
 const TrackStore = require('../stores/track_store');
 const TrackChange = require('../helpers/track_change');
 const TrackActions = require('../actions/track_actions');
@@ -57,7 +58,10 @@ var PlayBar = React.createClass({
       return(
         <div className="playbar with-song">
           <div className="words">
-          { this.state.currentTrack.title }
+          <Link to={ `tracks/${this.state.currentTrack.dataset.id}` }>
+            { this.state.currentTrack.title }
+          </Link>
+
           <div className="play" onClick={ this.handlePlay }>
             Play
           </div>

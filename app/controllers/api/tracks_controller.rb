@@ -38,11 +38,10 @@ class Api::TracksController < ApplicationController
   def index
     if params[:user_id]
       @tracks = Track.where("user_id = ?", params[:user_id].to_i)
-      render "api/tracks/index"
     else
       @tracks = Track.all
-      render "api/tracks/index"
     end
+    render "api/tracks/index"
   end
 
   private

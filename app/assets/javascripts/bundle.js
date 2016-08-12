@@ -27133,6 +27133,7 @@
 	
 	var React = __webpack_require__(1);
 	var TrackIndexItem = __webpack_require__(239);
+	var UserSuggestionIndex = __webpack_require__(308);
 	
 	var TrackIndex = React.createClass({
 	  displayName: 'TrackIndex',
@@ -34919,6 +34920,17 @@
 	
 	var _users = {};
 	
+	var _randomUsers = {};
+	
+	UserStore.allRandomUsers = function () {
+	  var randomUsers = [];
+	
+	  Object.keys(_randomUsers).forEach(function (userId) {
+	    randomUsers.push(_randomUsers[userId]);
+	  });
+	  return randomUsers;
+	};
+	
 	UserStore.all = function () {
 	  var users = [];
 	
@@ -34944,6 +34956,14 @@
 	  });
 	};
 	
+	var _resetAllRandomUsers = function _resetAllRandomUsers(users) {
+	  _randomUsers = {};
+	
+	  users.forEach(function (user) {
+	    _randomUsers[user.id] = user;
+	  });
+	};
+	
 	UserStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case UserConstants.RECEIVE_USER:
@@ -34952,6 +34972,10 @@
 	      break;
 	    case UserConstants.RECEIVE_USERS:
 	      _resetAllUsers(payload.users);
+	      this.__emitChange();
+	      break;
+	    case UserConstants.RECEIVE_RANDOM_USERS:
+	      _resetAllRandomUsers(payload.users);
 	      this.__emitChange();
 	      break;
 	  }
@@ -34967,7 +34991,8 @@
 	
 	module.exports = {
 	  RECEIVE_USER: "RECEIVE_USER",
-	  RECEIVE_USERS: "RECEIVE_USERS"
+	  RECEIVE_USERS: "RECEIVE_USERS",
+	  RECEIVE_RANDOM_USERS: "RECEIVE_RANDOM_USERS"
 	};
 
 /***/ },
@@ -34991,6 +35016,9 @@
 	  updateUser: function updateUser(formData) {
 	    UserApiUtil.updateUser(formData, this.receiveUser, ErrorActions.setErrors);
 	  },
+	  fetchRandomUsers: function fetchRandomUsers() {
+	    UserApiUtil.fetchRandomUsers(this.receiveRandomUsers);
+	  },
 	  receiveUser: function receiveUser(user) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.RECEIVE_USER,
@@ -35000,6 +35028,12 @@
 	  receiveAllUsers: function receiveAllUsers(users) {
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.RECEIVE_USERS,
+	      users: users
+	    });
+	  },
+	  receiveRandomUsers: function receiveRandomUsers(users) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.RECEIVE_RANDOM_USERS,
 	      users: users
 	    });
 	  }
@@ -35038,6 +35072,19 @@
 	      },
 	      error: function error(xhr) {
 	        errorCb(FormConstants.EDIT_USER_FORM, xhr.responseJSON, xhr.responseText);
+	      }
+	    });
+	  },
+	  fetchRandomUsers: function fetchRandomUsers(successCb) {
+	    $.ajax({
+	      url: "api/users",
+	      method: "GET",
+	      data: { random: true },
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(xhr) {
+	        console.log("Error in UserApiUtil@fetchRandomUsers");
 	      }
 	    });
 	  },
@@ -36303,6 +36350,7 @@
 	var TrackStore = __webpack_require__(269);
 	var TrackActions = __webpack_require__(240);
 	var UserActions = __webpack_require__(280);
+	var UserSuggestionIndex = __webpack_require__(308);
 	
 	var UserPage = React.createClass({
 	  displayName: 'UserPage',
@@ -36335,7 +36383,17 @@
 	        )
 	      ),
 	      React.createElement('br', null),
-	      React.createElement(TrackIndex, { tracks: this.state.tracks })
+	      React.createElement(TrackIndex, { tracks: this.state.tracks }),
+	      React.createElement(
+	        'div',
+	        { className: 'user-suggestion-index' },
+	        React.createElement(
+	          'h3',
+	          null,
+	          'Check out these artists!'
+	        ),
+	        React.createElement(UserSuggestionIndex, null)
+	      )
 	    );
 	  }
 	});
@@ -36355,6 +36413,7 @@
 	var TrackStore = __webpack_require__(269);
 	var TrackIndex = __webpack_require__(238);
 	var CSSHelper = __webpack_require__(291);
+	var UserSuggestionIndex = __webpack_require__(308);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -36427,6 +36486,16 @@
 	          ),
 	          React.createElement('br', null),
 	          React.createElement(TrackIndex, { tracks: userTracks })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'user-page-suggestions' },
+	          React.createElement(
+	            'h3',
+	            null,
+	            'You\'ll Like:'
+	          ),
+	          React.createElement(UserSuggestionIndex, null)
 	        )
 	      );
 	    } else {
@@ -36548,6 +36617,7 @@
 	    TrackActions.deleteTrack(this.props.track.id);
 	  },
 	  render: function render() {
+	    debugger;
 	    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id && this.props.track.user_id === SessionStore.currentUser().id) {
 	      return React.createElement(
 	        'div',
@@ -36566,18 +36636,35 @@
 	
 	        return React.createElement(
 	          'div',
-	          { className: 'usertracks-index-item' },
-	          this.props.track.title,
-	          React.createElement('br', null),
+	          { className: 'usertracks-index-item group' },
+	          React.createElement('img', { className: 'usertracks-image', src: this.props.track.image_url }),
 	          React.createElement(
 	            Link,
-	            { to: editTrackUrl },
-	            'Edit '
+	            { to: 'tracks/' + this.props.track.id, className: 'usertracks-title' },
+	            this.props.track.title
 	          ),
+	          React.createElement('br', null),
 	          React.createElement(
-	            'button',
-	            { onClick: this.handleDeleteSubmit },
-	            'Delete '
+	            'div',
+	            { className: 'usertracks-comments' },
+	            '(',
+	            this.props.track.comments.length,
+	            ' comments)'
+	          ),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'div',
+	            { className: 'edit-options' },
+	            React.createElement(
+	              Link,
+	              { to: editTrackUrl },
+	              'Edit  '
+	            ),
+	            React.createElement(
+	              'button',
+	              { onClick: this.handleDeleteSubmit },
+	              '   Delete '
+	            )
 	          )
 	        );
 	      } else {
@@ -36921,6 +37008,7 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
 	var TrackStore = __webpack_require__(269);
 	var TrackChange = __webpack_require__(272);
 	var TrackActions = __webpack_require__(240);
@@ -36984,7 +37072,11 @@
 	        React.createElement(
 	          'div',
 	          { className: 'words' },
-	          this.state.currentTrack.title,
+	          React.createElement(
+	            Link,
+	            { to: 'tracks/' + this.state.currentTrack.dataset.id },
+	            this.state.currentTrack.title
+	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'play', onClick: this.handlePlay },
@@ -37024,6 +37116,80 @@
 	    SessionActions.receiveCurrentUser(user);
 	  }
 	};
+
+/***/ },
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
+	var UserSuggestionIndexItem = __webpack_require__(309);
+	
+	var UserSuggestionIndex = React.createClass({
+	  displayName: 'UserSuggestionIndex',
+	  getInitialState: function getInitialState() {
+	    return { users: UserStore.allRandomUsers() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userListener = UserStore.addListener(this.onChange);
+	    UserActions.fetchRandomUsers();
+	  },
+	  onChange: function onChange() {
+	    this.setState({ users: UserStore.allRandomUsers() });
+	  },
+	  render: function render() {
+	
+	    var allRandomUserItems = this.state.users.map(function (user) {
+	      return React.createElement(UserSuggestionIndexItem, { key: user.id, user: user });
+	    });
+	    return React.createElement(
+	      'div',
+	      null,
+	      allRandomUserItems
+	    );
+	  }
+	});
+	
+	module.exports = UserSuggestionIndex;
+
+/***/ },
+/* 309 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
+	
+	var UserSuggestionIndexItem = React.createClass({
+	  displayName: 'UserSuggestionIndexItem',
+	  render: function render() {
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'user-suggestion-index-item' },
+	      React.createElement(
+	        Link,
+	        { to: 'users/' + this.props.user.id },
+	        React.createElement('img', { className: 'user-suggestion avatar-image', src: this.props.user.avatar_image_url })
+	      ),
+	      React.createElement(
+	        Link,
+	        { to: 'users/' + this.props.user.id },
+	        React.createElement(
+	          'div',
+	          { className: 'user-suggestion username' },
+	          this.props.user.username
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = UserSuggestionIndexItem;
 
 /***/ }
 /******/ ]);

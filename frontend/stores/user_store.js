@@ -7,6 +7,17 @@ const UserStore = new Store(AppDispatcher);
 
 var _users = {};
 
+var _randomUsers = {};
+
+UserStore.allRandomUsers = function () {
+  let randomUsers = [];
+
+  Object.keys(_randomUsers).forEach( (userId) => {
+    randomUsers.push(_randomUsers[userId]);
+  });
+  return randomUsers;
+};
+
 UserStore.all = function () {
   let users = [];
 
@@ -32,6 +43,14 @@ const _resetAllUsers = function (users) {
   });
 };
 
+const _resetAllRandomUsers = function (users) {
+  _randomUsers = {};
+
+  users.forEach( (user) => {
+    _randomUsers[user.id] = user;
+  });
+};
+
 UserStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case UserConstants.RECEIVE_USER:
@@ -40,6 +59,10 @@ UserStore.__onDispatch = function (payload) {
       break;
     case UserConstants.RECEIVE_USERS:
       _resetAllUsers(payload.users);
+      this.__emitChange();
+      break;
+    case UserConstants.RECEIVE_RANDOM_USERS:
+      _resetAllRandomUsers(payload.users);
       this.__emitChange();
       break;
   }

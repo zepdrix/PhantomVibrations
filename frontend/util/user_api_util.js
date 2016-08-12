@@ -29,9 +29,20 @@ module.exports = {
         errorCb(FormConstants.EDIT_USER_FORM, xhr.responseJSON, xhr.responseText);
       }
     });
+  },
 
-
-
+  fetchRandomUsers (successCb) {
+    $.ajax({
+      url: "api/users",
+      method: "GET",
+      data: { random: true },
+      success: (resp) => {
+        successCb(resp);
+      },
+      error(xhr) {
+        console.log("Error in UserApiUtil@fetchRandomUsers");
+      }
+    });
   },
 
   fetchAllUsers (successCb) {

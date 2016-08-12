@@ -8,4 +8,9 @@ json.array! @users do |user|
       end
     end
   end
+  json.likes do
+    json.array! user.likes do |like|
+      json.partial! "api/likes/like", like: like
+    end
+  end
 end

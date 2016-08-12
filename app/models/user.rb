@@ -28,12 +28,27 @@ class User < ActiveRecord::Base
   after_initialize :ensure_session_token
 
   has_many(
+    :liked_tracks,
+    through: :likes,
+    source: :track
+    )
+
+
+  has_many(
     :tracks,
     class_name: 'Track',
     foreign_key: :user_id,
     primary_key: :id,
     dependent: :destroy
-  )
+    )
+
+  has_many(
+    :likes,
+    class_name: 'Like',
+    foreign_key: :user_id,
+    primary_key: :id,
+    dependent: :destroy
+    )
 
   has_many(
     :comments,

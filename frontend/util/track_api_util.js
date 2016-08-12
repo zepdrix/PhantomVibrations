@@ -61,8 +61,6 @@ module.exports = {
         console.log("Error in TrackApiUtil@fetchUserTracks");
       }
     });
-
-
   },
 
   fetchTrack (id, successCb) {
