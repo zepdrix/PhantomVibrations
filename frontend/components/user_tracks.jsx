@@ -1,9 +1,9 @@
 const React = require('react');
-const SessionStore = require('../stores/session_store.js');
-const SessionActions = require('../actions/session_actions.js');
-const TrackStore = require('../stores/track_store.js');
-const TrackActions = require('../actions/track_actions.js');
-const UserTrackIndex = require('./user_track_index.jsx');
+const SessionStore = require('../stores/session_store');
+const SessionActions = require('../actions/session_actions');
+const TrackStore = require('../stores/track_store');
+const TrackActions = require('../actions/track_actions');
+const UserTrackIndex = require('./user_track_index');
 
 var UserTracks = React.createClass({
 

@@ -1,14 +1,18 @@
 const React = require('react');
-const CommentAvatarIndexItem = require('./comment_avatar_index_item.jsx');
-const TrackStore = require('../stores/track_store.js');
-const UserStore = require('../stores/user_store.js');
-const UserActions = require('../actions/user_actions.js');
+const CommentAvatarIndexItem = require('./comment_avatar_index_item');
+const TrackStore = require('../stores/track_store');
+const UserStore = require('../stores/user_store');
+const UserActions = require('../actions/user_actions');
 
 var CommentAvatarIndex = React.createClass({
 
 
   componentDidMount () {
-    this.autoShowState = true;
+    if (this.props.playing) {
+      this.autoShowState = true;
+    } else {
+      this.autoShowState = false;
+    }
   },
 
   stopAutoShow (e) {

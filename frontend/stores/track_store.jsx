@@ -1,8 +1,8 @@
 const Store = require('flux/utils').Store;
-
-const AppDispatcher = require('../dispatcher/dispatcher.js'),
-      TrackConstants = require('../constants/track_constants.js');
-
+const Wavesurfer = require('react-wavesurfer').default;
+const AppDispatcher = require('../dispatcher/dispatcher'),
+      TrackConstants = require('../constants/track_constants');
+const React = require('react');
 const TrackStore = new Store(AppDispatcher);
 
 var _tracks = {};
@@ -14,6 +14,7 @@ var _currentTrack = new Audio();
 
 _currentTrack.dataset.id = "no-track";
 
+var _waveforms = {};
 var _trackStates = {};
 
 var refreshIntervalId;
@@ -50,72 +51,37 @@ const _resetTrack = function (track) {
 const _resetAllTracks = function (tracks) {
 
   _tracks = {};
-
   tracks.forEach( (track) => {
       _tracks[track.id] = track;
     }
   );
-
-  // Object.keys(_tracks).forEach( (trackId) => {
-  //   if (!_trackStates.hasOwnProperty(trackId)) {
-  //     delete _tracks[trackId];
-  //   }
-  // });
-  //
-  // tracks.forEach( (track) => {
-  //   if (!_trackStates.hasOwnProperty(track.id.toString())) {
-  //     _tracks[track.id] = track;
-  //   }
-  // });
 };
 
-// const _resetCurrentTrack = function (track) {
-//   if (!!_currentTrack.id) {
-//     _currentTrack.pause();
-//   }
-//   _trackStates[track.id] = 0;
-//   _currentTrack = track;
-// };
 
 const _removeTrack = function (track) {
   delete _tracks[track.id];
 };
 
 
+TrackStore.getWaveforms = function () {
+  return _waveforms;
+};
 
 
+TrackStore.setWaveform = function (id, waveform) {
+  debugger
+  _waveforms[id] = waveform;
+};
 
-
-// CURRENT_TRACK
-//
-// _currentTrack
-//
-// CURRENT_TRACK_STATE
-//
-// _trackStates[_playQueue[_currentQueueIndex]]
-//
-// CURRENT_TRACK_ID
-//
-// _playQueue[_currentQueueIndex]
-//
-// UPDATE_PERCENTAGE_WHILE_PLAYING
-//
-//
-// STOP_UPDATING_PERCENTAGE_WHEN_PAUSED
-//
-// clearInterval(refreshIntervalId)
-//
-//
 const _playCurrentTrack = function () {
-  // refreshIntervalId = setInterval( () => {
-  //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
-  //   }, 25);
   _currentTrack.addEventListener('timeupdate', _setCurrentPercentage);
   _currentTrack.play();
 };
 
 const _setCurrentPercentage = function () {
-  _trackStates[_currentTrack.dataset.id] = _currentTrack.currentTime / _currentTrack.duration;
+  _trackStates[_currentTrack.dataset.id] = { percentage: 0, duration: 0 };
+  _trackStates[_currentTrack.dataset.id].percentage = _currentTrack.currentTime / _currentTrack.duration;
+  _trackStates[_currentTrack.dataset.id].duration = _currentTrack.duration;
 };
 
 
@@ -123,19 +89,28 @@ const _seekNewPercentage = function (clickPercentage) {
   _currentTrack.currentTime = clickPercentage * _currentTrack.duration;
 };
 
-
-
 TrackStore.getPlaybackPercentage = function (trackId) {
   if (_trackStates[trackId]) {
-    return _trackStates[trackId];
+    return _trackStates[trackId].percentage;
   } else {
     return 0;
   }
 };
 
+TrackStore.getTrackDuration = function (trackId) {
+  if (_trackStates[trackId]) {
+    return _trackStates[trackId].duration;
+  } else {
+    return 0;
+  }
+};
+
+TrackStore.getWaveform = function (id) {
+  return _waveforms[id];
+};
+
 
 const _pauseCurrentTrack = function () {
-  // clearInterval(refreshIntervalId);
   _setCurrentPercentage();
   _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
   _currentTrack.pause();
@@ -159,8 +134,6 @@ const _resetCurrentTrack = function (track) {
 TrackStore.getStates = function () {
   return _trackStates;
 };
-
-
 
 
 
@@ -222,6 +195,10 @@ TrackStore.__onDispatch = function (payload) {
       break;
     case TrackConstants.REMOVE_TRACK:
       _removeTrack(payload.track);
+      this.__emitChange();
+      break;
+    case TrackConstants.SET_WAVEFORM:
+      _setWaveform(payload.id, payload.waveform);
       this.__emitChange();
       break;
   }

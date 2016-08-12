@@ -1,7 +1,7 @@
 const React = require('react');
-const ErrorStore = require('../stores/error_store.js');
-const SessionStore = require('../stores/session_store.js');
-const SessionActions = require('../actions/session_actions.js');
+const ErrorStore = require('../stores/error_store');
+const SessionStore = require('../stores/session_store');
+const SessionActions = require('../actions/session_actions');
 
 var SignupForm = React.createClass({
 

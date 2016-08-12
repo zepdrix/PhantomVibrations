@@ -1,0 +1,32 @@
+.track-show wave {
+  top: -35px;
+  z-index: 0;
+  height: 120px;
+}
+
+.track-item wave {
+  top: -14px;
+  z-index: 0;
+  height: 80px;
+}
+
+
+
+
+.track-item canvas {
+  z-index: 0;
+  height: 80px;
+}
+.track-show wave wave {
+  z-index: 0;
+  height: 120;
+}
+
+.track-item div wave {
+  top: -8px;
+  height: 80px;
+}
+
+.track-show canvas {
+  height: 120px;
+}

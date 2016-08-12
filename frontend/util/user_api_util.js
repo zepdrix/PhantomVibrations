@@ -1,4 +1,4 @@
-const FormConstants = require('../constants/form_constants.js');
+const FormConstants = require('../constants/form_constants');
 
 module.exports = {
 

@@ -1,10 +1,10 @@
 const React = require('react');
 const Link = require('react-router').Link;
-const UserStore = require('../stores/user_store.js');
-const UserActions = require('../actions/user_actions.js');
-const TrackStore = require('../stores/track_store.js');
-const TrackIndex = require('./track_index.jsx');
-const CSSHelper = require('../helpers/css.js');
+const UserStore = require('../stores/user_store');
+const UserActions = require('../actions/user_actions');
+const TrackStore = require('../stores/track_store');
+const TrackIndex = require('./track_index');
+const CSSHelper = require('../helpers/css');
 
 var UserProfile = React.createClass({
 
@@ -36,7 +36,7 @@ var UserProfile = React.createClass({
   },
 
   render () {
-    
+
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
     if (this.state.user) {
 

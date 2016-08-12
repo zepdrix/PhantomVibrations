@@ -1,8 +1,8 @@
 const React = require('react');
 const Link = require('react-router').Link;
-const UserStore = require('../stores/user_store.js');
-const UserActions = require('../actions/user_actions.js');
-const TimeChange = require('../helpers/time_conversion.js');
+const UserStore = require('../stores/user_store');
+const UserActions = require('../actions/user_actions');
+const TimeChange = require('../helpers/time_conversion');
 
 var CommentIndexItem = React.createClass({
 

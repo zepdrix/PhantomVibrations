@@ -1,6 +1,6 @@
 const Store = require('flux/utils').Store;
 
-const AppDispatcher = require('../dispatcher/dispatcher.js'),
+const AppDispatcher = require('../dispatcher/dispatcher'),
       SessionConstants = require('../constants/session_constants');
 
 const SessionStore = new Store(AppDispatcher);

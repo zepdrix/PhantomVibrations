@@ -1,9 +1,9 @@
 const React = require('react');
 const Link = require('react-router').Link;
-const ErrorStore = require('../stores/error_store.js');
-const SessionStore = require('../stores/session_store.js');
-const SessionActions = require('../actions/session_actions.js');
-const FormConstants = require('../constants/form_constants.js');
+const ErrorStore = require('../stores/error_store');
+const SessionStore = require('../stores/session_store');
+const SessionActions = require('../actions/session_actions');
+const FormConstants = require('../constants/form_constants');
 
 var LoginForm = React.createClass({
 
