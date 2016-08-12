@@ -55,26 +55,26 @@
 	    hashHistory = ReactRouter.hashHistory;
 	
 	var TrackIndex = __webpack_require__(238),
-	    TrackEditForm = __webpack_require__(285),
-	    TrackForm = __webpack_require__(286),
-	    TrackShow = __webpack_require__(287),
-	    LoginForm = __webpack_require__(293),
-	    SignupForm = __webpack_require__(294),
-	    HomePage = __webpack_require__(295),
-	    UserPage = __webpack_require__(296),
-	    UserProfile = __webpack_require__(297),
-	    UserTracks = __webpack_require__(298),
-	    CurrentUserProfile = __webpack_require__(301),
-	    App = __webpack_require__(302);
+	    TrackEditForm = __webpack_require__(287),
+	    TrackForm = __webpack_require__(288),
+	    TrackShow = __webpack_require__(289),
+	    LoginForm = __webpack_require__(295),
+	    SignupForm = __webpack_require__(296),
+	    HomePage = __webpack_require__(297),
+	    UserPage = __webpack_require__(298),
+	    UserProfile = __webpack_require__(299),
+	    UserTracks = __webpack_require__(300),
+	    CurrentUserProfile = __webpack_require__(303),
+	    App = __webpack_require__(304);
 	
 	var SessionApiUtil = __webpack_require__(249),
-	    SessionActions = __webpack_require__(288),
+	    SessionActions = __webpack_require__(290),
 	    TrackApiUtil = __webpack_require__(241),
 	    TrackActions = __webpack_require__(240),
-	    TrackStore = __webpack_require__(269),
-	    SessionStore = __webpack_require__(271),
-	    SetupApp = __webpack_require__(305),
-	    TimeChange = __webpack_require__(292);
+	    TrackStore = __webpack_require__(308),
+	    SessionStore = __webpack_require__(273),
+	    SetupApp = __webpack_require__(307),
+	    TimeChange = __webpack_require__(294);
 	
 	window.SessionApiUtil = SessionApiUtil;
 	window.SessionActions = SessionActions;
@@ -27164,12 +27164,12 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var TrackActions = __webpack_require__(240);
-	var TrackStore = __webpack_require__(269);
-	var TrackChange = __webpack_require__(270);
-	var SessionStore = __webpack_require__(271);
-	var WindowSizeConstants = __webpack_require__(273);
-	var CommentAvatarIndex = __webpack_require__(274);
-	var CommentForm = __webpack_require__(280);
+	var TrackStore = __webpack_require__(308);
+	var TrackChange = __webpack_require__(272);
+	var SessionStore = __webpack_require__(273);
+	var WindowSizeConstants = __webpack_require__(275);
+	var CommentAvatarIndex = __webpack_require__(276);
+	var CommentForm = __webpack_require__(282);
 	
 	var TrackIndexItem = React.createClass({
 	  displayName: 'TrackIndexItem',
@@ -34433,205 +34433,15 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 269 */
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(252).Store;
-	
-	var AppDispatcher = __webpack_require__(244),
-	    TrackConstants = __webpack_require__(243);
-	
-	var TrackStore = new Store(AppDispatcher);
-	
-	var _tracks = {};
-	
-	// var _playQueue = {};
-	// var _currentQueueIndex = -1;
-	
-	var _currentTrack = new Audio();
-	
-	_currentTrack.dataset.id = "no-track";
-	
-	var _trackStates = {};
-	
-	var refreshIntervalId;
-	
-	TrackStore.all = function () {
-	  var tracks = [];
-	
-	  Object.keys(_tracks).forEach(function (trackId) {
-	    tracks.push(_tracks[trackId]);
-	  });
-	  return tracks;
-	};
-	
-	TrackStore.find = function (trackId) {
-	  return _tracks[trackId];
-	};
-	
-	TrackStore.currentTrack = function () {
-	  return _currentTrack;
-	};
-	
-	TrackStore.currentTime = function () {
-	  return _currentTrack.currentTime;
-	};
-	
-	TrackStore.isCurrentTrack = function () {
-	  return !!_currentTrack.dataset.id;
-	};
-	
-	var _resetTrack = function _resetTrack(track) {
-	  _tracks[track.id] = track;
-	};
-	
-	var _resetAllTracks = function _resetAllTracks(tracks) {
-	
-	  _tracks = {};
-	
-	  tracks.forEach(function (track) {
-	    _tracks[track.id] = track;
-	  });
-	
-	  // Object.keys(_tracks).forEach( (trackId) => {
-	  //   if (!_trackStates.hasOwnProperty(trackId)) {
-	  //     delete _tracks[trackId];
-	  //   }
-	  // });
-	  //
-	  // tracks.forEach( (track) => {
-	  //   if (!_trackStates.hasOwnProperty(track.id.toString())) {
-	  //     _tracks[track.id] = track;
-	  //   }
-	  // });
-	};
-	
-	// const _resetCurrentTrack = function (track) {
-	//   if (!!_currentTrack.id) {
-	//     _currentTrack.pause();
-	//   }
-	//   _trackStates[track.id] = 0;
-	//   _currentTrack = track;
-	// };
-	
-	var _removeTrack = function _removeTrack(track) {
-	  delete _tracks[track.id];
-	};
-	
-	// CURRENT_TRACK
-	//
-	// _currentTrack
-	//
-	// CURRENT_TRACK_STATE
-	//
-	// _trackStates[_playQueue[_currentQueueIndex]]
-	//
-	// CURRENT_TRACK_ID
-	//
-	// _playQueue[_currentQueueIndex]
-	//
-	// UPDATE_PERCENTAGE_WHILE_PLAYING
-	//
-	//
-	// STOP_UPDATING_PERCENTAGE_WHEN_PAUSED
-	//
-	// clearInterval(refreshIntervalId)
-	//
-	//
-	var _playCurrentTrack = function _playCurrentTrack() {
-	  // refreshIntervalId = setInterval( () => {
-	  //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
-	  //   }, 25);
-	  _currentTrack.addEventListener('timeupdate', _setCurrentPercentage);
-	  _currentTrack.play();
-	};
-	
-	var _setCurrentPercentage = function _setCurrentPercentage() {
-	  _trackStates[_currentTrack.dataset.id] = _currentTrack.currentTime / _currentTrack.duration;
-	};
-	
-	var _seekNewPercentage = function _seekNewPercentage(clickPercentage) {
-	  _currentTrack.currentTime = clickPercentage * _currentTrack.duration;
-	};
-	
-	TrackStore.getPlaybackPercentage = function (trackId) {
-	  if (_trackStates[trackId]) {
-	    return _trackStates[trackId];
-	  } else {
-	    return 0;
-	  }
-	};
-	
-	var _pauseCurrentTrack = function _pauseCurrentTrack() {
-	  // clearInterval(refreshIntervalId);
-	  _setCurrentPercentage();
-	  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
-	  _currentTrack.pause();
-	};
-	
-	var _resetCurrentTrack = function _resetCurrentTrack(track) {
-	  if (!!_currentTrack.dataset.id) {
-	    _pauseCurrentTrack();
-	  }
-	
-	  _currentTrack = track;
-	  _currentTrack.onloadedmetadata = function () {
-	    var trackId = _currentTrack.dataset.id;
-	    var prevPlaybackPercentage = TrackStore.getPlaybackPercentage(trackId);
-	    var startAt = prevPlaybackPercentage * _currentTrack.duration;
-	    _currentTrack.currentTime = startAt;
-	    _playCurrentTrack();
-	  };
-	};
-	
-	TrackStore.getStates = function () {
-	  return _trackStates;
-	};
-	
-	TrackStore.__onDispatch = function (payload) {
-	  switch (payload.actionType) {
-	    case TrackConstants.RECEIVE_TRACK:
-	      _resetTrack(payload.track);
-	      this.__emitChange();
-	      break;
-	    case TrackConstants.RECEIVE_TRACKS:
-	      _resetAllTracks(payload.tracks);
-	      this.__emitChange();
-	      break;
-	    case TrackConstants.RECEIVE_CURRENT_TRACK:
-	      _resetCurrentTrack(payload.track);
-	      this.__emitChange();
-	      break;
-	    case TrackConstants.PAUSE_CURRENT_TRACK:
-	      _pauseCurrentTrack(payload.track);
-	      this.__emitChange();
-	      break;
-	    case TrackConstants.PLAY_CURRENT_TRACK:
-	      _playCurrentTrack(payload.track);
-	      this.__emitChange();
-	      break;
-	    case TrackConstants.SEEK_NEW_PERCENTAGE:
-	      _seekNewPercentage(payload.percentage);
-	      this.__emitChange();
-	      break;
-	    case TrackConstants.REMOVE_TRACK:
-	      _removeTrack(payload.track);
-	      this.__emitChange();
-	      break;
-	  }
-	};
-	
-	module.exports = TrackStore;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
 	
 	module.exports = {
@@ -34655,7 +34465,7 @@
 	};
 
 /***/ },
-/* 271 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34663,7 +34473,7 @@
 	var Store = __webpack_require__(252).Store;
 	
 	var AppDispatcher = __webpack_require__(244),
-	    SessionConstants = __webpack_require__(272);
+	    SessionConstants = __webpack_require__(274);
 	
 	var SessionStore = new Store(AppDispatcher);
 	
@@ -34701,7 +34511,7 @@
 	module.exports = SessionStore;
 
 /***/ },
-/* 272 */
+/* 274 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34712,7 +34522,7 @@
 	};
 
 /***/ },
-/* 273 */
+/* 275 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34723,16 +34533,16 @@
 	};
 
 /***/ },
-/* 274 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentAvatarIndexItem = __webpack_require__(275);
-	var TrackStore = __webpack_require__(269);
-	var UserStore = __webpack_require__(276);
-	var UserActions = __webpack_require__(278);
+	var CommentAvatarIndexItem = __webpack_require__(277);
+	var TrackStore = __webpack_require__(308);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
 	
 	var CommentAvatarIndex = React.createClass({
 	  displayName: 'CommentAvatarIndex',
@@ -34771,14 +34581,14 @@
 	module.exports = CommentAvatarIndex;
 
 /***/ },
-/* 275 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(276);
-	var UserActions = __webpack_require__(278);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
 	var Link = __webpack_require__(175).Link;
 	
 	var CommentAvatarIndexItem = React.createClass({
@@ -34860,7 +34670,7 @@
 	module.exports = CommentAvatarIndexItem;
 
 /***/ },
-/* 276 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34868,7 +34678,7 @@
 	var Store = __webpack_require__(252).Store;
 	
 	var AppDispatcher = __webpack_require__(244),
-	    UserConstants = __webpack_require__(277);
+	    UserConstants = __webpack_require__(279);
 	
 	var UserStore = new Store(AppDispatcher);
 	
@@ -34915,7 +34725,7 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 277 */
+/* 279 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -34926,13 +34736,13 @@
 	};
 
 /***/ },
-/* 278 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var UserApiUtil = __webpack_require__(279),
-	    UserConstants = __webpack_require__(277),
+	var UserApiUtil = __webpack_require__(281),
+	    UserConstants = __webpack_require__(279),
 	    AppDispatcher = __webpack_require__(244),
 	    ErrorActions = __webpack_require__(248);
 	
@@ -34961,7 +34771,7 @@
 	};
 
 /***/ },
-/* 279 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -35011,17 +34821,17 @@
 	};
 
 /***/ },
-/* 280 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentActions = __webpack_require__(281);
-	var CommentStore = __webpack_require__(284);
+	var CommentActions = __webpack_require__(283);
+	var CommentStore = __webpack_require__(286);
 	var ErrorStore = __webpack_require__(251);
 	var FormConstants = __webpack_require__(242);
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	
 	var CommentForm = React.createClass({
 	  displayName: 'CommentForm',
@@ -35081,13 +34891,13 @@
 	module.exports = CommentForm;
 
 /***/ },
-/* 281 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var CommentApiUtil = __webpack_require__(282);
-	var CommentConstants = __webpack_require__(283);
+	var CommentApiUtil = __webpack_require__(284);
+	var CommentConstants = __webpack_require__(285);
 	var AppDispatcher = __webpack_require__(244);
 	var ErrorStore = __webpack_require__(251);
 	
@@ -35113,7 +34923,7 @@
 	};
 
 /***/ },
-/* 282 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -35162,7 +34972,7 @@
 	};
 
 /***/ },
-/* 283 */
+/* 285 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35173,7 +34983,7 @@
 	};
 
 /***/ },
-/* 284 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35181,7 +34991,7 @@
 	var Store = __webpack_require__(252).Store;
 	
 	var AppDispatcher = __webpack_require__(244),
-	    CommentConstants = __webpack_require__(283);
+	    CommentConstants = __webpack_require__(285);
 	
 	var CommentStore = new Store(AppDispatcher);
 	
@@ -35226,13 +35036,13 @@
 	module.exports = CommentStore;
 
 /***/ },
-/* 285 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
 	var ErrorStore = __webpack_require__(251);
 	var FormConstants = __webpack_require__(242);
@@ -35381,14 +35191,14 @@
 	module.exports = TrackEditForm;
 
 /***/ },
-/* 286 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var TrackActions = __webpack_require__(240);
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var ErrorStore = __webpack_require__(251);
 	var FormConstants = __webpack_require__(242);
 	
@@ -35563,24 +35373,24 @@
 	module.exports = TrackForm;
 
 /***/ },
-/* 287 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
-	var UserActions = __webpack_require__(278);
-	var CSSHelper = __webpack_require__(289);
-	var TrackChange = __webpack_require__(270);
-	var CommentForm = __webpack_require__(280);
-	var CommentIndex = __webpack_require__(290);
-	var CommentAvatarIndex = __webpack_require__(274);
-	var WindowSizeConstants = __webpack_require__(273);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
+	var UserActions = __webpack_require__(280);
+	var CSSHelper = __webpack_require__(291);
+	var TrackChange = __webpack_require__(272);
+	var CommentForm = __webpack_require__(282);
+	var CommentIndex = __webpack_require__(292);
+	var CommentAvatarIndex = __webpack_require__(276);
+	var WindowSizeConstants = __webpack_require__(275);
 	
 	var TrackShow = React.createClass({
 	  displayName: 'TrackShow',
@@ -35780,13 +35590,13 @@
 	module.exports = TrackShow;
 
 /***/ },
-/* 288 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var SessionApiUtil = __webpack_require__(249),
-	    SessionConstants = __webpack_require__(272),
+	    SessionConstants = __webpack_require__(274),
 	    AppDispatcher = __webpack_require__(244),
 	    ErrorActions = __webpack_require__(248);
 	
@@ -35818,7 +35628,7 @@
 	};
 
 /***/ },
-/* 289 */
+/* 291 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35841,14 +35651,14 @@
 	var trackshowBackgroundGradient = "style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 75%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 82%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}";
 
 /***/ },
-/* 290 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentIndexItem = __webpack_require__(291);
-	var UserStore = __webpack_require__(276);
+	var CommentIndexItem = __webpack_require__(293);
+	var UserStore = __webpack_require__(278);
 	
 	var CommentIndex = React.createClass({
 	  displayName: 'CommentIndex',
@@ -35873,16 +35683,16 @@
 	module.exports = CommentIndex;
 
 /***/ },
-/* 291 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var UserStore = __webpack_require__(276);
-	var UserActions = __webpack_require__(278);
-	var TimeChange = __webpack_require__(292);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
+	var TimeChange = __webpack_require__(294);
 	
 	var CommentIndexItem = React.createClass({
 	  displayName: 'CommentIndexItem',
@@ -35910,7 +35720,7 @@
 	module.exports = CommentIndexItem;
 
 /***/ },
-/* 292 */
+/* 294 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35942,7 +35752,7 @@
 	};
 
 /***/ },
-/* 293 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35950,8 +35760,8 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(251);
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
 	var FormConstants = __webpack_require__(242);
 	
 	var LoginForm = React.createClass({
@@ -36082,15 +35892,15 @@
 	module.exports = LoginForm;
 
 /***/ },
-/* 294 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var ErrorStore = __webpack_require__(251);
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
 	
 	var SignupForm = React.createClass({
 	  displayName: 'SignupForm',
@@ -36167,14 +35977,14 @@
 	module.exports = SignupForm;
 
 /***/ },
-/* 295 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var TrackIndex = __webpack_require__(238);
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
 	
 	var HomePage = React.createClass({
@@ -36214,17 +36024,17 @@
 	module.exports = HomePage;
 
 /***/ },
-/* 296 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(271);
+	var SessionStore = __webpack_require__(273);
 	var TrackIndex = __webpack_require__(238);
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
-	var UserActions = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
 	
 	var UserPage = React.createClass({
 	  displayName: 'UserPage',
@@ -36265,18 +36075,18 @@
 	module.exports = UserPage;
 
 /***/ },
-/* 297 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var UserStore = __webpack_require__(276);
-	var UserActions = __webpack_require__(278);
-	var TrackStore = __webpack_require__(269);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
+	var TrackStore = __webpack_require__(308);
 	var TrackIndex = __webpack_require__(238);
-	var CSSHelper = __webpack_require__(289);
+	var CSSHelper = __webpack_require__(291);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -36360,17 +36170,17 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 298 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
-	var TrackStore = __webpack_require__(269);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
-	var UserTrackIndex = __webpack_require__(299);
+	var UserTrackIndex = __webpack_require__(301);
 	
 	var UserTracks = React.createClass({
 	  displayName: 'UserTracks',
@@ -36408,13 +36218,13 @@
 	module.exports = UserTracks;
 
 /***/ },
-/* 299 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var UserTrackIndexItem = __webpack_require__(300);
+	var UserTrackIndexItem = __webpack_require__(302);
 	
 	var UserTrackIndex = React.createClass({
 	  displayName: 'UserTrackIndex',
@@ -36447,16 +36257,16 @@
 	module.exports = UserTrackIndex;
 
 /***/ },
-/* 300 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var TrackStore = __webpack_require__(269);
+	var TrackStore = __webpack_require__(308);
 	var TrackActions = __webpack_require__(240);
-	var SessionStore = __webpack_require__(271);
+	var SessionStore = __webpack_require__(273);
 	
 	var UserTrackIndexItem = React.createClass({
 	  displayName: 'UserTrackIndexItem',
@@ -36512,7 +36322,7 @@
 	module.exports = UserTrackIndexItem;
 
 /***/ },
-/* 301 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36520,10 +36330,10 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(251);
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
-	var UserStore = __webpack_require__(276);
-	var UserActions = __webpack_require__(278);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
 	var FormConstants = __webpack_require__(242);
 	
 	var CurrentUserProfile = React.createClass({
@@ -36646,21 +36456,21 @@
 	module.exports = CurrentUserProfile;
 
 /***/ },
-/* 302 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LoginForm = __webpack_require__(293);
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
+	var LoginForm = __webpack_require__(295);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
 	var Link = __webpack_require__(175).Link;
 	
-	var NavBar = __webpack_require__(303);
-	var PlayBar = __webpack_require__(304);
-	var HomePage = __webpack_require__(295);
-	var UserPage = __webpack_require__(296);
+	var NavBar = __webpack_require__(305);
+	var PlayBar = __webpack_require__(306);
+	var HomePage = __webpack_require__(297);
+	var UserPage = __webpack_require__(298);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -36689,15 +36499,15 @@
 	module.exports = App;
 
 /***/ },
-/* 303 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
-	var SessionStore = __webpack_require__(271);
-	var SessionActions = __webpack_require__(288);
+	var SessionStore = __webpack_require__(273);
+	var SessionActions = __webpack_require__(290);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -36837,14 +36647,14 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 304 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var TrackStore = __webpack_require__(269);
-	var TrackChange = __webpack_require__(270);
+	var TrackStore = __webpack_require__(308);
+	var TrackChange = __webpack_require__(272);
 	var TrackActions = __webpack_require__(240);
 	
 	var PlayBar = React.createClass({
@@ -36933,12 +36743,12 @@
 	module.exports = PlayBar;
 
 /***/ },
-/* 305 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var SessionActions = __webpack_require__(288);
+	var SessionActions = __webpack_require__(290);
 	
 	module.exports = function () {
 	  var user = window.phantomVibes.user;
@@ -36946,6 +36756,199 @@
 	    SessionActions.receiveCurrentUser(user);
 	  }
 	};
+
+/***/ },
+/* 308 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(252).Store;
+	
+	var AppDispatcher = __webpack_require__(244),
+	    TrackConstants = __webpack_require__(243);
+	
+	var TrackStore = new Store(AppDispatcher);
+	
+	var _tracks = {};
+	
+	// var _playQueue = {};
+	// var _currentQueueIndex = -1;
+	
+	var _currentTrack = new Audio();
+	
+	_currentTrack.dataset.id = "no-track";
+	
+	var _trackStates = {};
+	
+	var refreshIntervalId;
+	
+	TrackStore.all = function () {
+	  var tracks = [];
+	
+	  Object.keys(_tracks).forEach(function (trackId) {
+	    tracks.push(_tracks[trackId]);
+	  });
+	  return tracks;
+	};
+	
+	TrackStore.find = function (trackId) {
+	  return _tracks[trackId];
+	};
+	
+	TrackStore.currentTrack = function () {
+	  return _currentTrack;
+	};
+	
+	TrackStore.currentTime = function () {
+	  return _currentTrack.currentTime;
+	};
+	
+	TrackStore.isCurrentTrack = function () {
+	  return !!_currentTrack.dataset.id;
+	};
+	
+	var _resetTrack = function _resetTrack(track) {
+	  _tracks[track.id] = track;
+	};
+	
+	var _resetAllTracks = function _resetAllTracks(tracks) {
+	
+	  _tracks = {};
+	
+	  tracks.forEach(function (track) {
+	    _tracks[track.id] = track;
+	  });
+	
+	  // Object.keys(_tracks).forEach( (trackId) => {
+	  //   if (!_trackStates.hasOwnProperty(trackId)) {
+	  //     delete _tracks[trackId];
+	  //   }
+	  // });
+	  //
+	  // tracks.forEach( (track) => {
+	  //   if (!_trackStates.hasOwnProperty(track.id.toString())) {
+	  //     _tracks[track.id] = track;
+	  //   }
+	  // });
+	};
+	
+	// const _resetCurrentTrack = function (track) {
+	//   if (!!_currentTrack.id) {
+	//     _currentTrack.pause();
+	//   }
+	//   _trackStates[track.id] = 0;
+	//   _currentTrack = track;
+	// };
+	
+	var _removeTrack = function _removeTrack(track) {
+	  delete _tracks[track.id];
+	};
+	
+	// CURRENT_TRACK
+	//
+	// _currentTrack
+	//
+	// CURRENT_TRACK_STATE
+	//
+	// _trackStates[_playQueue[_currentQueueIndex]]
+	//
+	// CURRENT_TRACK_ID
+	//
+	// _playQueue[_currentQueueIndex]
+	//
+	// UPDATE_PERCENTAGE_WHILE_PLAYING
+	//
+	//
+	// STOP_UPDATING_PERCENTAGE_WHEN_PAUSED
+	//
+	// clearInterval(refreshIntervalId)
+	//
+	//
+	var _playCurrentTrack = function _playCurrentTrack() {
+	  // refreshIntervalId = setInterval( () => {
+	  //   _trackStates[_currentTrack.id] = (_currentTrack.currentTime / _currentTrack.duration);
+	  //   }, 25);
+	  _currentTrack.addEventListener('timeupdate', _setCurrentPercentage);
+	  _currentTrack.play();
+	};
+	
+	var _setCurrentPercentage = function _setCurrentPercentage() {
+	  _trackStates[_currentTrack.dataset.id] = _currentTrack.currentTime / _currentTrack.duration;
+	};
+	
+	var _seekNewPercentage = function _seekNewPercentage(clickPercentage) {
+	  _currentTrack.currentTime = clickPercentage * _currentTrack.duration;
+	};
+	
+	TrackStore.getPlaybackPercentage = function (trackId) {
+	  if (_trackStates[trackId]) {
+	    return _trackStates[trackId];
+	  } else {
+	    return 0;
+	  }
+	};
+	
+	var _pauseCurrentTrack = function _pauseCurrentTrack() {
+	  // clearInterval(refreshIntervalId);
+	  _setCurrentPercentage();
+	  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
+	  _currentTrack.pause();
+	};
+	
+	var _resetCurrentTrack = function _resetCurrentTrack(track) {
+	  if (!!_currentTrack.dataset.id) {
+	    _pauseCurrentTrack();
+	  }
+	
+	  _currentTrack = track;
+	  _currentTrack.onloadedmetadata = function () {
+	    var trackId = _currentTrack.dataset.id;
+	    var prevPlaybackPercentage = TrackStore.getPlaybackPercentage(trackId);
+	    var startAt = prevPlaybackPercentage * _currentTrack.duration;
+	    _currentTrack.currentTime = startAt;
+	    _playCurrentTrack();
+	  };
+	};
+	
+	TrackStore.getStates = function () {
+	  return _trackStates;
+	};
+	
+	TrackStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case TrackConstants.RECEIVE_TRACK:
+	      _resetTrack(payload.track);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.RECEIVE_TRACKS:
+	      _resetAllTracks(payload.tracks);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.RECEIVE_CURRENT_TRACK:
+	      _resetCurrentTrack(payload.track);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.PAUSE_CURRENT_TRACK:
+	      _pauseCurrentTrack(payload.track);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.PLAY_CURRENT_TRACK:
+	      _playCurrentTrack(payload.track);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.SEEK_NEW_PERCENTAGE:
+	      _seekNewPercentage(payload.percentage);
+	      this.__emitChange();
+	      break;
+	    case TrackConstants.REMOVE_TRACK:
+	      _removeTrack(payload.track);
+	      this.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = TrackStore;
 
 /***/ }
 /******/ ]);
