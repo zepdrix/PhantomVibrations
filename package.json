@@ -33,10 +33,11 @@
     "react-dom": "^15.3.0",
     "react-modal": "^1.4.0",
     "react-router": "^2.6.1",
+    "react-wavesurfer": "^0.5.2",
     "webpack": "^1.13.1"
   },
   "engines": {
-  "node": "6.3.0",
-  "npm": "3.10.3"
-}
+    "node": "6.3.0",
+    "npm": "3.10.3"
+  }
 }

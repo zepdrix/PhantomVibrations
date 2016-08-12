@@ -1,7 +1,7 @@
 const React = require('react');
-const TrackIndex = require('./track_index.jsx');
-const TrackStore = require('../stores/track_store.js');
-const TrackActions = require('../actions/track_actions.js');
+const TrackIndex = require('./track_index');
+const TrackStore = require('../stores/track_store');
+const TrackActions = require('../actions/track_actions');
 
 var HomePage = React.createClass({
   getInitialState () {

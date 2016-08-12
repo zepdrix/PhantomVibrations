@@ -1,7 +1,7 @@
 const Store = require('flux/utils').Store;
 
-const AppDispatcher = require('../dispatcher/dispatcher.js'),
-      UserConstants = require('../constants/user_constants.js');
+const AppDispatcher = require('../dispatcher/dispatcher'),
+      UserConstants = require('../constants/user_constants');
 
 const UserStore = new Store(AppDispatcher);
 

@@ -1,7 +1,7 @@
 const React = require('react');
 const Link = require('react-router').Link;
-const SessionStore = require('../stores/session_store.js');
-const SessionActions = require('../actions/session_actions.js');
+const SessionStore = require('../stores/session_store');
+const SessionActions = require('../actions/session_actions');
 
 var NavBar = React.createClass({
   contextTypes: {

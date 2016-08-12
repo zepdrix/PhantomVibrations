@@ -1,7 +1,7 @@
-const TrackApiUtil = require('../util/track_api_util.js'),
-      TrackConstants = require('../constants/track_constants.js'),
-      AppDispatcher = require('../dispatcher/dispatcher.js'),
-      ErrorActions = require('./error_actions.js');
+const TrackApiUtil = require('../util/track_api_util'),
+      TrackConstants = require('../constants/track_constants'),
+      AppDispatcher = require('../dispatcher/dispatcher'),
+      ErrorActions = require('./error_actions');
 
 module.exports = {
   createTrack (track) {
@@ -88,7 +88,16 @@ module.exports = {
       actionType: TrackConstants.SEEK_NEW_PERCENTAGE,
       percentage: clickPercentage
     });
+  },
 
+  setWaveform (id, waveform) {
+    debugger
+    
+    AppDispatcher.dispatch({
+      actionType: TrackConstants.SET_WAVEFORM,
+      id: id,
+      waveform: waveform
+    });
   }
 
 };

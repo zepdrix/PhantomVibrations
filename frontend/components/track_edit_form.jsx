@@ -1,8 +1,8 @@
 const React = require('react');
-const TrackStore = require('../stores/track_store.js');
-const TrackActions = require('../actions/track_actions.js');
-const ErrorStore = require('../stores/error_store.js');
-const FormConstants = require('../constants/form_constants.js');
+const TrackStore = require('../stores/track_store');
+const TrackActions = require('../actions/track_actions');
+const ErrorStore = require('../stores/error_store');
+const FormConstants = require('../constants/form_constants');
 
 
 var TrackEditForm = React.createClass({

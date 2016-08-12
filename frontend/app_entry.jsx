@@ -6,28 +6,28 @@ const React = require('react'),
       IndexRoute = ReactRouter.IndexRoute,
       hashHistory = ReactRouter.hashHistory;
 
-const TrackIndex = require('./components/track_index.jsx'),
-      TrackEditForm = require('./components/track_edit_form.jsx'),
-      TrackForm = require('./components/track_form.jsx'),
-      TrackShow = require('./components/track_show.jsx'),
-      LoginForm = require('./components/login_form.jsx'),
-      SignupForm = require('./components/signup_form.jsx'),
-      HomePage = require('./components/home_page.jsx'),
-      UserPage = require('./components/user_page.jsx'),
-      UserProfile = require('./components/user_profile.jsx'),
-      UserTracks = require('./components/user_tracks.jsx'),
-      CurrentUserProfile = require('./components/current_user_edit_form.jsx'),
-      App = require('./components/app.jsx');
+const TrackIndex = require('./components/track_index'),
+      TrackEditForm = require('./components/track_edit_form'),
+      TrackForm = require('./components/track_form'),
+      TrackShow = require('./components/track_show'),
+      LoginForm = require('./components/login_form'),
+      SignupForm = require('./components/signup_form'),
+      HomePage = require('./components/home_page'),
+      UserPage = require('./components/user_page'),
+      UserProfile = require('./components/user_profile'),
+      UserTracks = require('./components/user_tracks'),
+      CurrentUserProfile = require('./components/current_user_edit_form'),
+      App = require('./components/app');
 
 
-const SessionApiUtil = require('./util/session_api_util.js'),
-      SessionActions = require('./actions/session_actions.js'),
-      TrackApiUtil = require('./util/track_api_util.js'),
-      TrackActions = require('./actions/track_actions.js'),
-      TrackStore = require('./stores/track_store.js'),
-      SessionStore = require('./stores/session_store.js'),
-      SetupApp = require('./setup_app.js'),
-      TimeChange = require('./helpers/time_conversion.js');
+const SessionApiUtil = require('./util/session_api_util'),
+      SessionActions = require('./actions/session_actions'),
+      TrackApiUtil = require('./util/track_api_util'),
+      TrackActions = require('./actions/track_actions'),
+      TrackStore = require('./stores/track_store'),
+      SessionStore = require('./stores/session_store'),
+      SetupApp = require('./setup_app'),
+      TimeChange = require('./helpers/time_conversion');
 
 
 window.SessionApiUtil = SessionApiUtil;

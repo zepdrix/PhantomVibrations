@@ -1,7 +1,7 @@
 const Store = require('flux/utils').Store;
 
-const AppDispatcher = require('../dispatcher/dispatcher.js'),
-      CommentConstants = require('../constants/comment_constants.js');
+const AppDispatcher = require('../dispatcher/dispatcher'),
+      CommentConstants = require('../constants/comment_constants');
 
 const CommentStore = new Store(AppDispatcher);
 

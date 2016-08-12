@@ -1,7 +1,7 @@
-const SessionApiUtil = require('../util/session_api_util.js');
-const ErrorConstants = require('../constants/error_constants.js');
-const AppDispatcher = require('../dispatcher/dispatcher.js');
-const ErrorStore = require('../stores/error_store.js');
+const SessionApiUtil = require('../util/session_api_util');
+const ErrorConstants = require('../constants/error_constants');
+const AppDispatcher = require('../dispatcher/dispatcher');
+const ErrorStore = require('../stores/error_store');
 
 module.exports = {
   setErrors (form, errors) {

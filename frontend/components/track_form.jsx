@@ -1,8 +1,8 @@
 const React = require('react');
-const TrackActions = require('../actions/track_actions.js');
-const TrackStore = require('../stores/track_store.js');
-const ErrorStore = require('../stores/error_store.js');
-const FormConstants = require('../constants/form_constants.js');
+const TrackActions = require('../actions/track_actions');
+const TrackStore = require('../stores/track_store');
+const ErrorStore = require('../stores/error_store');
+const FormConstants = require('../constants/form_constants');
 
 var TrackForm = React.createClass({
   contextTypes: {
@@ -30,7 +30,6 @@ var TrackForm = React.createClass({
   },
 
   redirectIfTrackSaved() {
-    console.log(TrackStore.all());
     TrackActions.fetchAllTracks();
     this.context.router.push("/");
   },
@@ -82,8 +81,6 @@ var TrackForm = React.createClass({
     if (this.state.imageFile) {
       formData.append("track[image]", this.state.imageFile);
     }
-
-    debugger
 
     TrackActions.createTrack(formData);
   },

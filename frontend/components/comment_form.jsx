@@ -1,9 +1,9 @@
 const React = require('react');
-const CommentActions = require('../actions/comment_actions.js');
-const CommentStore = require('../stores/comment_store.js');
-const ErrorStore = require('../stores/error_store.js');
-const FormConstants = require('../constants/form_constants.js');
-const TrackStore = require('../stores/track_store.js');
+const CommentActions = require('../actions/comment_actions');
+const CommentStore = require('../stores/comment_store');
+const ErrorStore = require('../stores/error_store');
+const FormConstants = require('../constants/form_constants');
+const TrackStore = require('../stores/track_store');
 
 var CommentForm = React.createClass({
   contextTypes: {

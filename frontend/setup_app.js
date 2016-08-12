@@ -1,4 +1,4 @@
-const SessionActions = require('./actions/session_actions.js');
+const SessionActions = require('./actions/session_actions');
 
 module.exports = function () {
   var user = window.phantomVibes.user;

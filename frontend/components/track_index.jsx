@@ -1,5 +1,5 @@
 const React = require('react');
-const TrackIndexItem = require('./track_index_item.jsx');
+const TrackIndexItem = require('./track_index_item');
 
 var TrackIndex = React.createClass({
   render () {
