@@ -15,7 +15,7 @@ var UserTrackIndexItem = React.createClass({
   },
 
   render () {
-    debugger
+
     if ((parseInt(TrackStore.currentTrack().id) === this.props.track.id) && (this.props.track.user_id === SessionStore.currentUser().id)) {
       return(
         <div className="usertracks-index-item">

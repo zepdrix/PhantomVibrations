@@ -55,26 +55,26 @@
 	    hashHistory = ReactRouter.hashHistory;
 	
 	var TrackIndex = __webpack_require__(238),
-	    TrackEditForm = __webpack_require__(287),
-	    TrackForm = __webpack_require__(288),
-	    TrackShow = __webpack_require__(289),
-	    LoginForm = __webpack_require__(295),
-	    SignupForm = __webpack_require__(296),
-	    HomePage = __webpack_require__(297),
-	    UserPage = __webpack_require__(298),
-	    UserProfile = __webpack_require__(299),
-	    UserTracks = __webpack_require__(300),
-	    CurrentUserProfile = __webpack_require__(303),
-	    App = __webpack_require__(304);
+	    TrackEditForm = __webpack_require__(289),
+	    TrackForm = __webpack_require__(290),
+	    TrackShow = __webpack_require__(291),
+	    LoginForm = __webpack_require__(297),
+	    SignupForm = __webpack_require__(298),
+	    HomePage = __webpack_require__(299),
+	    UserPage = __webpack_require__(300),
+	    UserProfile = __webpack_require__(301),
+	    UserTracks = __webpack_require__(302),
+	    CurrentUserProfile = __webpack_require__(305),
+	    App = __webpack_require__(306);
 	
 	var SessionApiUtil = __webpack_require__(249),
-	    SessionActions = __webpack_require__(290),
+	    SessionActions = __webpack_require__(292),
 	    TrackApiUtil = __webpack_require__(241),
 	    TrackActions = __webpack_require__(240),
 	    TrackStore = __webpack_require__(269),
 	    SessionStore = __webpack_require__(273),
-	    SetupApp = __webpack_require__(307),
-	    TimeChange = __webpack_require__(294);
+	    SetupApp = __webpack_require__(309),
+	    TimeChange = __webpack_require__(296);
 	
 	window.SessionApiUtil = SessionApiUtil;
 	window.SessionActions = SessionActions;
@@ -27133,7 +27133,7 @@
 	
 	var React = __webpack_require__(1);
 	var TrackIndexItem = __webpack_require__(239);
-	var UserSuggestionIndex = __webpack_require__(308);
+	var UserSuggestionIndex = __webpack_require__(287);
 	
 	var TrackIndex = React.createClass({
 	  displayName: 'TrackIndex',
@@ -27269,8 +27269,9 @@
 	    var trackImageUrl = this.props.track.image_url;
 	    var userUrl = '/users/' + this.props.track.user_id;
 	    var userImageUrl = this.props.track.user.image_url;
-	    // let trackDuration = TrackStore.getTrackDuration(this.props.track.id);
 	
+	    // let trackDuration = TrackStore.getTrackDuration(this.props.track.id);
+	    //
 	    // let waveform;
 	    // let potentialWaveform = TrackStore.getWaveform(this.props.track.id);
 	    // if (potentialWaveform) {
@@ -34793,11 +34794,19 @@
 	var CommentAvatarIndex = React.createClass({
 	  displayName: 'CommentAvatarIndex',
 	  componentDidMount: function componentDidMount() {
+	
 	    if (this.props.playing) {
 	      this.autoShowState = true;
 	    } else {
 	      this.autoShowState = false;
 	    }
+	  },
+	  determineCommentId: function determineCommentId() {
+	    var commentIdx = 0;
+	    while (this.props.percentage > this.props.comments[commentIdx].track_percentage) {
+	      commentIdx += 1;
+	    }
+	    return this.props.comments[commentIdx].id;
 	  },
 	  stopAutoShow: function stopAutoShow(e) {
 	    e.preventDefault();
@@ -34810,12 +34819,15 @@
 	  render: function render() {
 	    var _this = this;
 	
+	    // let currentCommentId = this.determineCommentId();
+	
 	    var allCommentAvatarIndexItems = this.props.comments.map(function (comment, key) {
 	      return React.createElement(CommentAvatarIndexItem, {
 	        key: key,
 	        comment: comment,
 	        user: UserStore.find(comment.user_id),
 	        width: _this.props.width,
+	        currentCommentId: _this.determineCommentId(),
 	        trackId: _this.props.trackId,
 	        percentage: _this.props.percentage,
 	        autoShowState: _this.autoShowState });
@@ -34859,7 +34871,7 @@
 	    var livePercentage = this.props.percentage;
 	    var percentage = this.props.comment.track_percentage * this.props.width;
 	    var userUrl = '/users/' + this.props.comment.user_id;
-	
+	    var space = ' ';
 	    if (this.state.comment) {
 	      hiddenComment = React.createElement(
 	        'div',
@@ -34867,18 +34879,18 @@
 	        React.createElement(
 	          Link,
 	          { className: 'username-link', to: userUrl },
-	          this.props.comment.username
+	          this.props.comment.username + space
 	        ),
 	        this.state.comment
 	      );
-	    } else if (livePercentage - 0.01 < this.props.comment.track_percentage && this.props.comment.track_percentage < livePercentage + 0.01 && this.props.autoShowState) {
+	    } else if (livePercentage < this.props.comment.track_percentage && this.props.comment.track_percentage < livePercentage + 0.01 && this.props.autoShowState && this.props.comment.id === this.props.currentCommentId) {
 	      hiddenComment = React.createElement(
 	        'div',
 	        { className: 'hidden-comment' },
 	        React.createElement(
 	          Link,
 	          { className: 'username-link', to: userUrl },
-	          this.props.comment.username
+	          this.props.comment.username + space
 	        ),
 	        this.props.comment.body
 	      );
@@ -35324,6 +35336,80 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var UserStore = __webpack_require__(278);
+	var UserActions = __webpack_require__(280);
+	var UserSuggestionIndexItem = __webpack_require__(288);
+	
+	var UserSuggestionIndex = React.createClass({
+	  displayName: 'UserSuggestionIndex',
+	  getInitialState: function getInitialState() {
+	    return { users: UserStore.allRandomUsers() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userListener = UserStore.addListener(this.onChange);
+	    UserActions.fetchRandomUsers();
+	  },
+	  onChange: function onChange() {
+	    this.setState({ users: UserStore.allRandomUsers() });
+	  },
+	  render: function render() {
+	
+	    var allRandomUserItems = this.state.users.map(function (user) {
+	      return React.createElement(UserSuggestionIndexItem, { key: user.id, user: user });
+	    });
+	    return React.createElement(
+	      'div',
+	      null,
+	      allRandomUserItems
+	    );
+	  }
+	});
+	
+	module.exports = UserSuggestionIndex;
+
+/***/ },
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
+	
+	var UserSuggestionIndexItem = React.createClass({
+	  displayName: 'UserSuggestionIndexItem',
+	  render: function render() {
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'user-suggestion-index-item' },
+	      React.createElement(
+	        Link,
+	        { to: '/users/' + this.props.user.id },
+	        React.createElement('img', { className: 'user-suggestion avatar-image', src: this.props.user.avatar_image_url })
+	      ),
+	      React.createElement(
+	        Link,
+	        { to: '/users/' + this.props.user.id },
+	        React.createElement(
+	          'div',
+	          { className: 'user-suggestion username' },
+	          this.props.user.username
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = UserSuggestionIndexItem;
+
+/***/ },
+/* 289 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
 	var TrackStore = __webpack_require__(269);
 	var TrackActions = __webpack_require__(240);
 	var ErrorStore = __webpack_require__(251);
@@ -35390,6 +35476,8 @@
 	    if (this.state.imageFile) {
 	      formData.append("track[image]", this.state.imageFile);
 	    }
+	
+	    debugger;
 	
 	    TrackActions.updateTrack(formData);
 	  },
@@ -35473,7 +35561,7 @@
 	module.exports = TrackEditForm;
 
 /***/ },
-/* 288 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35652,7 +35740,7 @@
 	module.exports = TrackForm;
 
 /***/ },
-/* 289 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35663,14 +35751,14 @@
 	var TrackStore = __webpack_require__(269);
 	var TrackActions = __webpack_require__(240);
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	var UserActions = __webpack_require__(280);
-	var CSSHelper = __webpack_require__(291);
+	var CSSHelper = __webpack_require__(293);
 	var TrackChange = __webpack_require__(272);
 	var Wavesurfer = __webpack_require__(270).default;
 	
 	var CommentForm = __webpack_require__(282);
-	var CommentIndex = __webpack_require__(292);
+	var CommentIndex = __webpack_require__(294);
 	var CommentAvatarIndex = __webpack_require__(276);
 	var WindowSizeConstants = __webpack_require__(275);
 	
@@ -35737,7 +35825,7 @@
 	
 	      if (currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
 	        clearInterval(this.setRefreshIntervalId);
-	        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 50);
+	        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 25);
 	        this.setState({ playing: true });
 	      } else {
 	        if (this.setRefreshIntervalId) {
@@ -35892,7 +35980,7 @@
 	          React.createElement(
 	            'div',
 	            { className: 'comment-index' },
-	            React.createElement(CommentIndex, { comments: liveTrack.comments })
+	            React.createElement(CommentIndex, { trackDuration: trackDuration, comments: liveTrack.comments })
 	          )
 	        )
 	      );
@@ -35905,7 +35993,7 @@
 	module.exports = TrackShow;
 
 /***/ },
-/* 290 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35943,7 +36031,7 @@
 	};
 
 /***/ },
-/* 291 */
+/* 293 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -35966,21 +36054,22 @@
 	var trackshowBackgroundGradient = "style={{background: '-webkit-linear-gradient(top, rgba( 0, 0, 0, 0) 75%, rgba('+(rbg1[0])+', '+(0)+', '+(rbg1[2])+', 0.5) 82%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 90%, rgba(0, 0, 0, 0) 100%)'}}";
 
 /***/ },
-/* 292 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var CommentIndexItem = __webpack_require__(293);
+	var CommentIndexItem = __webpack_require__(295);
 	var UserStore = __webpack_require__(278);
 	
 	var CommentIndex = React.createClass({
 	  displayName: 'CommentIndex',
 	  render: function render() {
+	    var _this = this;
 	
 	    var allCommentIndexItems = this.props.comments.map(function (comment, key) {
-	      return React.createElement(CommentIndexItem, { key: key, comment: comment });
+	      return React.createElement(CommentIndexItem, { trackDuration: _this.props.trackDuration, key: key, comment: comment });
 	    });
 	
 	    return React.createElement(
@@ -35998,7 +36087,7 @@
 	module.exports = CommentIndex;
 
 /***/ },
-/* 293 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36007,7 +36096,7 @@
 	var Link = __webpack_require__(175).Link;
 	var UserStore = __webpack_require__(278);
 	var UserActions = __webpack_require__(280);
-	var TimeChange = __webpack_require__(294);
+	var TimeChange = __webpack_require__(296);
 	
 	var CommentIndexItem = React.createClass({
 	  displayName: 'CommentIndexItem',
@@ -36021,10 +36110,11 @@
 	        null,
 	        React.createElement(
 	          Link,
-	          { to: userUrl },
+	          { className: 'comment-index-username', to: userUrl },
 	          this.props.comment.username,
-	          ' says: '
+	          ' '
 	        ),
+	        ' says:',
 	        React.createElement('br', null),
 	        this.props.comment.body
 	      )
@@ -36035,7 +36125,7 @@
 	module.exports = CommentIndexItem;
 
 /***/ },
-/* 294 */
+/* 296 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -36067,7 +36157,7 @@
 	};
 
 /***/ },
-/* 295 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36076,7 +36166,7 @@
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(251);
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	var FormConstants = __webpack_require__(242);
 	
 	var LoginForm = React.createClass({
@@ -36207,7 +36297,7 @@
 	module.exports = LoginForm;
 
 /***/ },
-/* 296 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36215,7 +36305,7 @@
 	var React = __webpack_require__(1);
 	var ErrorStore = __webpack_require__(251);
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	
 	var SignupForm = React.createClass({
 	  displayName: 'SignupForm',
@@ -36292,7 +36382,7 @@
 	module.exports = SignupForm;
 
 /***/ },
-/* 297 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36339,7 +36429,7 @@
 	module.exports = HomePage;
 
 /***/ },
-/* 298 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36350,7 +36440,7 @@
 	var TrackStore = __webpack_require__(269);
 	var TrackActions = __webpack_require__(240);
 	var UserActions = __webpack_require__(280);
-	var UserSuggestionIndex = __webpack_require__(308);
+	var UserSuggestionIndex = __webpack_require__(287);
 	
 	var UserPage = React.createClass({
 	  displayName: 'UserPage',
@@ -36401,7 +36491,7 @@
 	module.exports = UserPage;
 
 /***/ },
-/* 299 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36412,8 +36502,8 @@
 	var UserActions = __webpack_require__(280);
 	var TrackStore = __webpack_require__(269);
 	var TrackIndex = __webpack_require__(238);
-	var CSSHelper = __webpack_require__(291);
-	var UserSuggestionIndex = __webpack_require__(308);
+	var CSSHelper = __webpack_require__(293);
+	var UserSuggestionIndex = __webpack_require__(287);
 	
 	var UserProfile = React.createClass({
 	  displayName: 'UserProfile',
@@ -36507,17 +36597,17 @@
 	module.exports = UserProfile;
 
 /***/ },
-/* 300 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	var TrackStore = __webpack_require__(269);
 	var TrackActions = __webpack_require__(240);
-	var UserTrackIndex = __webpack_require__(301);
+	var UserTrackIndex = __webpack_require__(303);
 	
 	var UserTracks = React.createClass({
 	  displayName: 'UserTracks',
@@ -36555,13 +36645,13 @@
 	module.exports = UserTracks;
 
 /***/ },
-/* 301 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var UserTrackIndexItem = __webpack_require__(302);
+	var UserTrackIndexItem = __webpack_require__(304);
 	
 	var UserTrackIndex = React.createClass({
 	  displayName: 'UserTrackIndex',
@@ -36594,7 +36684,7 @@
 	module.exports = UserTrackIndex;
 
 /***/ },
-/* 302 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36617,7 +36707,7 @@
 	    TrackActions.deleteTrack(this.props.track.id);
 	  },
 	  render: function render() {
-	    debugger;
+	
 	    if (parseInt(TrackStore.currentTrack().id) === this.props.track.id && this.props.track.user_id === SessionStore.currentUser().id) {
 	      return React.createElement(
 	        'div',
@@ -36677,7 +36767,7 @@
 	module.exports = UserTrackIndexItem;
 
 /***/ },
-/* 303 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36686,7 +36776,7 @@
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(251);
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	var UserStore = __webpack_require__(278);
 	var UserActions = __webpack_require__(280);
 	var FormConstants = __webpack_require__(242);
@@ -36811,21 +36901,21 @@
 	module.exports = CurrentUserProfile;
 
 /***/ },
-/* 304 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LoginForm = __webpack_require__(295);
+	var LoginForm = __webpack_require__(297);
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	var Link = __webpack_require__(175).Link;
 	
-	var NavBar = __webpack_require__(305);
-	var PlayBar = __webpack_require__(306);
-	var HomePage = __webpack_require__(297);
-	var UserPage = __webpack_require__(298);
+	var NavBar = __webpack_require__(307);
+	var PlayBar = __webpack_require__(308);
+	var HomePage = __webpack_require__(299);
+	var UserPage = __webpack_require__(300);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -36854,7 +36944,7 @@
 	module.exports = App;
 
 /***/ },
-/* 305 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36862,7 +36952,7 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var SessionStore = __webpack_require__(273);
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	
 	var NavBar = React.createClass({
 	  displayName: 'NavBar',
@@ -37002,7 +37092,7 @@
 	module.exports = NavBar;
 
 /***/ },
-/* 306 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37103,12 +37193,12 @@
 	module.exports = PlayBar;
 
 /***/ },
-/* 307 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var SessionActions = __webpack_require__(290);
+	var SessionActions = __webpack_require__(292);
 	
 	module.exports = function () {
 	  var user = window.phantomVibes.user;
@@ -37116,80 +37206,6 @@
 	    SessionActions.receiveCurrentUser(user);
 	  }
 	};
-
-/***/ },
-/* 308 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var UserStore = __webpack_require__(278);
-	var UserActions = __webpack_require__(280);
-	var UserSuggestionIndexItem = __webpack_require__(309);
-	
-	var UserSuggestionIndex = React.createClass({
-	  displayName: 'UserSuggestionIndex',
-	  getInitialState: function getInitialState() {
-	    return { users: UserStore.allRandomUsers() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.userListener = UserStore.addListener(this.onChange);
-	    UserActions.fetchRandomUsers();
-	  },
-	  onChange: function onChange() {
-	    this.setState({ users: UserStore.allRandomUsers() });
-	  },
-	  render: function render() {
-	
-	    var allRandomUserItems = this.state.users.map(function (user) {
-	      return React.createElement(UserSuggestionIndexItem, { key: user.id, user: user });
-	    });
-	    return React.createElement(
-	      'div',
-	      null,
-	      allRandomUserItems
-	    );
-	  }
-	});
-	
-	module.exports = UserSuggestionIndex;
-
-/***/ },
-/* 309 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var Link = __webpack_require__(175).Link;
-	
-	var UserSuggestionIndexItem = React.createClass({
-	  displayName: 'UserSuggestionIndexItem',
-	  render: function render() {
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'user-suggestion-index-item' },
-	      React.createElement(
-	        Link,
-	        { to: 'users/' + this.props.user.id },
-	        React.createElement('img', { className: 'user-suggestion avatar-image', src: this.props.user.avatar_image_url })
-	      ),
-	      React.createElement(
-	        Link,
-	        { to: 'users/' + this.props.user.id },
-	        React.createElement(
-	          'div',
-	          { className: 'user-suggestion username' },
-	          this.props.user.username
-	        )
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = UserSuggestionIndexItem;
 
 /***/ }
 /******/ ]);

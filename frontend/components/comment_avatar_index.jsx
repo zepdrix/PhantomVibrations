@@ -6,13 +6,21 @@ const UserActions = require('../actions/user_actions');
 
 var CommentAvatarIndex = React.createClass({
 
-
   componentDidMount () {
+
     if (this.props.playing) {
       this.autoShowState = true;
     } else {
       this.autoShowState = false;
     }
+  },
+
+  determineCommentId () {
+    let commentIdx = 0;
+    while (this.props.percentage > this.props.comments[commentIdx].track_percentage) {
+      commentIdx += 1;
+    }
+    return this.props.comments[commentIdx].id;
   },
 
   stopAutoShow (e) {
@@ -26,12 +34,15 @@ var CommentAvatarIndex = React.createClass({
   },
 
   render () {
+    // let currentCommentId = this.determineCommentId();
+
     let allCommentAvatarIndexItems = this.props.comments.map( (comment, key) => {
       return <CommentAvatarIndexItem
                 key={ key }
                 comment={ comment }
                 user={ UserStore.find(comment.user_id) }
                 width={ this.props.width }
+                currentCommentId={ this.determineCommentId() }
                 trackId={ this.props.trackId }
                 percentage={ this.props.percentage }
                 autoShowState= {this.autoShowState }/>;

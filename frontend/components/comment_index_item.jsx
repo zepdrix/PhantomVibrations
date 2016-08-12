@@ -11,7 +11,7 @@ var CommentIndexItem = React.createClass({
     return(
       <li>
         <div>
-          <Link to={ userUrl } >{ this.props.comment.username } says: </Link>
+          <Link className="comment-index-username" to={ userUrl } >{ this.props.comment.username } </Link> says:
           <br/>
           { this.props.comment.body }
         </div>

@@ -23,6 +23,10 @@
   height: 40px;
 }
 
+.comment-index-username {
+  font-weight: bold;
+}
+
 .track-avatar-comments-container {
   position: relative;
   top: 260px;
@@ -78,7 +82,7 @@
 
 
 .track-show .comment-avatar-index .hidden-comment {
-  color: lightgrey;
+  color: #E8E8E8;
   z-index: 9999;
 }
 
@@ -93,8 +97,8 @@
   z-index: 9999;
 }
 
-.track-show .comment-avatar-index .username-link {
-  color: #4A4A4A;
+.track-index .comment-avatar-index .username-link {
+  color: #3B3B3B;
   font-weight: 600;
 }
 

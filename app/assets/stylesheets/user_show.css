@@ -1,11 +1,10 @@
 .user-tracks {
   width: 700px;
-  /*position: relative;*/
-
+  position: ;
 }
 
 .user-page-suggestions {
   left: 750px;
   top: 350px;
-
+  float: right;
 }

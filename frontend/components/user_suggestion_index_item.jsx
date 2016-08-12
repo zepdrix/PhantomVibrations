@@ -9,11 +9,11 @@ var UserSuggestionIndexItem = React.createClass({
 
     return(
       <div className="user-suggestion-index-item">
-        <Link to={ `users/${this.props.user.id}` } >
+        <Link to={ `/users/${this.props.user.id}` } >
 
           <img className="user-suggestion avatar-image" src={ this.props.user.avatar_image_url } />
         </Link>
-        <Link to={ `users/${this.props.user.id}` } >
+        <Link to={ `/users/${this.props.user.id}` } >
           <div className="user-suggestion username">
             { this.props.user.username }
           </div>

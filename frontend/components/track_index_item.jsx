@@ -109,8 +109,9 @@ var TrackIndexItem = React.createClass({
     let trackImageUrl = this.props.track.image_url;
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
-    // let trackDuration = TrackStore.getTrackDuration(this.props.track.id);
 
+    // let trackDuration = TrackStore.getTrackDuration(this.props.track.id);
+    //
     // let waveform;
     // let potentialWaveform = TrackStore.getWaveform(this.props.track.id);
     // if (potentialWaveform) {

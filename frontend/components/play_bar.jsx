@@ -73,6 +73,7 @@ var PlayBar = React.createClass({
           <div className="playnode-container" onClick={ this.resetPercentage }>
             <div className="playnode-played" style={{width: percentage + 'px'}}></div>
           </div>
+
         </div>
       );
     } else {

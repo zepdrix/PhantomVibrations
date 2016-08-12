@@ -108,10 +108,23 @@ a.track-item.track-title {
   border-left: 6px solid #FC6F0A;
 }
 
-.comment-form .track-index input {
-  top: 20px;
+.comment-form.track-index input {
+  /*top: 20px;
   left: 80px;
-  z-index: 20;
+  */
+  height: 10px;
+  font-size:12px;
+  margin-left: 70px;
+  width: 200px;
+  padding: 2px 5px;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  /*z-index: 20;*/
+}
+
+.comment-form.track-index {
+  width: 300px;
+
 }
 
 .track-show .comment-input {
@@ -158,6 +171,7 @@ a.track-item.track-title {
 
 .track-index {
   width: 600px;
+  float: left;
   margin-right: 0px;
 }
 
@@ -193,8 +207,11 @@ a.track-item.track-title {
 .track-show.playnode-played {
   height: 16px;
   width: 0px;
-  background-color: orange;
+  /*background: linear-gradient(to top, rgba(0,0,0,0), rgba(165,165,165,0.5));*/
+
+  background-color: #ED980E;
 }
+
 .playnode .words {
   float: left;
 }

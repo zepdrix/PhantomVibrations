@@ -7,7 +7,7 @@ var CommentIndex = React.createClass({
   render () {
 
     let allCommentIndexItems = this.props.comments.map( (comment, key) => {
-      return <CommentIndexItem key={ key } comment={ comment } />;
+      return <CommentIndexItem trackDuration={ this.props.trackDuration } key={ key } comment={ comment } />;
     });
 
     return(

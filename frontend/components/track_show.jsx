@@ -61,8 +61,6 @@ var TrackShow = React.createClass({
     }
   },
 
-
-
   resetPercentage (e) {
     e.preventDefault();
 
@@ -85,11 +83,9 @@ var TrackShow = React.createClass({
       this.setState({track: TrackStore.find(parseInt(this.props.params.trackId)), playing: playing});
     } else {
 
-
-
       if (currentTrack.dataset.id == this.props.params.trackId && this.state.playing) {
         clearInterval(this.setRefreshIntervalId);
-        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 50);
+        this.setRefreshIntervalId = setInterval(this.setNewPercentage, 25);
         this.setState({ playing: true });
       } else {
         if (this.setRefreshIntervalId) {
@@ -222,7 +218,7 @@ var TrackShow = React.createClass({
             </div>
 
             <div className="comment-index">
-              <CommentIndex  comments={ liveTrack.comments}/>
+              <CommentIndex trackDuration={ trackDuration } comments={ liveTrack.comments}/>
             </div>
           </div>
         </div>
