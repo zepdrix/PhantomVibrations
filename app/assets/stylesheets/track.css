@@ -173,6 +173,7 @@ a.track-item.track-title {
   width: 600px;
   float: left;
   margin-right: 0px;
+  margin-bottom: 45px;
 }
 
 .track-list.playnode-container {

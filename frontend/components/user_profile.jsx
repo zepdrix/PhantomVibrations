@@ -46,12 +46,21 @@ var UserProfile = React.createClass({
       let avatarUrl = this.state.user.avatar_image_url;
       let userUrl = `/users/${this.state.user.id}`;
 
+      let bannerStyle;
+      let bannerImage;
+
+      if ( this.state.user.banner_image_url ) {
+        bannerStyle = {background: 'transparent'};
+        bannerImage = <img className="user-banner-image" src={ this.state.user.avatar_image_url }/>;
+      } else {
+        bannerStyle = {background: '-webkit-linear-gradient(135deg, rgba('+(this.state.rbg1[0])+', '+(this.state.rbg1[1])+', '+(this.state.rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'};
+
+      }
       return(
         <div className="user-page">
-          <div className="user-page banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(this.state.rbg1[0])+', '+(this.state.rbg1[1])+', '+(this.state.rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
-            <div>
+          { bannerImage }
+          <div className="user-page banner-area" style={bannerStyle}>
               <img className="user-avatar-image" src={ this.state.user.avatar_image_url }/>
-            </div>
 
             <div className="user-info">
               <div className="username">

@@ -36544,17 +36544,23 @@
 	      var avatarUrl = this.state.user.avatar_image_url;
 	      var userUrl = '/users/' + this.state.user.id;
 	
+	      var bannerStyle = void 0;
+	      var bannerImage = void 0;
+	
+	      if (this.state.user.banner_image_url) {
+	        bannerStyle = { background: 'transparent' };
+	        bannerImage = React.createElement('img', { className: 'user-banner-image', src: this.state.user.avatar_image_url });
+	      } else {
+	        bannerStyle = { background: '-webkit-linear-gradient(135deg, rgba(' + this.state.rbg1[0] + ', ' + this.state.rbg1[1] + ', ' + this.state.rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' };
+	      }
 	      return React.createElement(
 	        'div',
 	        { className: 'user-page' },
+	        bannerImage,
 	        React.createElement(
 	          'div',
-	          { className: 'user-page banner-area', style: { background: '-webkit-linear-gradient(135deg, rgba(' + this.state.rbg1[0] + ', ' + this.state.rbg1[1] + ', ' + this.state.rbg1[2] + ', 0.5) 1%, rgba(' + rbg2[0] + ', ' + 0 + ', ' + rbg2[2] + ', 0.7) 100%)' } },
-	          React.createElement(
-	            'div',
-	            null,
-	            React.createElement('img', { className: 'user-avatar-image', src: this.state.user.avatar_image_url })
-	          ),
+	          { className: 'user-page banner-area', style: bannerStyle },
+	          React.createElement('img', { className: 'user-avatar-image', src: this.state.user.avatar_image_url }),
 	          React.createElement(
 	            'div',
 	            { className: 'user-info' },
