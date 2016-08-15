@@ -1,6 +1,6 @@
 # PhantomVibrations
 
-[Heroku link][heroku]: http:/phantomvibrations.herokuapp.com
+[PhantomVibrations](http:/phantomvibrations.herokuapp.com)
 
 # Summary
 
@@ -15,6 +15,15 @@ PhantomVibrations is a single page web application built with Ruby on Rails and 
   - Experience uninterrupted audio playback while navigating the site
   - Comment on any track, if the track is playing, the comment will appear at the corresponding time on the song's waveform
   - See the comments appear in time on a track's waveform as the track is playing
+
+# Technologies/Libraries used
+
+   - React.js
+   - Flux
+   - BCrypt
+   - Paperclip
+   - figaro
+   - react-waveform
 
 # Technical Details
 
