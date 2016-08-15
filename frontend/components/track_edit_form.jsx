@@ -72,8 +72,6 @@ var TrackEditForm = React.createClass({
       formData.append("track[image]", this.state.imageFile);
     }
 
-    debugger
-
     TrackActions.updateTrack(formData);
   },
 

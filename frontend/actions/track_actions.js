@@ -90,9 +90,7 @@ module.exports = {
     });
   },
 
-  setWaveform (id, waveform) {
-    debugger
-    
+  setWaveform (id, waveform) {    
     AppDispatcher.dispatch({
       actionType: TrackConstants.SET_WAVEFORM,
       id: id,

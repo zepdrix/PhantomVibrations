@@ -69,7 +69,6 @@ TrackStore.getWaveforms = function () {
 
 
 TrackStore.setWaveform = function (id, waveform) {
-  debugger
   _waveforms[id] = waveform;
 };
 
