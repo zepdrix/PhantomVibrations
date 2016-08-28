@@ -20,6 +20,8 @@ var UserPage = React.createClass({
     this.storeListener.remove();
   },
 
+
+
   onChange () {
     this.setState({ tracks: TrackStore.all() });
   },

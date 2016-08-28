@@ -13,32 +13,46 @@ var UserProfile = React.createClass({
     let user = UserStore.find(parseInt(this.props.params.userId));
     let rbg1 = CSSHelper.styleHelper();
 
-    return { user: UserStore.find(parseInt(this.props.params.userId)), userTracks: TrackStore.all(), rbg1: rbg1};
+    return { user: user, userTracks: [], rbg1: rbg1};
   },
 
   componentDidMount () {
     this.userListener = UserStore.addListener(this.onUserChange);
-    this.trackListener = TrackStore.addListener(this.onTrackChange);
     TrackActions.fetchUserTracks(parseInt(this.props.params.userId));
     UserActions.fetchUser(parseInt(this.props.params.userId));
   },
 
   onTrackChange () {
-    this.setState({ userTracks: TrackStore.all() });
+    // this.setState({ userTracks: TrackStore.all() });
+  },
+
+  componentWillMount () {
+    let userId = parseInt(this.props.params.userId);
+    UserActions.fetchUser(userId);
+    TrackActions.fetchUserTracks(userId);
   },
 
   componentWillUnmount () {
     this.userListener.remove();
-    this.trackListener.remove();
+    // this.trackListener.remove();
+  },
+
+  componentWillReceiveProps (nextProps) {
+    let userId = parseInt(nextProps.params.userId);
+    UserActions.fetchUser(userId);
+    TrackActions.fetchUserTracks(userId);
   },
 
   onUserChange () {
-    this.setState({ user: UserStore.find(parseInt(this.props.params.userId)) });
+    // debugger
+    let user = UserStore.find(parseInt(this.props.params.userId));
+    this.setState({ user: user, userTracks: user.tracks });
   },
 
   render () {
 
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
+
     if (this.state.user) {
 
       let username = this.state.user.username;
@@ -82,7 +96,7 @@ var UserProfile = React.createClass({
 
           <div className="user-page-suggestions">
             <h3>You'll Like:</h3>
-            <UserSuggestionIndex/>
+            <UserSuggestionIndex />
           </div>
         </div>
 

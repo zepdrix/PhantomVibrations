@@ -7,5 +7,13 @@ end
 json.user do
   json.partial! "api/users/user", user: track.user
 end
+
+arr = []
+track.likes.each do |like|
+  arr.push(like.user_id)
+end
+
+json.likes arr
+
 json.image_url asset_path(track.image.url)
 json.audio_url asset_path(track.audio.url)

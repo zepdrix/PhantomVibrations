@@ -61,6 +61,7 @@ var TrackForm = React.createClass({
     let fileReader = new FileReader();
 
     fileReader.onloadend = function () {
+
       this.setState({ audioFile: file, audioUrl: fileReader.result });
     }.bind(this);
 
@@ -77,7 +78,6 @@ var TrackForm = React.createClass({
     formData.append("track[title]", this.state.title);
     formData.append("track[description]", this.state.description);
     formData.append("track[audio]", this.state.audioFile);
-
     if (this.state.imageFile) {
       formData.append("track[image]", this.state.imageFile);
     }

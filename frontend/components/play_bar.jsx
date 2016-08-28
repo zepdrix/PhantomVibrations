@@ -18,7 +18,6 @@ var PlayBar = React.createClass({
   onTrackChange () {
     this.setState({ currentTrack: TrackStore.currentTrack() });
     this.refreshIntervalId = setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
-
   },
 
   handlePlay (e) {
@@ -27,7 +26,6 @@ var PlayBar = React.createClass({
     this.refreshIntervalId = setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
     TrackActions.playCurrentTrack();
 
-    // this.state.currentTrack.play();
   },
 
   resetPercentage (e) {
@@ -38,14 +36,12 @@ var PlayBar = React.createClass({
 
   handlePause (e) {
     e.preventDefault();
-    // TrackChange.pauseTrack(e);
     TrackActions.pauseCurrentTrack();
   },
 
   render () {
     if (this.state.currentTrack.dataset.id !== "no-track") {
       var percentage = 0;
-      // this.state.currentTrack.play();
 
       if (this.state.currentTrack) {
         let barWidth = window.innerWidth < 900 ? 900 : window.innerWidth;

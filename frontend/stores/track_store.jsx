@@ -1,7 +1,8 @@
 const Store = require('flux/utils').Store;
 const Wavesurfer = require('react-wavesurfer').default;
 const AppDispatcher = require('../dispatcher/dispatcher'),
-      TrackConstants = require('../constants/track_constants');
+      TrackConstants = require('../constants/track_constants'),
+      LikeConstants = require('../constants/like_constants');
 const React = require('react');
 const TrackStore = new Store(AppDispatcher);
 
@@ -62,6 +63,14 @@ const _removeTrack = function (track) {
   delete _tracks[track.id];
 };
 
+const _addLike = function (trackId, userId) {
+  _tracks[trackId].likes.push(userId);
+};
+
+const _removeLike = function (trackId, userId) {
+  let likeUserId = _tracks[trackId].likes.indexOf(userId);
+  _tracks[trackId].likes.splice(userId, 1);
+};
 
 TrackStore.getWaveforms = function () {
   return _waveforms;
@@ -82,7 +91,6 @@ const _setCurrentPercentage = function () {
   _trackStates[_currentTrack.dataset.id].percentage = _currentTrack.currentTime / _currentTrack.duration;
   _trackStates[_currentTrack.dataset.id].duration = _currentTrack.duration;
 };
-
 
 const _seekNewPercentage = function (clickPercentage) {
   _currentTrack.currentTime = clickPercentage * _currentTrack.duration;
@@ -134,38 +142,6 @@ TrackStore.getStates = function () {
   return _trackStates;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 TrackStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case TrackConstants.RECEIVE_TRACK:
@@ -198,6 +174,14 @@ TrackStore.__onDispatch = function (payload) {
       break;
     case TrackConstants.SET_WAVEFORM:
       _setWaveform(payload.id, payload.waveform);
+      this.__emitChange();
+      break;
+    case LikeConstants.RECEIVE_LIKE:
+      _addLike(payload.like.track_id, payload.like.user_id);
+      this.__emitChange();
+      break;
+    case LikeConstants.REMOVE_LIKE:
+      _removeLike(payload.like.track_id, payload.like.user_id);
       this.__emitChange();
       break;
   }

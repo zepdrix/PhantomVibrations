@@ -24,17 +24,16 @@
 
 .track-item.track-username {
   color: #A3A3A3;
-}
-a.track-item.track-title {
-
 
 }
+
 .track-item.track-title {
   color: #636363;
   font-size: 14px;
   z-index: 11;
 }
 .track-item.track-username, .track-item.track-title {
+  margin-bottom: 5px;
   margin-left: 10px;
 }
 
@@ -149,6 +148,8 @@ a.track-item.track-title {
   margin-left: 10px;
   float: left;
   font-size: 25px;
+  color: lightgrey;
+  text-shadow: 0 0 5px black;
 }
 
 .track-show .username, .user-info .username {
@@ -156,6 +157,8 @@ a.track-item.track-title {
   margin: 10px;
   float: left;
   font-size: 17px;
+  color: lightgrey;
+  text-shadow: 0 0 5px black;
 }
 
 .track-show .track-image {

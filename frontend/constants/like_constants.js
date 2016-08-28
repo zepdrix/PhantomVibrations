@@ -1,0 +1,4 @@
+module.exports = {
+  RECEIVE_LIKE: "RECEIVE_LIKE",
+  REMOVE_LIKE: "REMOVE_LIKE"
+};

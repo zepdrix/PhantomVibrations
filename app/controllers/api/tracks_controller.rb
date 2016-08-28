@@ -39,7 +39,7 @@ class Api::TracksController < ApplicationController
     if params[:user_id]
       @tracks = Track.where("user_id = ?", params[:user_id].to_i)
     else
-      @tracks = Track.includes(:comments, :user).all.shuffle[0, 5]
+      @tracks = Track.includes(:comments, :user, :likes).all.shuffle[0, 5]
     end
     render "api/tracks/index"
   end

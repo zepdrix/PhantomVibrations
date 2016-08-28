@@ -18,6 +18,14 @@ var CommentAvatarIndexItem = React.createClass({
     this.setState({ comment: null });
   },
 
+  shortenedComment (comment) {
+    let shortenedComment = comment;
+    if (comment.length > 30) {
+      shortenedComment = comment.slice(0, 30) + "...";
+    }
+    return shortenedComment;
+  },
+
   render () {
     let hiddenComment;
     let livePercentage = this.props.percentage;
@@ -31,7 +39,7 @@ var CommentAvatarIndexItem = React.createClass({
                           { this.props.comment.username + space}
                         </Link>
 
-                        { this.state.comment }
+                        { this.shortenedComment(this.state.comment) }
 
                       </div>;
     } else if ((livePercentage < this.props.comment.track_percentage && this.props.comment.track_percentage  < livePercentage + 0.01) &&
@@ -41,7 +49,7 @@ var CommentAvatarIndexItem = React.createClass({
                           { this.props.comment.username + space}
                         </Link>
 
-                        { this.props.comment.body }
+                        { this.shortenedComment(this.props.comment.body) }
 
                       </div>;
     }

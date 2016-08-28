@@ -14,6 +14,10 @@ var UserSuggestionIndex = React.createClass({
     UserActions.fetchRandomUsers();
   },
 
+  componentWillUnmount () {
+    this.userListener.remove();
+  },
+
   onChange () {
     this.setState({ users: UserStore.allRandomUsers() });
   },

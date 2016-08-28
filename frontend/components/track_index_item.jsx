@@ -8,6 +8,7 @@ const SessionStore = require('../stores/session_store');
 const WindowSizeConstants = require('../constants/window_size_constants');
 const CommentAvatarIndex = require('./comment_avatar_index');
 const CommentForm = require('./comment_form');
+const TrackLikeButton = require('./track_like_button');
 const WaveSurfer = require('react-wavesurfer');
 
 
@@ -41,7 +42,6 @@ var TrackIndexItem = React.createClass({
 
   setNewPercentage (clickPercentage) {
     if (clickPercentage) {
-
       TrackActions.seekNewPercentage(clickPercentage);
     } else {
       let newPercentage = TrackStore.getPlaybackPercentage(this.props.track.id);
@@ -56,9 +56,6 @@ var TrackIndexItem = React.createClass({
       this.setRefreshIntervalId = setInterval(this.setNewPercentage, 30);
       this.setState({ playing: true });
     } else {
-      if (this.setRefreshIntervalId) {
-        clearInterval(this.setRefreshIntervalId);
-      }
       this.setState({ playing: false });
       this.setNewPercentage();
     }
@@ -78,13 +75,15 @@ var TrackIndexItem = React.createClass({
   resetPercentage (e) {
     e.preventDefault();
     if (this.state.playing) {
-
       let clickPercentage = ((e.pageX - e.currentTarget.offsetLeft) / e.currentTarget.offsetWidth);
       this.setNewPercentage(clickPercentage);
     } else {
       this.onClick(e);
     }
   },
+  // <div className="track-index-track-like-button">
+  //   <TrackLikeButton track={ this.props.track }></TrackLikeButton>
+  // </div>
 // <div className="track-list playnode-played" style={{width: (this.state.percentage * 420) + 'px'}}></div>
   render () {
     const waveOptions = {
@@ -109,30 +108,6 @@ var TrackIndexItem = React.createClass({
     let trackImageUrl = this.props.track.image_url;
     let userUrl = `/users/${this.props.track.user_id}`;
     let userImageUrl = this.props.track.user.image_url;
-
-    // let trackDuration = TrackStore.getTrackDuration(this.props.track.id);
-    //
-    // let waveform;
-    // let potentialWaveform = TrackStore.getWaveform(this.props.track.id);
-    // if (potentialWaveform) {
-    //   waveform = potentialWaveform;
-    // } else {
-    //
-    //   const waveOptions = {
-    //     progressColor: '#6c718c',
-    //     waveColor: '#c4c8dc',
-    //     normalize: true,
-    //     barWidth: 4,
-    //     cursorColor: 'lightgrey',
-    //     height: 80
-    //   };
-    //
-    //            TrackStore.setWaveform(this.props.track.id,   <Wavesurfer
-    //                           audioFile={this.props.track.audio_url}
-    //                           pos={ this.state.percentage * trackDuration }
-    //                           options={ waveOptions }
-    //                         />);
-    // }
 
     return(
       <li className="track-item" >
@@ -177,6 +152,7 @@ var TrackIndexItem = React.createClass({
               playing={ this.state.playing }
               />
           </div>
+
 
 
           <div className="comment-form track-index">

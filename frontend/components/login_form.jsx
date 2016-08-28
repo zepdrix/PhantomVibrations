@@ -58,6 +58,11 @@ var LoginForm = React.createClass({
     }
   },
 
+  loginGuest (e) {
+    e.preventDefault();
+    SessionActions.loginUser({ username: 'guest', password: 'password123'});
+  },
+
   handleUsername (e) {
     e.preventDefault();
     this.setState({ username: e.target.value });
@@ -100,6 +105,7 @@ var LoginForm = React.createClass({
           </div>
           <button className="login-button form-hover">Submit</button>
           { navLink }
+          <button className="login-button form-hover" onClick={this.loginGuest}>Log In As Guest</button>
         </form>
       </div>
     );
