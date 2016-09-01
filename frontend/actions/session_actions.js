@@ -11,6 +11,13 @@ module.exports = {
       ErrorActions.setErrors);
   },
 
+  updateUser (formData) {
+    SessionApiUtil.updateUser(
+      formData,
+      this.receiveCurrentUser,
+      ErrorActions.setErrors);
+  },
+
   loginUser (user) {
     SessionApiUtil.loginUser(
       user,

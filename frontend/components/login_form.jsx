@@ -1,6 +1,7 @@
 const React = require('react');
 const Link = require('react-router').Link;
 const ErrorStore = require('../stores/error_store');
+const ErrorActions = require('../actions/error_actions');
 const SessionStore = require('../stores/session_store');
 const SessionActions = require('../actions/session_actions');
 const FormConstants = require('../constants/form_constants');
@@ -23,6 +24,7 @@ var LoginForm = React.createClass({
   componentWillUnmount () {
     this.errorListener.remove();
     this.sessionListener.remove();
+    ErrorActions.clearErrors();
   },
 
   redirectIfLoggedIn () {

@@ -44,7 +44,6 @@ var UserProfile = React.createClass({
   },
 
   onUserChange () {
-    // debugger
     let user = UserStore.find(parseInt(this.props.params.userId));
     this.setState({ user: user, userTracks: user.tracks });
   },

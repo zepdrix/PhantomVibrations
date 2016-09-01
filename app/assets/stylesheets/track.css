@@ -56,6 +56,16 @@
   margin-bottom: 35px;
 }
 
+.play-icon:active, .pause-icon-small:active {
+  transition: 0.1s;
+  transform: translateY(3px);
+}
+
+.play-icon-big:active, .pause-icon-big:active {
+  transition: 0.1s;
+  transform: translateY(4px);
+}
+
 .track-show .play-icon-big {
   display: block;
   float: left;
@@ -67,6 +77,9 @@
 	border-bottom: 30px solid transparent;
 }
 
+.play-icon, .play-icon-big, .pause-icon-big, .pause-icon-small {
+  cursor: pointer;
+}
 
 
 .track-show .pause-icon-big {

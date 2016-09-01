@@ -27,7 +27,7 @@ var CurrentUserProfile = React.createClass({
 
   componentDidMount () {
     this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
-    this.sessionListener = UserStore.addListener(this.redirectIfUserSaved);
+    this.sessionListener = SessionStore.addListener(this.redirectIfUserSaved);
   },
 
   componentWillUnmount () {
@@ -63,7 +63,6 @@ var CurrentUserProfile = React.createClass({
       let errorMessages = errors.map( (error, key) => {
         return <li className="form-error" key={ key }>{ error }</li>;
         });
-
         return <ul>{ errorMessages }</ul>;
     }
   },
@@ -77,7 +76,7 @@ var CurrentUserProfile = React.createClass({
     if (this.state.avatarImageFile) {
       formData.append("user[avatar_image]", this.state.avatarImageFile);
     }
-    UserActions.updateUser(formData);
+    SessionActions.updateUser(formData);
   },
 
   render () {

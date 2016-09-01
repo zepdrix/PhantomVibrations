@@ -44,13 +44,10 @@ SessionStore.__onDispatch = function (payload) {
       this.__emitChange();
       break;
     case LikeConstants.RECEIVE_LIKE:
-    debugger
       _addLike(payload.like);
       this.__emitChange();
       break;
     case LikeConstants.REMOVE_LIKE:
-    debugger
-    
       _removeLike(payload.like);
       this.__emitChange();
       break;

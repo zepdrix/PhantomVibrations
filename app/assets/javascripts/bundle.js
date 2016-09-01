@@ -27913,6 +27913,21 @@
 	      }
 	    });
 	  },
+	  updateUser: function updateUser(formData, successCb, errorCb) {
+	    $.ajax({
+	      url: "api/users/" + formData.get('user[id]'),
+	      method: "PATCH",
+	      contentType: false,
+	      processData: false,
+	      data: formData,
+	      success: function success(resp) {
+	        successCb(resp);
+	      },
+	      error: function error(xhr) {
+	        errorCb(FormConstants.EDIT_USER_FORM, xhr.responseJSON, xhr.responseText);
+	      }
+	    });
+	  },
 	  fetchCurrentUser: function fetchCurrentUser(successCb) {
 	    $.ajax({
 	      url: "api/session",
@@ -34765,13 +34780,10 @@
 	      this.__emitChange();
 	      break;
 	    case LikeConstants.RECEIVE_LIKE:
-	      debugger;
 	      _addLike(payload.like);
 	      this.__emitChange();
 	      break;
 	    case LikeConstants.REMOVE_LIKE:
-	      debugger;
-	
 	      _removeLike(payload.like);
 	      this.__emitChange();
 	      break;
@@ -35446,6 +35458,9 @@
 	module.exports = {
 	  createUser: function createUser(user) {
 	    SessionApiUtil.createUser(user, this.receiveCurrentUser, ErrorActions.setErrors);
+	  },
+	  updateUser: function updateUser(formData) {
+	    SessionApiUtil.updateUser(formData, this.receiveCurrentUser, ErrorActions.setErrors);
 	  },
 	  loginUser: function loginUser(user) {
 	    SessionApiUtil.loginUser(user, this.receiveCurrentUser, ErrorActions.setErrors);
@@ -36338,6 +36353,7 @@
 	var React = __webpack_require__(1);
 	var Link = __webpack_require__(175).Link;
 	var ErrorStore = __webpack_require__(251);
+	var ErrorActions = __webpack_require__(248);
 	var SessionStore = __webpack_require__(274);
 	var SessionActions = __webpack_require__(289);
 	var FormConstants = __webpack_require__(242);
@@ -36360,6 +36376,7 @@
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.errorListener.remove();
 	    this.sessionListener.remove();
+	    ErrorActions.clearErrors();
 	  },
 	  redirectIfLoggedIn: function redirectIfLoggedIn() {
 	    this.context.router.push("/");
@@ -36718,7 +36735,6 @@
 	    TrackActions.fetchUserTracks(userId);
 	  },
 	  onUserChange: function onUserChange() {
-	    // debugger
 	    var user = UserStore.find(parseInt(this.props.params.userId));
 	    this.setState({ user: user, userTracks: user.tracks });
 	  },
@@ -37001,7 +37017,7 @@
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
-	    this.sessionListener = UserStore.addListener(this.redirectIfUserSaved);
+	    this.sessionListener = SessionStore.addListener(this.redirectIfUserSaved);
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.errorListener.remove();
@@ -37036,7 +37052,6 @@
 	          error
 	        );
 	      });
-	
 	      return React.createElement(
 	        'ul',
 	        null,
@@ -37053,7 +37068,7 @@
 	    if (this.state.avatarImageFile) {
 	      formData.append("user[avatar_image]", this.state.avatarImageFile);
 	    }
-	    UserActions.updateUser(formData);
+	    SessionActions.updateUser(formData);
 	  },
 	  render: function render() {
 	    return React.createElement(
