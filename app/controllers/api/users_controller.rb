@@ -15,6 +15,7 @@ class Api::UsersController < ApplicationController
     @user = User.find(params[:id])
 
     if @user.update(user_params)
+      log_out
       log_in(@user)
       render "api/users/show"
     else
