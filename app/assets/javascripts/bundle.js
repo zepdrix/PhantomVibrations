@@ -36376,7 +36376,9 @@
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.errorListener.remove();
 	    this.sessionListener.remove();
-	    ErrorActions.clearErrors();
+	    setTimeout(function () {
+	      ErrorActions.clearErrors();
+	    }, 1000);
 	  },
 	  redirectIfLoggedIn: function redirectIfLoggedIn() {
 	    this.context.router.push("/");
