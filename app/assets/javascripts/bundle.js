@@ -34495,9 +34495,6 @@
 	
 	var _tracks = {};
 	
-	// var _playQueue = {};
-	// var _currentQueueIndex = -1;
-	
 	var _currentTrack = new Audio();
 	
 	_currentTrack.dataset.id = "no-track";
@@ -34570,6 +34567,12 @@
 	  _currentTrack.play();
 	};
 	
+	var _pauseCurrentTrack = function _pauseCurrentTrack() {
+	  _setCurrentPercentage();
+	  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
+	  _currentTrack.pause();
+	};
+	
 	var _setCurrentPercentage = function _setCurrentPercentage() {
 	  _trackStates[_currentTrack.dataset.id] = { percentage: 0, duration: 0 };
 	  _trackStates[_currentTrack.dataset.id].percentage = _currentTrack.currentTime / _currentTrack.duration;
@@ -34598,12 +34601,6 @@
 	
 	TrackStore.getWaveform = function (id) {
 	  return _waveforms[id];
-	};
-	
-	var _pauseCurrentTrack = function _pauseCurrentTrack() {
-	  _setCurrentPercentage();
-	  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
-	  _currentTrack.pause();
 	};
 	
 	var _resetCurrentTrack = function _resetCurrentTrack(track) {
@@ -34858,8 +34855,6 @@
 	  render: function render() {
 	    var _this = this;
 	
-	    // let currentCommentId = this.determineCommentId();
-	
 	    var allCommentAvatarIndexItems = this.props.comments.map(function (comment, key) {
 	      return React.createElement(CommentAvatarIndexItem, {
 	        key: key,
@@ -34918,6 +34913,7 @@
 	    var percentage = this.props.comment.track_percentage * this.props.width;
 	    var userUrl = '/users/' + this.props.comment.user_id;
 	    var space = ' ';
+	
 	    if (this.state.comment) {
 	      hiddenComment = React.createElement(
 	        'div',
@@ -34929,7 +34925,7 @@
 	        ),
 	        this.shortenedComment(this.state.comment)
 	      );
-	    } else if (livePercentage < this.props.comment.track_percentage && this.props.comment.track_percentage < livePercentage + 0.01 && this.props.autoShowState && this.props.comment.id === this.props.currentCommentId) {
+	    } else if (livePercentage < this.props.comment.track_percentage && this.props.comment.track_percentage < livePercentage + 0.02 && this.props.autoShowState && this.props.comment.id === this.props.currentCommentId) {
 	      hiddenComment = React.createElement(
 	        'div',
 	        { className: 'hidden-comment' },
@@ -37366,7 +37362,6 @@
 	        var barWidth = window.innerWidth < 900 ? 900 : window.innerWidth;
 	        percentage = this.state.currentTrack.currentTime / this.state.currentTrack.duration * barWidth;
 	      } else {
-	
 	        percentage = 0;
 	      }
 	

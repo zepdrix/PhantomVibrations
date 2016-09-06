@@ -32,6 +32,7 @@ var CommentAvatarIndexItem = React.createClass({
     let percentage = this.props.comment.track_percentage * this.props.width;
     let userUrl = `/users/${this.props.comment.user_id}`;
     let space = ' ';
+
     if (this.state.comment) {
       hiddenComment = <div className="hidden-comment">
 
@@ -42,7 +43,7 @@ var CommentAvatarIndexItem = React.createClass({
                         { this.shortenedComment(this.state.comment) }
 
                       </div>;
-    } else if ((livePercentage < this.props.comment.track_percentage && this.props.comment.track_percentage  < livePercentage + 0.01) &&
+    } else if ((livePercentage < this.props.comment.track_percentage && this.props.comment.track_percentage  < livePercentage + 0.02) &&
                 this.props.autoShowState && (this.props.comment.id === this.props.currentCommentId)) {
       hiddenComment = <div className="hidden-comment">
                         <Link className="username-link" to={ userUrl }>
@@ -53,8 +54,6 @@ var CommentAvatarIndexItem = React.createClass({
 
                       </div>;
     }
-
-
 
     return(
       <div onMouseLeave={ this.commentHide }>

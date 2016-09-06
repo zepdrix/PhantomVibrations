@@ -2,7 +2,6 @@ const TrackStore = require('../stores/track_store');
 const TrackActions = require('../actions/track_actions');
 
 module.exports = {
-
   playTrack (id) {
     if (id == TrackStore.currentTrack().dataset.id) {
       if (TrackStore.currentTrack().paused) {

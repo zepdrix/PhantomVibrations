@@ -8,9 +8,6 @@ const TrackStore = new Store(AppDispatcher);
 
 var _tracks = {};
 
-// var _playQueue = {};
-// var _currentQueueIndex = -1;
-
 var _currentTrack = new Audio();
 
 _currentTrack.dataset.id = "no-track";
@@ -86,6 +83,12 @@ const _playCurrentTrack = function () {
   _currentTrack.play();
 };
 
+const _pauseCurrentTrack = function () {
+  _setCurrentPercentage();
+  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
+  _currentTrack.pause();
+};
+
 const _setCurrentPercentage = function () {
   _trackStates[_currentTrack.dataset.id] = { percentage: 0, duration: 0 };
   _trackStates[_currentTrack.dataset.id].percentage = _currentTrack.currentTime / _currentTrack.duration;
@@ -117,11 +120,6 @@ TrackStore.getWaveform = function (id) {
 };
 
 
-const _pauseCurrentTrack = function () {
-  _setCurrentPercentage();
-  _currentTrack.removeEventListener('timeupdate', _setCurrentPercentage);
-  _currentTrack.pause();
-};
 
 const _resetCurrentTrack = function (track) {
   if (!!_currentTrack.dataset.id) {

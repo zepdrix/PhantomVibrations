@@ -25,7 +25,6 @@ var PlayBar = React.createClass({
     clearInterval(this.refreshIntervalId);
     this.refreshIntervalId = setInterval( () => { this.setState({ currentTime: this.state.currentTrack.currentTime }); } , 100);
     TrackActions.playCurrentTrack();
-
   },
 
   resetPercentage (e) {
@@ -47,29 +46,28 @@ var PlayBar = React.createClass({
         let barWidth = window.innerWidth < 900 ? 900 : window.innerWidth;
         percentage = (this.state.currentTrack.currentTime / this.state.currentTrack.duration) * barWidth;
       } else {
-
         percentage = 0;
       }
 
       return(
         <div className="playbar with-song">
           <div className="words">
-          <Link to={ `tracks/${this.state.currentTrack.dataset.id}` }>
-            { this.state.currentTrack.title }
-          </Link>
+            <Link to={ `tracks/${this.state.currentTrack.dataset.id}` }>
+              { this.state.currentTrack.title }
+            </Link>
 
-          <div className="play" onClick={ this.handlePlay }>
-            Play
+            <div className="play" onClick={ this.handlePlay }>
+              Play
+            </div>
+
+            <div className="pause" onClick={ this.handlePause }>
+              Pause
+            </div>
           </div>
 
-          <div className="pause" onClick={ this.handlePause }>
-            Pause
-          </div>
-          </div>
           <div className="playnode-container" onClick={ this.resetPercentage }>
             <div className="playnode-played" style={{width: percentage + 'px'}}></div>
           </div>
-
         </div>
       );
     } else {

@@ -38,7 +38,6 @@ var CommentAvatarIndex = React.createClass({
   },
 
   render () {
-    // let currentCommentId = this.determineCommentId();
 
     let allCommentAvatarIndexItems = this.props.comments.map( (comment, key) => {
       return <CommentAvatarIndexItem

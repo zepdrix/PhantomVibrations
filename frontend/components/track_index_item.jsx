@@ -153,8 +153,6 @@ var TrackIndexItem = React.createClass({
               />
           </div>
 
-
-
           <div className="comment-form track-index">
             <CommentForm track={ this.props.track }/>
           </div>
