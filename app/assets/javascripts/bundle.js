@@ -36716,11 +36716,12 @@
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.userListener = UserStore.addListener(this.onUserChange);
-	    TrackActions.fetchUserTracks(parseInt(this.props.params.userId));
-	    UserActions.fetchUser(parseInt(this.props.params.userId));
+	    this.trackListener = TrackStore.addListener(this.onTrackUpdate);
+	    // TrackActions.fetchUserTracks(parseInt(this.props.params.userId));
+	    // UserActions.fetchUser(parseInt(this.props.params.userId));
 	  },
-	  onTrackChange: function onTrackChange() {
-	    // this.setState({ userTracks: TrackStore.all() });
+	  onTrackUpdate: function onTrackUpdate() {
+	    this.setState({ userTracks: TrackStore.all() });
 	  },
 	  componentWillMount: function componentWillMount() {
 	    var userId = parseInt(this.props.params.userId);
@@ -36729,7 +36730,7 @@
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.userListener.remove();
-	    // this.trackListener.remove();
+	    this.trackListener.remove();
 	  },
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var userId = parseInt(nextProps.params.userId);

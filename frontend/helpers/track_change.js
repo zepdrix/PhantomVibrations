@@ -20,5 +20,4 @@ module.exports = {
       TrackActions.resetCurrentTrack(track);
     }
   },
-
 };
