@@ -13,16 +13,16 @@ var PlayBar = React.createClass({
 
   componentDidMount () {
     this.trackListener = TrackStore.addListener(this.onTrackChange);
-    window.addEventListener('keydown', (e) => {
-      if (e.key === ' ' && TrackStore.isCurrentTrack()) {
-        e.preventDefault();
-        if (this.state.currentTrack.paused) {
-          TrackActions.playCurrentTrack();
-        } else {
-          TrackActions.pauseCurrentTrack();
-        }
-      }
-    });
+    // window.addEventListener('keydown', (e) => {
+    //   if (e.key === ' ' && TrackStore.isCurrentTrack()) {
+    //     e.preventDefault();
+    //     if (this.state.currentTrack.paused) {
+    //       TrackActions.playCurrentTrack();
+    //     } else {
+    //       TrackActions.pauseCurrentTrack();
+    //     }
+    //   }
+    // });
   },
 
   onTrackChange () {
