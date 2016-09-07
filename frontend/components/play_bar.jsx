@@ -13,6 +13,16 @@ var PlayBar = React.createClass({
 
   componentDidMount () {
     this.trackListener = TrackStore.addListener(this.onTrackChange);
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ' && TrackStore.isCurrentTrack()) {
+        e.preventDefault();
+        if (this.state.currentTrack.paused) {
+          TrackActions.playCurrentTrack();
+        } else {
+          TrackActions.pauseCurrentTrack();
+        }
+      }
+    });
   },
 
   onTrackChange () {
@@ -53,6 +63,9 @@ var PlayBar = React.createClass({
         <div className="playbar with-song">
           <div className="words">
             <Link to={ `tracks/${this.state.currentTrack.dataset.id}` }>
+              <img className="playbar-track-image" src={ this.state.currentTrack.dataset.image_url }></img>
+            </Link>
+            <Link className="playbar-track-title" to={ `tracks/${this.state.currentTrack.dataset.id}` }>
               { this.state.currentTrack.title }
             </Link>
 

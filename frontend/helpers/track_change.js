@@ -10,11 +10,11 @@ module.exports = {
         TrackActions.pauseCurrentTrack();
       }
     } else {
-
       let track = new Audio();
       let currentTrack = TrackStore.find(id);
       track.dataset.id = currentTrack.id;
       track.title = currentTrack.title;
+      track.dataset.image_url = currentTrack.image_url;
       track.src = currentTrack.audio_url;
       TrackActions.resetCurrentTrack(track);
     }

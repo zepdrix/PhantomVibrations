@@ -34714,11 +34714,11 @@
 	        TrackActions.pauseCurrentTrack();
 	      }
 	    } else {
-	
 	      var track = new Audio();
 	      var currentTrack = TrackStore.find(id);
 	      track.dataset.id = currentTrack.id;
 	      track.title = currentTrack.title;
+	      track.dataset.image_url = currentTrack.image_url;
 	      track.src = currentTrack.audio_url;
 	      TrackActions.resetCurrentTrack(track);
 	    }
@@ -37325,23 +37325,35 @@
 	      currentTime: 0 };
 	  },
 	  componentDidMount: function componentDidMount() {
+	    var _this = this;
+	
 	    this.trackListener = TrackStore.addListener(this.onTrackChange);
+	    window.addEventListener('keydown', function (e) {
+	      if (e.key === ' ' && TrackStore.isCurrentTrack()) {
+	        e.preventDefault();
+	        if (_this.state.currentTrack.paused) {
+	          TrackActions.playCurrentTrack();
+	        } else {
+	          TrackActions.pauseCurrentTrack();
+	        }
+	      }
+	    });
 	  },
 	  onTrackChange: function onTrackChange() {
-	    var _this = this;
+	    var _this2 = this;
 	
 	    this.setState({ currentTrack: TrackStore.currentTrack() });
 	    this.refreshIntervalId = setInterval(function () {
-	      _this.setState({ currentTime: _this.state.currentTrack.currentTime });
+	      _this2.setState({ currentTime: _this2.state.currentTrack.currentTime });
 	    }, 100);
 	  },
 	  handlePlay: function handlePlay(e) {
-	    var _this2 = this;
+	    var _this3 = this;
 	
 	    e.preventDefault();
 	    clearInterval(this.refreshIntervalId);
 	    this.refreshIntervalId = setInterval(function () {
-	      _this2.setState({ currentTime: _this2.state.currentTrack.currentTime });
+	      _this3.setState({ currentTime: _this3.state.currentTrack.currentTime });
 	    }, 100);
 	    TrackActions.playCurrentTrack();
 	  },
@@ -37374,6 +37386,11 @@
 	          React.createElement(
 	            Link,
 	            { to: 'tracks/' + this.state.currentTrack.dataset.id },
+	            React.createElement('img', { className: 'playbar-track-image', src: this.state.currentTrack.dataset.image_url })
+	          ),
+	          React.createElement(
+	            Link,
+	            { className: 'playbar-track-title', to: 'tracks/' + this.state.currentTrack.dataset.id },
 	            this.state.currentTrack.title
 	          ),
 	          React.createElement(

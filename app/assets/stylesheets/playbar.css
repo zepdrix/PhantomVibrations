@@ -36,7 +36,21 @@
 .playbar > .playnode-played {
   position: relative;
   top: -20px;
-  
+
+}
+
+.playbar-track-image {
+  position: fixed;
+  margin-top: 10px;
+  height: 40px;
+  width: 40px;
+  margin-left: 10px;
+  box-shadow: 0 0 5px black;
+  transition: 0.5s;
+}
+
+.playbar-track-image:hover {
+  box-shadow: 0 0 5px lightgrey;
 }
 
 .play, .pause {
@@ -46,10 +60,10 @@
 }
 
 
-.words > a {
+.playbar-track-title {
   font-size: 24px;
   position: relative;
-  left: 20px;
+  left: 60px;
   transition: 0.5s;
   top: 5px;
 }
@@ -57,13 +71,13 @@
 .play {
   position: relative;
   top: 3px;
-  left: 20px;
+  left: 60px;
 }
 
 .pause {
   top: -16px;
   position: relative;
-  left: 60px;
+  left: 100px;
 }
 
 .play:hover, .pause:hover, .words > a:hover {
