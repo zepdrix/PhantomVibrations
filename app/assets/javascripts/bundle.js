@@ -36016,6 +36016,12 @@
 	    var currentUser = SessionStore.currentUser();
 	    this.setState({ currentUser: currentUser });
 	  },
+	  componentWillReceiveProps: function componentWillReceiveProps() {
+	    var trackId = parseInt(this.props.params.trackId);
+	
+	    TrackActions.fetchTrack(trackId);
+	    this.setState({ track: TrackStore.find(trackId) });
+	  },
 	  setNewPercentage: function setNewPercentage(clickPercentage) {
 	    if (clickPercentage) {
 	      TrackActions.seekNewPercentage(clickPercentage);
@@ -37211,8 +37217,8 @@
 	          'Home'
 	        ),
 	        React.createElement(
-	          'a',
-	          { href: '/', className: 'navbar-collection nav-bar-left' },
+	          Link,
+	          { to: '/', className: 'navbar-collection nav-bar-left' },
 	          'Collection'
 	        )
 	      );
@@ -37325,35 +37331,33 @@
 	      currentTime: 0 };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    var _this = this;
-	
 	    this.trackListener = TrackStore.addListener(this.onTrackChange);
-	    window.addEventListener('keydown', function (e) {
-	      if (e.key === ' ' && TrackStore.isCurrentTrack()) {
-	        e.preventDefault();
-	        if (_this.state.currentTrack.paused) {
-	          TrackActions.playCurrentTrack();
-	        } else {
-	          TrackActions.pauseCurrentTrack();
-	        }
-	      }
-	    });
+	    // window.addEventListener('keydown', (e) => {
+	    //   if (e.key === ' ' && TrackStore.isCurrentTrack()) {
+	    //     e.preventDefault();
+	    //     if (this.state.currentTrack.paused) {
+	    //       TrackActions.playCurrentTrack();
+	    //     } else {
+	    //       TrackActions.pauseCurrentTrack();
+	    //     }
+	    //   }
+	    // });
 	  },
 	  onTrackChange: function onTrackChange() {
-	    var _this2 = this;
+	    var _this = this;
 	
 	    this.setState({ currentTrack: TrackStore.currentTrack() });
 	    this.refreshIntervalId = setInterval(function () {
-	      _this2.setState({ currentTime: _this2.state.currentTrack.currentTime });
+	      _this.setState({ currentTime: _this.state.currentTrack.currentTime });
 	    }, 100);
 	  },
 	  handlePlay: function handlePlay(e) {
-	    var _this3 = this;
+	    var _this2 = this;
 	
 	    e.preventDefault();
 	    clearInterval(this.refreshIntervalId);
 	    this.refreshIntervalId = setInterval(function () {
-	      _this3.setState({ currentTime: _this3.state.currentTrack.currentTime });
+	      _this2.setState({ currentTime: _this2.state.currentTrack.currentTime });
 	    }, 100);
 	    TrackActions.playCurrentTrack();
 	  },

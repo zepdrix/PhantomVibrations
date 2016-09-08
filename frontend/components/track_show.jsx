@@ -52,6 +52,13 @@ var TrackShow = React.createClass({
     this.setState({ currentUser });
   },
 
+  componentWillReceiveProps () {
+    let trackId = parseInt(this.props.params.trackId);
+    
+    TrackActions.fetchTrack(trackId);
+    this.setState({ track: TrackStore.find(trackId) });
+  },
+
   setNewPercentage (clickPercentage) {
     if (clickPercentage) {
       TrackActions.seekNewPercentage(clickPercentage);

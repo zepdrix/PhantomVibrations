@@ -34,7 +34,7 @@ var NavBar = React.createClass({
       return(
         <div>
           <Link to='/' className="navbar-home nav-bar-left">Home</Link>
-          <a href="/"className="navbar-collection nav-bar-left">Collection</a>
+          <Link to="/"className="navbar-collection nav-bar-left">Collection</Link>
         </div>
       );
     }

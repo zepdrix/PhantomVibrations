@@ -104,6 +104,9 @@
   font-weight: 600;
 }
 
+ul.comment-index.list li:last-child {
+    margin-bottom: 100px;
+}
 
 .track-show.comment-area {
   display: block;
