@@ -36420,10 +36420,6 @@
 	      SessionActions.createUser(this.state);
 	    }
 	  },
-	  loginGuest: function loginGuest(e) {
-	    e.preventDefault();
-	    SessionActions.loginUser({ username: 'guest', password: 'password123' });
-	  },
 	  handleUsername: function handleUsername(e) {
 	    e.preventDefault();
 	    this.setState({ username: e.target.value });
@@ -36486,12 +36482,7 @@
 	          { className: 'login-button form-hover' },
 	          'Submit'
 	        ),
-	        navLink,
-	        React.createElement(
-	          'button',
-	          { className: 'login-button form-hover', onClick: this.loginGuest },
-	          'Log In As Guest'
-	        )
+	        navLink
 	      )
 	    );
 	  }
@@ -37191,6 +37182,10 @@
 	  updateUser: function updateUser() {
 	    this.setState({ currentUser: SessionStore.currentUser() });
 	  },
+	  loginGuest: function loginGuest(e) {
+	    e.preventDefault();
+	    SessionActions.loginUser({ username: 'guest', password: 'password123' });
+	  },
 	  navLeft: function navLeft() {
 	    if (SessionStore.isUserLoggedIn()) {
 	      return React.createElement(
@@ -37290,6 +37285,11 @@
 	            Link,
 	            { to: '/signup', className: 'navbar-signup nav-bar-right' },
 	            'Sign Up'
+	          ),
+	          React.createElement(
+	            'button',
+	            { className: 'nav-bar-right', onClick: this.loginGuest },
+	            'Guest Log In'
 	          )
 	        )
 	      );

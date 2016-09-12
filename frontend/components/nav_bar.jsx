@@ -21,6 +21,10 @@ var NavBar = React.createClass({
     this.setState({ currentUser: SessionStore.currentUser() });
   },
 
+  loginGuest (e) {
+    e.preventDefault();
+    SessionActions.loginUser({ username: 'guest', password: 'password123'});
+  },
 
   navLeft () {
     if (SessionStore.isUserLoggedIn()) {
@@ -66,6 +70,7 @@ var NavBar = React.createClass({
           <nav>
             <Link to="/login" className="navbar-login nav-bar-right">Log In</Link>
             <Link to="/signup" className="navbar-signup nav-bar-right">Sign Up</Link>
+            <button className="nav-bar-right" onClick={ this.loginGuest }>Guest Log In</button>
           </nav>
       </div>
       );
