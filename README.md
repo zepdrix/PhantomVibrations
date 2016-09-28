@@ -3,18 +3,9 @@
 [PhantomVibrations](http:/phantomvibrations.herokuapp.com)
 
 # Summary
+<img src="docs/screenshots/home.png" width="800">
 
-PhantomVibrations is a single page web application built with Ruby on Rails and using the React.js/flux architecture. PhantomVibrations is inspired by SoundCloud's unique features, users are allowed to:
-
-  - Create an account
-  - Log in / Log out
-  - Upload / Edit / Delete audio files
-  - View / listen to their own tracks
-  - View / listen to other users' tracks
-  - View waveform representations of all audio files
-  - Experience uninterrupted audio playback while navigating the site
-  - Comment on any track, if the track is playing, the comment will appear at the corresponding time on the song's waveform
-  - See the comments appear in time on a track's waveform as the track is playing
+PhantomVibrations is a single page web application built with Ruby on Rails and using the React.js/flux architecture. PhantomVibrations is inspired by SoundCloud's unique features. Users can create and edit user accounts, upload and edit audio files, view / listen to audio tracks, and comment on any track. A track is displayed as a visual representation of its audio waveform, which is rendered with React-wavesurfer. When a user comments on a track that is playing, a comment will appear at the corresponding time on the song's waveform. Comments are highlighted and displayed while a track is playing, allowing the user to see all the comments about the song at that particular time. If the track is not playing at the time of commenting, the comment will be added to a random time. A user can experience uninterrupted audio playback while navigating the site. Track progress is saved throughout site navigation as well, so if a user plays Track1 and pauses it 1 minute through the track, Track1 will start from that 1 minute mark the next time it is played.
 
 # Technologies/Libraries used
 
@@ -23,7 +14,7 @@ PhantomVibrations is a single page web application built with Ruby on Rails and 
    - BCrypt
    - Paperclip
    - figaro
-   - react-waveform
+   - react-wavesurfer
 
 # Technical Details
 ---
@@ -74,6 +65,11 @@ const _setCurrentPercentage = function () {
 };
 ```
 
+In this screenshot we can see the progress bar passing by and highlighting a comment as the track is playing:
+
+<img src="docs/screenshots/track_list.png" width="600">
+
+
 ### PlayBar
 ---
 The track PlayBar that appears at the bottom of the screen when a track starts playing uses the track currentTime and duration properties (stored in the state) along with inline CSS to change the width of the orange 'song progress' HTML div as the song is playing.
@@ -91,6 +87,11 @@ if (this.state.currentTrack) {
 </div>
 ```
 
+The PlayBar updates while a track is playing, the orange/white progress bar has an onClick listener that will seek to the position of the track that the clicked position represents:
+
+<img src="docs/screenshots/playbar.png" width="600">
+
+
 ### Track Waveforms
 ---
 React-wavesurfer parses through the audio file via the audio_url and generates the waveform in HTML canvas. React-wavesurfer uses the Wavesurfer.js library, which creates an object that also supports playback, however the playback is handled by the process described in the Audio Playback portion of this README so this component is not actually playing any audio. Instead, we use React-wavesurfer's 'pos' attribute, which allows us to specify a position for the 'scrollbar' in the waveform. Much like the playbar, this 'pos' attribute is updated as a song is playing by referencing the duration and percentage of the track, which is stored in the TrackIndexItem and TrackShow components' states.
@@ -102,6 +103,11 @@ React-wavesurfer parses through the audio file via the audio_url and generates t
   options={ waveOptions }
 />
 ```
+
+A react-wavesurfer component in the TrackShow page:
+
+<img src="docs/screenshots/track_show.png" width="800">
+
 
 ## Comments
 ---
