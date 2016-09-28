@@ -4,6 +4,7 @@ const CommentStore = require('../stores/comment_store');
 const ErrorStore = require('../stores/error_store');
 const FormConstants = require('../constants/form_constants');
 const TrackStore = require('../stores/track_store');
+const SessionStore = require('../stores/session_store');
 
 var CommentForm = React.createClass({
   contextTypes: {
@@ -24,23 +25,27 @@ var CommentForm = React.createClass({
   },
 
   handleSubmit (e) {
+    if (SessionStore.isUserLoggedIn()) {
+      
+      let trackPercentage;
+      if (TrackStore.currentTrack().dataset.id == this.props.track.id) {
+        let currentTrack = TrackStore.currentTrack();
+        trackPercentage = currentTrack.currentTime / currentTrack.duration;
+      } else {
+        trackPercentage = Math.random();
+      }
 
-    let trackPercentage;
-    if (TrackStore.currentTrack().dataset.id == this.props.track.id) {
-      let currentTrack = TrackStore.currentTrack();
-      trackPercentage = currentTrack.currentTime / currentTrack.duration;
+      e.preventDefault();
+      CommentActions.createComment({
+        body: this.state.body,
+        track_id: this.props.track.id,
+        track_percentage: trackPercentage
+      });
+      this.setState({ body: '' });
+      TrackActions.fetchTrack(this.props.track.id);
     } else {
-      trackPercentage = Math.random();
+      this.context.router.push("/login");
     }
-
-    e.preventDefault();
-    CommentActions.createComment({
-      body: this.state.body,
-      track_id: this.props.track.id,
-      track_percentage: trackPercentage
-    });
-    this.setState({ body: '' });
-    TrackActions.fetchTrack(this.props.track.id);
   },
 
   render () {

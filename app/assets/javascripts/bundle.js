@@ -35168,6 +35168,7 @@
 	var ErrorStore = __webpack_require__(251);
 	var FormConstants = __webpack_require__(242);
 	var TrackStore = __webpack_require__(269);
+	var SessionStore = __webpack_require__(274);
 	
 	var CommentForm = React.createClass({
 	  displayName: 'CommentForm',
@@ -35185,23 +35186,27 @@
 	    this.setState({ body: e.target.value });
 	  },
 	  handleSubmit: function handleSubmit(e) {
+	    if (SessionStore.isUserLoggedIn()) {
 	
-	    var trackPercentage = void 0;
-	    if (TrackStore.currentTrack().dataset.id == this.props.track.id) {
-	      var currentTrack = TrackStore.currentTrack();
-	      trackPercentage = currentTrack.currentTime / currentTrack.duration;
+	      var trackPercentage = void 0;
+	      if (TrackStore.currentTrack().dataset.id == this.props.track.id) {
+	        var currentTrack = TrackStore.currentTrack();
+	        trackPercentage = currentTrack.currentTime / currentTrack.duration;
+	      } else {
+	        trackPercentage = Math.random();
+	      }
+	
+	      e.preventDefault();
+	      CommentActions.createComment({
+	        body: this.state.body,
+	        track_id: this.props.track.id,
+	        track_percentage: trackPercentage
+	      });
+	      this.setState({ body: '' });
+	      TrackActions.fetchTrack(this.props.track.id);
 	    } else {
-	      trackPercentage = Math.random();
+	      this.context.router.push("/login");
 	    }
-	
-	    e.preventDefault();
-	    CommentActions.createComment({
-	      body: this.state.body,
-	      track_id: this.props.track.id,
-	      track_percentage: trackPercentage
-	    });
-	    this.setState({ body: '' });
-	    TrackActions.fetchTrack(this.props.track.id);
 	  },
 	  render: function render() {
 	
