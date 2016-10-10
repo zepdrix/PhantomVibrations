@@ -102,7 +102,7 @@ var TrackForm = React.createClass({
         <form className="create-track-form" encType="multipart/form-data" onSubmit={ this.handleSubmit }>
           <div className="create-track-form-title">Upload a Track</div>
           { this.formErrors() }
-          <div className="login-input">
+          <div className="login-input title">
             <div className="form-label">Title
             </div>
             <input className="input"
@@ -110,8 +110,16 @@ var TrackForm = React.createClass({
               value={ this.state.title }
                 onChange={ this.handleTitle }/>
           </div>
-          <br/>
-          <div className="login-input">
+
+          <div className="login-input image">
+            <div className="form-label">Upload a track image!
+            </div>
+            <input type="file" onChange={ this.handleImage }/>
+            <br/>
+            <img className="form-image" src={ this.state.imageUrl }/>
+          </div>
+
+          <div className="login-input description">
             <div className="form-label">Description
             </div>
             <textarea className="input"
@@ -120,16 +128,8 @@ var TrackForm = React.createClass({
               value={ this.state.description }
               onChange={ this.handleDescription }/>
           </div>
-
-          <div className="login-input">
-            <div className="form-label">Upload a track image!
-            </div>
-            <input type="file" onChange={ this.handleImage }/>
-            <br/>
-            <img className="form-image" src={ this.state.imageUrl }/>
-          </div>
-
-          <div className="login-input">
+          
+          <div className="login-input audio">
             <div className="form-label">Upload a song!
             </div>
             <input type="file" onChange={ this.handleAudio }/>

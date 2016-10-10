@@ -23,13 +23,12 @@ var TrackIndexItem = React.createClass({
     }
 
     let potentialWaveform = TrackStore.getWaveform(this.props.track.id);
-
     return  { percentage: percentage, playing: playing, waveform: potentialWaveform };
   },
 
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-    TrackActions.fetchTrack(this.props.track.id);
+    // TrackActions.fetchTrack(this.props.track.id);
     this.renderPlaybar();
   },
 
@@ -84,7 +83,7 @@ var TrackIndexItem = React.createClass({
   // <div className="track-index-track-like-button">
   //   <TrackLikeButton track={ this.props.track }></TrackLikeButton>
   // </div>
-// <div className="track-list playnode-played" style={{width: (this.state.percentage * 420) + 'px'}}></div>
+  // <div className="track-list playnode-played" style={{width: (this.state.percentage * 420) + 'px'}}></div>
   render () {
     const waveOptions = {
       progressColor: '#ED980E',

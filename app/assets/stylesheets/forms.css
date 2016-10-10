@@ -13,6 +13,10 @@
   box-shadow: 0px 0px 30px black;
 }
 
+.create-track-form {
+  width: 550px;
+}
+
 .user-edit {
   margin: 5px;
   margin-left: 15px;
@@ -20,6 +24,37 @@
 
 .login-input {
   margin: 10px;
+}
+
+.login-input.title {
+  float: left;
+  width: 230px;
+  margin-left: 20px;
+}
+
+.login-input.description {
+  float: left;
+  margin-left: 20px;
+
+  width: 230px;
+}
+.login-input.image {
+  float: right;
+  width: 230px;
+  margin-right: 20px;
+
+}
+
+
+.login-input.audio {
+  float: left;
+  width: 230px;
+  margin-left: 20px;
+  
+}
+
+.login-input.audio audio {
+  width: 250px;
 }
 
 .form-label {
@@ -30,11 +65,16 @@
   text-indent: 4px;
   color: white;
 }
-
 .login-button, .create-track-button, .update-user-button, .edit-track-form {
   display: block;
   margin: 0 auto;
   padding: 5px;
+}
+
+button.create-track-button {
+  float: right;
+  margin-top: 20px;
+  margin-right: 100px;
 }
 
 .login-form-title, .create-track-form-title, .edit-user-form-title, .edit-track-form-title {

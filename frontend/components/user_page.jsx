@@ -11,8 +11,13 @@ var UserPage = React.createClass({
     return { tracks: TrackStore.all() };
   },
 
+  // componentWillMount () {
+  //   TrackActions.fetchAllTracks();
+  // },
+
   componentDidMount () {
     this.storeListener = TrackStore.addListener(this.onChange);
+
     TrackActions.fetchAllTracks();
   },
 
@@ -20,9 +25,8 @@ var UserPage = React.createClass({
     this.storeListener.remove();
   },
 
-
-
   onChange () {
+
     this.setState({ tracks: TrackStore.all() });
   },
 

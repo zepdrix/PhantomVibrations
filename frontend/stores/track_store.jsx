@@ -47,14 +47,12 @@ const _resetTrack = function (track) {
 };
 
 const _resetAllTracks = function (tracks) {
-
   _tracks = {};
   tracks.forEach( (track) => {
       _tracks[track.id] = track;
     }
   );
 };
-
 
 const _removeTrack = function (track) {
   delete _tracks[track.id];
@@ -72,7 +70,6 @@ const _removeLike = function (trackId, userId) {
 TrackStore.getWaveforms = function () {
   return _waveforms;
 };
-
 
 TrackStore.setWaveform = function (id, waveform) {
   _waveforms[id] = waveform;

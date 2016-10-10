@@ -13,7 +13,7 @@ var TrackLikeButton = React.createClass({
     // } else {
     // }
     numLikes = 0;
-    return { numLikes: numLikes };
+    return { numLikes: this.props.track.likes.length, track: this.props.track };
   },
 
   componentDidMount () {

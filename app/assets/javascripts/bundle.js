@@ -27187,12 +27187,11 @@
 	    }
 	
 	    var potentialWaveform = TrackStore.getWaveform(this.props.track.id);
-	
 	    return { percentage: percentage, playing: playing, waveform: potentialWaveform };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-	    TrackActions.fetchTrack(this.props.track.id);
+	    // TrackActions.fetchTrack(this.props.track.id);
 	    this.renderPlaybar();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -34534,7 +34533,6 @@
 	};
 	
 	var _resetAllTracks = function _resetAllTracks(tracks) {
-	
 	  _tracks = {};
 	  tracks.forEach(function (track) {
 	    _tracks[track.id] = track;
@@ -35398,7 +35396,7 @@
 	    // } else {
 	    // }
 	    numLikes = 0;
-	    return { numLikes: numLikes };
+	    return { numLikes: this.props.track.likes.length, track: this.props.track };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onLikeChange);
@@ -35904,7 +35902,7 @@
 	        this.formErrors(),
 	        React.createElement(
 	          'div',
-	          { className: 'login-input' },
+	          { className: 'login-input title' },
 	          React.createElement(
 	            'div',
 	            { className: 'form-label' },
@@ -35915,10 +35913,21 @@
 	            value: this.state.title,
 	            onChange: this.handleTitle })
 	        ),
-	        React.createElement('br', null),
 	        React.createElement(
 	          'div',
-	          { className: 'login-input' },
+	          { className: 'login-input image' },
+	          React.createElement(
+	            'div',
+	            { className: 'form-label' },
+	            'Upload a track image!'
+	          ),
+	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
+	          React.createElement('br', null),
+	          React.createElement('img', { className: 'form-image', src: this.state.imageUrl })
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'login-input description' },
 	          React.createElement(
 	            'div',
 	            { className: 'form-label' },
@@ -35932,19 +35941,7 @@
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'login-input' },
-	          React.createElement(
-	            'div',
-	            { className: 'form-label' },
-	            'Upload a track image!'
-	          ),
-	          React.createElement('input', { type: 'file', onChange: this.handleImage }),
-	          React.createElement('br', null),
-	          React.createElement('img', { className: 'form-image', src: this.state.imageUrl })
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'login-input' },
+	          { className: 'login-input audio' },
 	          React.createElement(
 	            'div',
 	            { className: 'form-label' },
@@ -36646,14 +36643,22 @@
 	  getInitialState: function getInitialState() {
 	    return { tracks: TrackStore.all() };
 	  },
+	
+	
+	  // componentWillMount () {
+	  //   TrackActions.fetchAllTracks();
+	  // },
+	
 	  componentDidMount: function componentDidMount() {
 	    this.storeListener = TrackStore.addListener(this.onChange);
+	
 	    TrackActions.fetchAllTracks();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.storeListener.remove();
 	  },
 	  onChange: function onChange() {
+	
 	    this.setState({ tracks: TrackStore.all() });
 	  },
 	  render: function render() {
