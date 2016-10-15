@@ -2,6 +2,7 @@ const React = require('react');
 const TrackStore = require('../stores/track_store');
 const TrackActions = require('../actions/track_actions');
 const ErrorStore = require('../stores/error_store');
+const ErrorActions = require('../actions/error_actions');
 const FormConstants = require('../constants/form_constants');
 
 
@@ -33,6 +34,7 @@ var TrackEditForm = React.createClass({
 
   componentWillUnmount () {
     this.trackListener.remove();
+    ErrorActions.clearErrors();
   },
 
   redirectIfTrackSaved () {
@@ -126,11 +128,5 @@ var TrackEditForm = React.createClass({
     );
   }
 });
-
-
-
-
-
-
 
 module.exports = TrackEditForm;

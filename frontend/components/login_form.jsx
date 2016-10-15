@@ -24,7 +24,7 @@ var LoginForm = React.createClass({
   componentWillUnmount () {
     this.errorListener.remove();
     this.sessionListener.remove();
-    setTimeout(() => {ErrorActions.clearErrors();}, 1000);
+    setTimeout(() => { ErrorActions.clearErrors(); }, 1000);
   },
 
   redirectIfLoggedIn () {

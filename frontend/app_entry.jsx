@@ -19,7 +19,6 @@ const TrackIndex = require('./components/track_index'),
       CurrentUserProfile = require('./components/current_user_edit_form'),
       App = require('./components/app');
 
-
 const SessionApiUtil = require('./util/session_api_util'),
       SessionActions = require('./actions/session_actions'),
       TrackApiUtil = require('./util/track_api_util'),

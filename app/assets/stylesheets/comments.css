@@ -173,6 +173,7 @@ ul.comment-index.list li:last-child {
   padding: 5px 10px;
   box-shadow: 0px 0px 30px lightgrey;
   background-color: #FFFBE8;
+  font-weight: 600;
 }
 
 .comment-index.list > li {

@@ -52,19 +52,20 @@ var UserProfile = React.createClass({
   render () {
 
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
-
+    debugger
     if (this.state.user) {
 
       let username = this.state.user.username;
       let userTracks = this.state.userTracks;
       let avatarUrl = this.state.user.avatar_image_url;
       let userUrl = `/users/${this.state.user.id}`;
+      let trackDisplay = userTracks.length === 0 ? <h3>{ username } doesn't have any tracks yet!</h3> : <TrackIndex tracks={ userTracks }/>;
 
       let bannerStyle;
       let bannerImage;
 
       if ( this.state.user.banner_image_url ) {
-        bannerStyle = {background: 'transparent'};
+        bannerStyle = { background: 'transparent' };
         bannerImage = <img className="user-banner-image" src={ this.state.user.avatar_image_url }/>;
       } else {
         bannerStyle = {background: '-webkit-linear-gradient(135deg, rgba('+(this.state.rbg1[0])+', '+(this.state.rbg1[1])+', '+(this.state.rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'};
@@ -91,11 +92,11 @@ var UserProfile = React.createClass({
 
             <h2>{ this.state.user.username }'s Vibrations</h2>
             <br/>
-            <TrackIndex tracks={ userTracks }/>
+            { trackDisplay }
           </div>
 
           <div className="user-page-suggestions">
-            <h3>You'll Like:</h3>
+            <h3>Check out:</h3>
             <UserSuggestionIndex />
           </div>
         </div>

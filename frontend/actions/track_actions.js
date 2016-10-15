@@ -14,7 +14,8 @@ module.exports = {
   updateTrack (formData) {
     TrackApiUtil.updateTrack(
       formData,
-      this.receiveTrack);
+      this.receiveTrack,
+      ErrorActions.setErrors);
   },
 
   deleteTrack (id) {
@@ -90,7 +91,7 @@ module.exports = {
     });
   },
 
-  setWaveform (id, waveform) {    
+  setWaveform (id, waveform) {
     AppDispatcher.dispatch({
       actionType: TrackConstants.SET_WAVEFORM,
       id: id,

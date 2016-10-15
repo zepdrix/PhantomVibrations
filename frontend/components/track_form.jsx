@@ -1,6 +1,7 @@
 const React = require('react');
 const TrackActions = require('../actions/track_actions');
 const TrackStore = require('../stores/track_store');
+const ErrorActions = require('../actions/error_actions');
 const ErrorStore = require('../stores/error_store');
 const FormConstants = require('../constants/form_constants');
 
@@ -27,6 +28,8 @@ var TrackForm = React.createClass({
   componentWillUnmount () {
     this.errorListener.remove();
     this.trackListener.remove();
+    ErrorActions.clearErrors();
+
   },
 
   redirectIfTrackSaved() {
@@ -128,7 +131,7 @@ var TrackForm = React.createClass({
               value={ this.state.description }
               onChange={ this.handleDescription }/>
           </div>
-          
+
           <div className="login-input audio">
             <div className="form-label">Upload a song!
             </div>

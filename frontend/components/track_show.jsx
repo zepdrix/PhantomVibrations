@@ -54,7 +54,7 @@ var TrackShow = React.createClass({
 
   componentWillReceiveProps () {
     let trackId = parseInt(this.props.params.trackId);
-    
+
     TrackActions.fetchTrack(trackId);
     this.setState({ track: TrackStore.find(trackId) });
   },
@@ -120,8 +120,6 @@ var TrackShow = React.createClass({
     let currentTrack = TrackStore.currentTrack();
     let liveTrack = TrackStore.find(parseInt(this.props.params.trackId));
 
-
-
     const waveOptions = {
       progressColor: '#ED980E',
       waveColor: '#c4c8dc',
@@ -154,8 +152,8 @@ var TrackShow = React.createClass({
     //              TrackStore.setWaveform(this.props.params.trackId, waveform);
     //   }
 
-
       let trackDuration = TrackStore.getTrackDuration(this.props.params.trackId);
+      let trackDescription = this.state.track.description.length > 0 ? this.state.track.description : this.state.track.user.username + " didn't include a description for this track!";
       let userUrl = `/users/${this.state.track.user_id}`;
       return(
         <div className="track-show-main">
@@ -213,15 +211,23 @@ var TrackShow = React.createClass({
               </div>
 
               <div className="comment-user-area">
-                <img src={ this.state.track.user.avatar_image_url }/>
+                <Link to={ userUrl }>
+                  <img src={ this.state.track.user.avatar_image_url }/>
+                </Link>
+
                 <br/>
-                <div className="comment-username">{ this.state.track.user.username }</div>
+                <Link to={ userUrl }>
+                  <div className="comment-username">{ this.state.track.user.username }</div>
+                </Link>
               </div>
             </div>
 
 
             <div className="description">
-              { this.state.track.description }
+              Track Description:
+              <p>
+                { trackDescription }
+              </p>
             </div>
 
             <div className="comment-index">

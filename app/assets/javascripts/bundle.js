@@ -27356,7 +27356,7 @@
 	    TrackApiUtil.createTrack(track, this.receiveTrack, ErrorActions.setErrors);
 	  },
 	  updateTrack: function updateTrack(formData) {
-	    TrackApiUtil.updateTrack(formData, this.receiveTrack);
+	    TrackApiUtil.updateTrack(formData, this.receiveTrack, ErrorActions.setErrors);
 	  },
 	  deleteTrack: function deleteTrack(id) {
 	    TrackApiUtil.deleteTrack(id, this.removeTrack);
@@ -35640,6 +35640,7 @@
 	var TrackStore = __webpack_require__(269);
 	var TrackActions = __webpack_require__(240);
 	var ErrorStore = __webpack_require__(251);
+	var ErrorActions = __webpack_require__(248);
 	var FormConstants = __webpack_require__(242);
 	
 	var TrackEditForm = React.createClass({
@@ -35670,6 +35671,7 @@
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.trackListener.remove();
+	    ErrorActions.clearErrors();
 	  },
 	  redirectIfTrackSaved: function redirectIfTrackSaved() {
 	    this.context.router.push('/tracks');
@@ -35794,6 +35796,7 @@
 	var React = __webpack_require__(1);
 	var TrackActions = __webpack_require__(240);
 	var TrackStore = __webpack_require__(269);
+	var ErrorActions = __webpack_require__(248);
 	var ErrorStore = __webpack_require__(251);
 	var FormConstants = __webpack_require__(242);
 	
@@ -35820,6 +35823,7 @@
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.errorListener.remove();
 	    this.trackListener.remove();
+	    ErrorActions.clearErrors();
 	  },
 	  redirectIfTrackSaved: function redirectIfTrackSaved() {
 	    TrackActions.fetchAllTracks();
@@ -36116,8 +36120,8 @@
 	      //              TrackStore.setWaveform(this.props.params.trackId, waveform);
 	      //   }
 	
-	
 	      var trackDuration = TrackStore.getTrackDuration(this.props.params.trackId);
+	      var trackDescription = this.state.track.description.length > 0 ? this.state.track.description : this.state.track.user.username + " didn't include a description for this track!";
 	      var userUrl = '/users/' + this.state.track.user_id;
 	      return React.createElement(
 	        'div',
@@ -36193,19 +36197,32 @@
 	            React.createElement(
 	              'div',
 	              { className: 'comment-user-area' },
-	              React.createElement('img', { src: this.state.track.user.avatar_image_url }),
+	              React.createElement(
+	                Link,
+	                { to: userUrl },
+	                React.createElement('img', { src: this.state.track.user.avatar_image_url })
+	              ),
 	              React.createElement('br', null),
 	              React.createElement(
-	                'div',
-	                { className: 'comment-username' },
-	                this.state.track.user.username
+	                Link,
+	                { to: userUrl },
+	                React.createElement(
+	                  'div',
+	                  { className: 'comment-username' },
+	                  this.state.track.user.username
+	                )
 	              )
 	            )
 	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'description' },
-	            this.state.track.description
+	            'Track Description:',
+	            React.createElement(
+	              'p',
+	              null,
+	              trackDescription
+	            )
 	          ),
 	          React.createElement(
 	            'div',
@@ -36747,13 +36764,19 @@
 	  render: function render() {
 	
 	    var rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
-	
+	    debugger;
 	    if (this.state.user) {
 	
 	      var username = this.state.user.username;
 	      var userTracks = this.state.userTracks;
 	      var avatarUrl = this.state.user.avatar_image_url;
 	      var userUrl = '/users/' + this.state.user.id;
+	      var trackDisplay = userTracks.length === 0 ? React.createElement(
+	        'h3',
+	        null,
+	        username,
+	        ' doesn\'t have any tracks yet!'
+	      ) : React.createElement(TrackIndex, { tracks: userTracks });
 	
 	      var bannerStyle = void 0;
 	      var bannerImage = void 0;
@@ -36797,7 +36820,7 @@
 	            '\'s Vibrations'
 	          ),
 	          React.createElement('br', null),
-	          React.createElement(TrackIndex, { tracks: userTracks })
+	          trackDisplay
 	        ),
 	        React.createElement(
 	          'div',
@@ -36805,7 +36828,7 @@
 	          React.createElement(
 	            'h3',
 	            null,
-	            'You\'ll Like:'
+	            'Check out:'
 	          ),
 	          React.createElement(UserSuggestionIndex, null)
 	        )
@@ -36873,13 +36896,14 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var Link = __webpack_require__(175).Link;
 	var UserTrackIndexItem = __webpack_require__(308);
 	
 	var UserTrackIndex = React.createClass({
 	  displayName: 'UserTrackIndex',
 	  render: function render() {
 	
-	    if (!!this.props.tracks) {
+	    if (this.props.tracks.length > 0) {
 	      var allUserTrackIndexItems = this.props.tracks.map(function (track, key) {
 	        return React.createElement(UserTrackIndexItem, { track: track, key: key });
 	      });
@@ -36896,8 +36920,17 @@
 	    } else {
 	      return React.createElement(
 	        'div',
-	        null,
-	        'You have no tracks!'
+	        { className: 'usertracks-index' },
+	        React.createElement(
+	          'div',
+	          { className: 'usertracks-header' },
+	          'You have no tracks!',
+	          React.createElement(
+	            Link,
+	            { to: '/upload' },
+	            ' Click here to upload one!'
+	          )
+	        )
 	      );
 	    }
 	  }
