@@ -25,16 +25,19 @@ var TrackEditForm = React.createClass({
       title: track.title,
       description: trackDescription,
       imageUrl: trackImageUrl,
-      imageFile: null };
+      imageFile: null,
+      spinner: "edit-track-button form-hover"};
   },
 
   componentDidMount () {
+    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
     this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
   },
 
   componentWillUnmount () {
     this.trackListener.remove();
-    ErrorActions.clearErrors();
+    this.errorListener.remove();
+    setTimeout(() => { ErrorActions.clearErrors(); }, 1000);
   },
 
   redirectIfTrackSaved () {
@@ -74,7 +77,10 @@ var TrackEditForm = React.createClass({
       formData.append("track[image]", this.state.imageFile);
     }
 
-    TrackActions.updateTrack(formData);
+    this.addSpinner();
+
+    TrackActions.updateTrack(formData, this.removeSpinner);
+
   },
 
   formErrors () {
@@ -86,6 +92,14 @@ var TrackEditForm = React.createClass({
 
         return <ul>{ errorMessages }</ul>;
     }
+  },
+
+  addSpinner () {
+    this.setState({ spinner: "loader edit" });
+  },
+
+  removeSpinner () {
+    this.setState({ spinner: "edit-track-button form-hover" });
   },
 
   render () {
@@ -123,7 +137,7 @@ var TrackEditForm = React.createClass({
           <img className="form-image" src={ this.state.imageUrl }/>
         </fieldset>
 
-        <button className="create-track-button form-hover">Update</button>
+        <button className={ this.state.spinner }>Update</button>
       </form>
     );
   }

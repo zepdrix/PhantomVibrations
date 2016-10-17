@@ -52,7 +52,7 @@ var UserProfile = React.createClass({
   render () {
 
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
-    debugger
+
     if (this.state.user) {
 
       let username = this.state.user.username;

@@ -50,11 +50,12 @@
   float: left;
   width: 230px;
   margin-left: 20px;
-  
+
 }
 
 .login-input.audio audio {
   width: 250px;
+  border-radius: 10px;
 }
 
 .form-label {
@@ -65,6 +66,7 @@
   text-indent: 4px;
   color: white;
 }
+
 .login-button, .create-track-button, .update-user-button, .edit-track-form {
   display: block;
   margin: 0 auto;
@@ -73,8 +75,16 @@
 
 button.create-track-button {
   float: right;
-  margin-top: 20px;
+  margin-top: 30px;
   margin-right: 100px;
+  margin-bottom: 15px;
+}
+
+button.edit-track-button {
+  float: right;
+  margin-top: 20px;
+  margin-right: 115px;
+  margin-bottom: 25px;
 }
 
 .login-form-title, .create-track-form-title, .edit-user-form-title, .edit-track-form-title {
@@ -108,20 +118,15 @@ button.create-track-button {
   font-size: 12px;
 }
 
-.form-hover {
-  transition: 1s;
-}
-
 .form-hover:hover {
-  color: lightgrey;
-  transition: 1s;
+  color: white;
 }
 
 .form-error {
   display: block;
   font-size: 12px;
   text-align: center;
-  color: lightgrey;
+  color: orange;
 }
 
 .form-image {

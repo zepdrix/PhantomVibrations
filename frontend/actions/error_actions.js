@@ -4,11 +4,12 @@ const AppDispatcher = require('../dispatcher/dispatcher');
 const ErrorStore = require('../stores/error_store');
 
 module.exports = {
-  setErrors (form, errors) {
+  setErrors (form, errors, spinner) {
     AppDispatcher.dispatch({
       actionType: ErrorConstants.SET_ERRORS,
       form: form,
-      errors: errors
+      errors: errors,
+      spinner: spinner
     });
   },
 

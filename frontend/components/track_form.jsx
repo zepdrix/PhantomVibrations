@@ -17,7 +17,8 @@ var TrackForm = React.createClass({
       imageFile: null,
       imageUrl: null,
       audioFile: '',
-      audioUrl: null };
+      audioUrl: null,
+      spinner: 'create-track-button form-hover'};
   },
 
   componentDidMount () {
@@ -73,7 +74,6 @@ var TrackForm = React.createClass({
     }
   },
 
-
   handleSubmit (e) {
     e.preventDefault();
     let formData = new FormData();
@@ -81,21 +81,32 @@ var TrackForm = React.createClass({
     formData.append("track[title]", this.state.title);
     formData.append("track[description]", this.state.description);
     formData.append("track[audio]", this.state.audioFile);
+
     if (this.state.imageFile) {
       formData.append("track[image]", this.state.imageFile);
     }
 
-    TrackActions.createTrack(formData);
+    this.addSpinner();
+
+    TrackActions.createTrack(formData, this.removeSpinner);
+  },
+
+  addSpinner () {
+    this.setState({ spinner: 'loader' });
+  },
+
+  removeSpinner () {
+    this.setState({ spinner: "create-track-button form-hover" });
   },
 
   formErrors () {
     let errors = ErrorStore.errors(FormConstants.CREATE_TRACK_FORM) || [];
     if (errors.length > 0) {
+
       let errorMessages = errors.map( (error, key) => {
         return <li className="form-error" key={ key }>{ error }</li>;
         });
-
-        return <ul>{ errorMessages }</ul>;
+      return <ul>{ errorMessages }</ul>;
     }
   },
 
@@ -140,8 +151,7 @@ var TrackForm = React.createClass({
             <audio src={ this.state.audioUrl } preload="auto" controls>
             </audio>
           </div>
-
-          <button className="create-track-button form-hover">Submit</button>
+          <button className={ this.state.spinner }>Submit</button>
         </form>
       </div>
     );

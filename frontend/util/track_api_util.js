@@ -2,7 +2,7 @@ const FormConstants = require('../constants/form_constants');
 
 module.exports = {
 
-  createTrack (formData, successCb, errorCb) {
+  createTrack (formData, successCb, errorCb, spinner) {
     $.ajax({
       url: "api/tracks",
       method: "POST",
@@ -15,11 +15,12 @@ module.exports = {
       },
       error(xhr) {
         errorCb(FormConstants.CREATE_TRACK_FORM, xhr.responseJSON, xhr.responseText);
+        spinner();
       }
     });
   },
 
-  updateTrack (formData, successCb, errorCb) {
+  updateTrack (formData, successCb, errorCb, spinner) {
     $.ajax({
       url: `api/tracks/${formData.get('track[id]')}`,
       method: "PATCH",
@@ -32,6 +33,7 @@ module.exports = {
       },
       error(xhr) {
         errorCb(FormConstants.EDIT_TRACK_FORM, xhr.responseJSON, xhr.responseText);
+        spinner();
       }
     });
   },

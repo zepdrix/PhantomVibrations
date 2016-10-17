@@ -27352,11 +27352,11 @@
 	    ErrorActions = __webpack_require__(248);
 	
 	module.exports = {
-	  createTrack: function createTrack(track) {
-	    TrackApiUtil.createTrack(track, this.receiveTrack, ErrorActions.setErrors);
+	  createTrack: function createTrack(track, spinner) {
+	    TrackApiUtil.createTrack(track, this.receiveTrack, ErrorActions.setErrors, spinner);
 	  },
-	  updateTrack: function updateTrack(formData) {
-	    TrackApiUtil.updateTrack(formData, this.receiveTrack, ErrorActions.setErrors);
+	  updateTrack: function updateTrack(formData, spinner) {
+	    TrackApiUtil.updateTrack(formData, this.receiveTrack, ErrorActions.setErrors, spinner);
 	  },
 	  deleteTrack: function deleteTrack(id) {
 	    TrackApiUtil.deleteTrack(id, this.removeTrack);
@@ -27430,7 +27430,7 @@
 	var FormConstants = __webpack_require__(242);
 	
 	module.exports = {
-	  createTrack: function createTrack(formData, successCb, errorCb) {
+	  createTrack: function createTrack(formData, successCb, errorCb, spinner) {
 	    $.ajax({
 	      url: "api/tracks",
 	      method: "POST",
@@ -27443,10 +27443,11 @@
 	      },
 	      error: function error(xhr) {
 	        errorCb(FormConstants.CREATE_TRACK_FORM, xhr.responseJSON, xhr.responseText);
+	        spinner();
 	      }
 	    });
 	  },
-	  updateTrack: function updateTrack(formData, successCb, errorCb) {
+	  updateTrack: function updateTrack(formData, successCb, errorCb, spinner) {
 	    $.ajax({
 	      url: "api/tracks/" + formData.get('track[id]'),
 	      method: "PATCH",
@@ -27459,6 +27460,7 @@
 	      },
 	      error: function error(xhr) {
 	        errorCb(FormConstants.EDIT_TRACK_FORM, xhr.responseJSON, xhr.responseText);
+	        spinner();
 	      }
 	    });
 	  },
@@ -27874,11 +27876,12 @@
 	var ErrorStore = __webpack_require__(251);
 	
 	module.exports = {
-	  setErrors: function setErrors(form, errors) {
+	  setErrors: function setErrors(form, errors, spinner) {
 	    AppDispatcher.dispatch({
 	      actionType: ErrorConstants.SET_ERRORS,
 	      form: form,
-	      errors: errors
+	      errors: errors,
+	      spinner: spinner
 	    });
 	  },
 	  clearErrors: function clearErrors() {
@@ -35664,14 +35667,19 @@
 	      title: track.title,
 	      description: trackDescription,
 	      imageUrl: trackImageUrl,
-	      imageFile: null };
+	      imageFile: null,
+	      spinner: "edit-track-button form-hover" };
 	  },
 	  componentDidMount: function componentDidMount() {
+	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
 	    this.trackListener = TrackStore.addListener(this.redirectIfTrackSaved);
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.trackListener.remove();
-	    ErrorActions.clearErrors();
+	    this.errorListener.remove();
+	    setTimeout(function () {
+	      ErrorActions.clearErrors();
+	    }, 1000);
 	  },
 	  redirectIfTrackSaved: function redirectIfTrackSaved() {
 	    this.context.router.push('/tracks');
@@ -35706,7 +35714,9 @@
 	      formData.append("track[image]", this.state.imageFile);
 	    }
 	
-	    TrackActions.updateTrack(formData);
+	    this.addSpinner();
+	
+	    TrackActions.updateTrack(formData, this.removeSpinner);
 	  },
 	  formErrors: function formErrors() {
 	    var errors = ErrorStore.errors(FormConstants.EDIT_TRACK_FORM) || [];
@@ -35725,6 +35735,12 @@
 	        errorMessages
 	      );
 	    }
+	  },
+	  addSpinner: function addSpinner() {
+	    this.setState({ spinner: "loader edit" });
+	  },
+	  removeSpinner: function removeSpinner() {
+	    this.setState({ spinner: "edit-track-button form-hover" });
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -35778,7 +35794,7 @@
 	      ),
 	      React.createElement(
 	        'button',
-	        { className: 'create-track-button form-hover' },
+	        { className: this.state.spinner },
 	        'Update'
 	      )
 	    );
@@ -35814,7 +35830,8 @@
 	      imageFile: null,
 	      imageUrl: null,
 	      audioFile: '',
-	      audioUrl: null };
+	      audioUrl: null,
+	      spinner: 'create-track-button form-hover' };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.errorListener = ErrorStore.addListener(this.forceUpdate.bind(this));
@@ -35867,15 +35884,25 @@
 	    formData.append("track[title]", this.state.title);
 	    formData.append("track[description]", this.state.description);
 	    formData.append("track[audio]", this.state.audioFile);
+	
 	    if (this.state.imageFile) {
 	      formData.append("track[image]", this.state.imageFile);
 	    }
 	
-	    TrackActions.createTrack(formData);
+	    this.addSpinner();
+	
+	    TrackActions.createTrack(formData, this.removeSpinner);
+	  },
+	  addSpinner: function addSpinner() {
+	    this.setState({ spinner: 'loader' });
+	  },
+	  removeSpinner: function removeSpinner() {
+	    this.setState({ spinner: "create-track-button form-hover" });
 	  },
 	  formErrors: function formErrors() {
 	    var errors = ErrorStore.errors(FormConstants.CREATE_TRACK_FORM) || [];
 	    if (errors.length > 0) {
+	
 	      var errorMessages = errors.map(function (error, key) {
 	        return React.createElement(
 	          'li',
@@ -35883,7 +35910,6 @@
 	          error
 	        );
 	      });
-	
 	      return React.createElement(
 	        'ul',
 	        null,
@@ -35957,7 +35983,7 @@
 	        ),
 	        React.createElement(
 	          'button',
-	          { className: 'create-track-button form-hover' },
+	          { className: this.state.spinner },
 	          'Submit'
 	        )
 	      )
@@ -36764,7 +36790,7 @@
 	  render: function render() {
 	
 	    var rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
-	    debugger;
+	
 	    if (this.state.user) {
 	
 	      var username = this.state.user.username;

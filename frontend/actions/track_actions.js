@@ -4,18 +4,20 @@ const TrackApiUtil = require('../util/track_api_util'),
       ErrorActions = require('./error_actions');
 
 module.exports = {
-  createTrack (track) {
+  createTrack (track, spinner) {
     TrackApiUtil.createTrack(
       track,
       this.receiveTrack,
-      ErrorActions.setErrors);
+      ErrorActions.setErrors,
+      spinner);
   },
 
-  updateTrack (formData) {
+  updateTrack (formData, spinner) {
     TrackApiUtil.updateTrack(
       formData,
       this.receiveTrack,
-      ErrorActions.setErrors);
+      ErrorActions.setErrors,
+      spinner);
   },
 
   deleteTrack (id) {

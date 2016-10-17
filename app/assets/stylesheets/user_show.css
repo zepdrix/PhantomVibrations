@@ -27,6 +27,7 @@
 
 .user-avatar-image, .track-image {
   box-shadow: 0px 0px 30px grey;
+  object-fit: cover;
 }
 
 .user-page{
