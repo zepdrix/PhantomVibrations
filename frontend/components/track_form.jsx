@@ -29,13 +29,12 @@ var TrackForm = React.createClass({
   componentWillUnmount () {
     this.errorListener.remove();
     this.trackListener.remove();
-    ErrorActions.clearErrors();
-
+    setTimeout(() => { ErrorActions.clearErrors(); }, 1000);
   },
 
   redirectIfTrackSaved() {
     TrackActions.fetchAllTracks();
-    this.context.router.push("/");
+    this.context.router.push("/tracks");
   },
 
   handleTitle (e) {
@@ -76,19 +75,21 @@ var TrackForm = React.createClass({
 
   handleSubmit (e) {
     e.preventDefault();
-    let formData = new FormData();
+    if (this.state.spinner === 'create-track-button form-hover') {
+      let formData = new FormData();
 
-    formData.append("track[title]", this.state.title);
-    formData.append("track[description]", this.state.description);
-    formData.append("track[audio]", this.state.audioFile);
+      formData.append("track[title]", this.state.title);
+      formData.append("track[description]", this.state.description);
+      formData.append("track[audio]", this.state.audioFile);
 
-    if (this.state.imageFile) {
-      formData.append("track[image]", this.state.imageFile);
+      if (this.state.imageFile) {
+        formData.append("track[image]", this.state.imageFile);
+      }
+
+      this.addSpinner();
+
+      TrackActions.createTrack(formData, this.removeSpinner);
     }
-
-    this.addSpinner();
-
-    TrackActions.createTrack(formData, this.removeSpinner);
   },
 
   addSpinner () {
