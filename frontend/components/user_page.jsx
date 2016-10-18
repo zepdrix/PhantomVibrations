@@ -11,10 +11,6 @@ var UserPage = React.createClass({
     return { tracks: TrackStore.all() };
   },
 
-  // componentWillMount () {
-  //   TrackActions.fetchAllTracks();
-  // },
-
   componentDidMount () {
     this.storeListener = TrackStore.addListener(this.onChange);
 

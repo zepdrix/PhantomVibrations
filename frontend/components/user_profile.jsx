@@ -19,8 +19,6 @@ var UserProfile = React.createClass({
   componentDidMount () {
     this.userListener = UserStore.addListener(this.onUserChange);
     this.trackListener = TrackStore.addListener(this.onTrackUpdate);
-    // TrackActions.fetchUserTracks(parseInt(this.props.params.userId));
-    // UserActions.fetchUser(parseInt(this.props.params.userId));
   },
 
   onTrackUpdate () {

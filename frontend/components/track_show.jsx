@@ -25,8 +25,6 @@ var TrackShow = React.createClass({
 
     let playing = false;
 
-
-
     if (!currentTrack.paused && currentTrack.dataset.id == this.props.params.trackId) {
       playing = true;
     }
@@ -112,7 +110,6 @@ var TrackShow = React.createClass({
     });
   },
 
-  // <div className="track-show playnode-played" style={{width: (this.state.percentage * WindowSizeConstants.TRACK_SHOW_WIDTH ) + 'px'}}></div>
   render () {
 
     let rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
@@ -137,24 +134,16 @@ var TrackShow = React.createClass({
 
     if (this.state.track) {
 
-    //   let waveform;
-    //   let potentialWaveform = TrackStore.getWaveform(this.props.params.trackId);
-    //   if (potentialWaveform) {
-    //     waveform = potentialWaveform;
-    //   } else {
-    //     let trackPercentage = TrackStore.getPlaybackPercentage(this.props.params.trackId);
-    //
-    //     waveform = <Wavesurfer
-    //                  audioFile={this.state.track.audio_url}
-    //                  pos={ this.state.percentage * trackDuration }
-    //                  options={ waveOptions }
-    //                />;
-    //              TrackStore.setWaveform(this.props.params.trackId, waveform);
-    //   }
-
       let trackDuration = TrackStore.getTrackDuration(this.props.params.trackId);
       let trackDescription = this.state.track.description.length > 0 ? this.state.track.description : this.state.track.user.username + " didn't include a description for this track!";
       let userUrl = `/users/${this.state.track.user_id}`;
+
+      let waveSurfer = <Wavesurfer
+        audioFile={this.state.track.audio_url}
+        pos={ this.state.percentage * trackDuration }
+        options={ waveOptions }
+      />;
+
       return(
         <div className="track-show-main">
           <div className="track-show banner-area" style={{background: '-webkit-linear-gradient(135deg, rgba('+(this.state.rbg1[0])+', '+(this.state.rbg1[1])+', '+(this.state.rbg1[2])+', 0.5) 1%, rgba('+rbg2[0]+', '+(0)+', '+rbg2[2]+', 0.7) 100%)'}}>
@@ -188,13 +177,7 @@ var TrackShow = React.createClass({
             </div>
 
             <div className="track-show playnode-container" id={ this.props.params.trackId } onClick={ this.resetPercentage } >
-              <Wavesurfer
-                audioFile={this.state.track.audio_url}
-                pos={ this.state.percentage * trackDuration }
-                options={ waveOptions }
-              />
-
-
+              { waveSurfer }
             </div>
 
             <div className="track-show-avatar-comments-container">

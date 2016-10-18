@@ -28,7 +28,6 @@ var TrackIndexItem = React.createClass({
 
   componentDidMount () {
     this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-    // TrackActions.fetchTrack(this.props.track.id);
     this.renderPlaybar();
   },
 

@@ -27191,7 +27191,6 @@
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.currentTrackListener = TrackStore.addListener(this.renderPlaybar);
-	    // TrackActions.fetchTrack(this.props.track.id);
 	    this.renderPlaybar();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -35394,10 +35393,6 @@
 	  displayName: 'TrackLikeButton',
 	  getInitialState: function getInitialState() {
 	    var numLikes = void 0;
-	    // if (this.props.track) {
-	    //   numLikes = this.props.track.likes.length;
-	    // } else {
-	    // }
 	    numLikes = 0;
 	    return { numLikes: this.props.track.likes.length, track: this.props.track };
 	  },
@@ -36104,9 +36099,6 @@
 	      TrackChange.playTrack(parseInt(_this.props.params.trackId));
 	    });
 	  },
-	
-	
-	  // <div className="track-show playnode-played" style={{width: (this.state.percentage * WindowSizeConstants.TRACK_SHOW_WIDTH ) + 'px'}}></div>
 	  render: function render() {
 	
 	    var rbg2 = [this.state.rbg1[1], this.state.rbg1[2], this.state.rbg1[0]];
@@ -36131,24 +36123,16 @@
 	
 	    if (this.state.track) {
 	
-	      //   let waveform;
-	      //   let potentialWaveform = TrackStore.getWaveform(this.props.params.trackId);
-	      //   if (potentialWaveform) {
-	      //     waveform = potentialWaveform;
-	      //   } else {
-	      //     let trackPercentage = TrackStore.getPlaybackPercentage(this.props.params.trackId);
-	      //
-	      //     waveform = <Wavesurfer
-	      //                  audioFile={this.state.track.audio_url}
-	      //                  pos={ this.state.percentage * trackDuration }
-	      //                  options={ waveOptions }
-	      //                />;
-	      //              TrackStore.setWaveform(this.props.params.trackId, waveform);
-	      //   }
-	
 	      var trackDuration = TrackStore.getTrackDuration(this.props.params.trackId);
 	      var trackDescription = this.state.track.description.length > 0 ? this.state.track.description : this.state.track.user.username + " didn't include a description for this track!";
 	      var userUrl = '/users/' + this.state.track.user_id;
+	
+	      var waveSurfer = React.createElement(Wavesurfer, {
+	        audioFile: this.state.track.audio_url,
+	        pos: this.state.percentage * trackDuration,
+	        options: waveOptions
+	      });
+	
 	      return React.createElement(
 	        'div',
 	        { className: 'track-show-main' },
@@ -36196,11 +36180,7 @@
 	          React.createElement(
 	            'div',
 	            { className: 'track-show playnode-container', id: this.props.params.trackId, onClick: this.resetPercentage },
-	            React.createElement(Wavesurfer, {
-	              audioFile: this.state.track.audio_url,
-	              pos: this.state.percentage * trackDuration,
-	              options: waveOptions
-	            })
+	            waveSurfer
 	          ),
 	          React.createElement(
 	            'div',
@@ -36686,12 +36666,6 @@
 	  getInitialState: function getInitialState() {
 	    return { tracks: TrackStore.all() };
 	  },
-	
-	
-	  // componentWillMount () {
-	  //   TrackActions.fetchAllTracks();
-	  // },
-	
 	  componentDidMount: function componentDidMount() {
 	    this.storeListener = TrackStore.addListener(this.onChange);
 	
@@ -36763,8 +36737,6 @@
 	  componentDidMount: function componentDidMount() {
 	    this.userListener = UserStore.addListener(this.onUserChange);
 	    this.trackListener = TrackStore.addListener(this.onTrackUpdate);
-	    // TrackActions.fetchUserTracks(parseInt(this.props.params.userId));
-	    // UserActions.fetchUser(parseInt(this.props.params.userId));
 	  },
 	  onTrackUpdate: function onTrackUpdate() {
 	    this.setState({ userTracks: TrackStore.all() });
@@ -36891,7 +36863,6 @@
 	    this.sessionListener = SessionStore.addListener(this.onSessionChange);
 	    this.trackListener = TrackStore.addListener(this.onTrackChange);
 	    TrackActions.fetchUserTracks(this.state.currentUser.id);
-	    // TrackActions.fetchAllTracks();
 	    SessionActions.fetchCurrentUser();
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
@@ -37401,16 +37372,6 @@
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.trackListener = TrackStore.addListener(this.onTrackChange);
-	    // window.addEventListener('keydown', (e) => {
-	    //   if (e.key === ' ' && TrackStore.isCurrentTrack()) {
-	    //     e.preventDefault();
-	    //     if (this.state.currentTrack.paused) {
-	    //       TrackActions.playCurrentTrack();
-	    //     } else {
-	    //       TrackActions.pauseCurrentTrack();
-	    //     }
-	    //   }
-	    // });
 	  },
 	  onTrackChange: function onTrackChange() {
 	    var _this = this;

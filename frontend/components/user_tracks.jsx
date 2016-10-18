@@ -17,7 +17,6 @@ var UserTracks = React.createClass({
     this.sessionListener = SessionStore.addListener(this.onSessionChange);
     this.trackListener = TrackStore.addListener(this.onTrackChange);
     TrackActions.fetchUserTracks(this.state.currentUser.id);
-    // TrackActions.fetchAllTracks();
     SessionActions.fetchCurrentUser();
   },
 

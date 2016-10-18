@@ -8,10 +8,6 @@ const TrackStore = require('../stores/track_store');
 var TrackLikeButton = React.createClass({
   getInitialState () {
     let numLikes;
-    // if (this.props.track) {
-    //   numLikes = this.props.track.likes.length;
-    // } else {
-    // }
     numLikes = 0;
     return { numLikes: this.props.track.likes.length, track: this.props.track };
   },
