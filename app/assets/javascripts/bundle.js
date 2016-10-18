@@ -37257,7 +37257,7 @@
 	        ),
 	        React.createElement(
 	          Link,
-	          { to: '/', className: 'navbar-collection nav-bar-left' },
+	          { to: '/login', className: 'navbar-collection nav-bar-left' },
 	          'Collection'
 	        )
 	      );
