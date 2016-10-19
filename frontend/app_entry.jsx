@@ -25,16 +25,7 @@ const SessionApiUtil = require('./util/session_api_util'),
       TrackActions = require('./actions/track_actions'),
       TrackStore = require('./stores/track_store'),
       SessionStore = require('./stores/session_store'),
-      SetupApp = require('./setup_app'),
       TimeChange = require('./helpers/time_conversion');
-
-
-window.SessionApiUtil = SessionApiUtil;
-window.SessionActions = SessionActions;
-window.TimeChange = TimeChange;
-window.TrackApiUtil = TrackApiUtil;
-window.TrackActions = TrackActions;
-window.TrackStore = TrackStore;
 
 const _ensureLoggedIn = function (nextState, replace) {
   if (!SessionStore.isUserLoggedIn()) {
@@ -63,7 +54,7 @@ const appRouter = (
       <Route path='/login' component={ LoginForm }/>
       <Route path='/signup' component={ LoginForm }/>
       <Route path='/tracks/:trackId' component={ TrackShow }/>
-      <Route path='/tracks/:trackId/edit' component={ TrackEditForm }/>
+      <Route path='/tracks/:trackId/edit' component={ TrackEditForm } onEnter={ _ensureLoggedIn }/>
       <Route path='/users/:userId' component={ UserProfile }/>
       <Route path='/users/:userId/edit' component={ CurrentUserProfile } onEnter={ _ensureLoggedIn }/>
       <Route path='/upload' component={ TrackForm } onEnter={ _ensureLoggedIn }/>

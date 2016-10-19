@@ -1,6 +1,5 @@
 .user-tracks {
   width: 700px;
-
 }
 
 .user-page-suggestions {
@@ -8,7 +7,6 @@
   top: 350px;
   float: right;
 }
-
 
 .user-page .user-avatar-image {
   height: 200px;
@@ -38,7 +36,6 @@
 .user-page.section {
   padding-top: 35px;
   display: block;
-  /*position: relative;*/
 }
 .user-page.banner-area {
   margin-top: 75px;

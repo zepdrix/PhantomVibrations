@@ -73,15 +73,7 @@
 	    TrackActions = __webpack_require__(240),
 	    TrackStore = __webpack_require__(269),
 	    SessionStore = __webpack_require__(274),
-	    SetupApp = __webpack_require__(313),
 	    TimeChange = __webpack_require__(300);
-	
-	window.SessionApiUtil = SessionApiUtil;
-	window.SessionActions = SessionActions;
-	window.TimeChange = TimeChange;
-	window.TrackApiUtil = TrackApiUtil;
-	window.TrackActions = TrackActions;
-	window.TrackStore = TrackStore;
 	
 	var _ensureLoggedIn = function _ensureLoggedIn(nextState, replace) {
 	  if (!SessionStore.isUserLoggedIn()) {
@@ -109,7 +101,7 @@
 	    React.createElement(Route, { path: '/login', component: LoginForm }),
 	    React.createElement(Route, { path: '/signup', component: LoginForm }),
 	    React.createElement(Route, { path: '/tracks/:trackId', component: TrackShow }),
-	    React.createElement(Route, { path: '/tracks/:trackId/edit', component: TrackEditForm }),
+	    React.createElement(Route, { path: '/tracks/:trackId/edit', component: TrackEditForm, onEnter: _ensureLoggedIn }),
 	    React.createElement(Route, { path: '/users/:userId', component: UserProfile }),
 	    React.createElement(Route, { path: '/users/:userId/edit', component: CurrentUserProfile, onEnter: _ensureLoggedIn }),
 	    React.createElement(Route, { path: '/upload', component: TrackForm, onEnter: _ensureLoggedIn }),
@@ -35466,7 +35458,7 @@
 	    SessionApiUtil.logoutUser(this.removeCurrentUser);
 	  },
 	  fetchCurrentUser: function fetchCurrentUser() {
-	    SessionApiUtil.fetchCurrentUser(SessionActions.receiveCurrentUser);
+	    SessionApiUtil.fetchCurrentUser(this.receiveCurrentUser);
 	  },
 	  receiveCurrentUser: function receiveCurrentUser(user) {
 	    AppDispatcher.dispatch({
@@ -35752,7 +35744,7 @@
 	        { className: 'login-input' },
 	        React.createElement(
 	          'label',
-	          { 'for': 'track-title', className: 'form-label' },
+	          { htmlFor: 'track-title', className: 'form-label' },
 	          'Title'
 	        ),
 	        React.createElement('input', { id: 'track-title', className: 'input',
@@ -37455,21 +37447,6 @@
 	});
 	
 	module.exports = PlayBar;
-
-/***/ },
-/* 313 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var SessionActions = __webpack_require__(289);
-	
-	module.exports = function () {
-	  var user = window.phantomVibes.user;
-	  if (typeof user !== "undefined") {
-	    SessionActions.receiveCurrentUser(user);
-	  }
-	};
 
 /***/ }
 /******/ ]);

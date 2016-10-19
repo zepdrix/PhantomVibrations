@@ -32,7 +32,7 @@ module.exports = {
 
   fetchCurrentUser () {
     SessionApiUtil.fetchCurrentUser(
-      SessionActions.receiveCurrentUser);
+      this.receiveCurrentUser);
   },
 
   receiveCurrentUser (user) {

@@ -1,12 +1,9 @@
-
-
 .track-show-avatar-comments-container {
   position: relative;
   top: 223px;
   margin-left: 30px;
   border-top: 1px solid grey;
   background: linear-gradient(to top, rgba(0,0,0,0), rgba(165,165,165,0.5));
-  /*background-color: grey;*/
   width: 500px;
   height: 40px;
 }
@@ -17,8 +14,6 @@
   top: 16px;
   border-top: 1px solid grey;
   background: linear-gradient(to top, rgba(0,0,0,0), rgba(165,165,165,0.5));
-  /*margin-left: 30px;*/
-  /*background-color: grey;*/
   width: 420px;
   height: 40px;
 }
@@ -31,7 +26,6 @@
   position: relative;
   top: 260px;
   margin-left: 30px;
-  /*background-color: grey;*/
   width: 500px;
   height: 40px;
 }
@@ -65,7 +59,6 @@
   width: 20px;
   padding-bottom: 10px;
   transition: 0.3s;
-  /*z-index: 9998;*/
 }
 
 .comment-avatar-container {
@@ -77,7 +70,6 @@
   position: absolute;
   left: 0px;
   top: 15px;
-  /*text-shadow: 0 0 5px lightgrey;*/
   font-size: 12px;
 }
 
@@ -160,7 +152,6 @@ ul.comment-index.list li:last-child {
 .track-show .comment-user-area img{
   margin: 20px;
   object-fit: cover;
-
   height: 158px;
   width: 158px;
   border-radius: 50%;

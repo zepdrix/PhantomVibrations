@@ -108,7 +108,7 @@ var TrackEditForm = React.createClass({
         <h3 className="edit-track-form-title">Edit Track</h3>
         { this.formErrors() }
         <fieldset className="login-input">
-          <label for="track-title" className="form-label">
+          <label htmlFor="track-title" className="form-label">
             Title
           </label>
           <input id="track-title" className="input"

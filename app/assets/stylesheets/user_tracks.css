@@ -2,18 +2,16 @@
   padding-top: 0px;
   width: 600px;
   margin: 0 auto;
-
 }
+
 .usertracks {
   padding-top: 75px;
-
 }
 
 .usertracks-header {
   font-size: 26px;
   margin-bottom: 25px;
 }
-
 
 .usertracks-index-item {
   position: relative;
@@ -48,6 +46,7 @@
 .usertracks-index-item * {
   float: left;
 }
+
 .usertracks-comments {
   position: absolute;
   float: left;

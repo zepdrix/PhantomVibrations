@@ -104,7 +104,6 @@
   border-top: 10px solid transparent;
   border-left: 20px solid #FC6F0A;
   border-bottom: 10px solid transparent;
-  /*background-image: url(<%= asset_path 'play.svg' %>)*/
 }
 
 
@@ -121,9 +120,6 @@
 }
 
 .comment-form.track-index input {
-  /*top: 20px;
-  left: 80px;
-  */
   height: 10px;
   font-size:12px;
   margin-left: 70px;
@@ -131,20 +127,16 @@
   padding: 2px 5px;
   border: 1px solid lightgrey;
   border-radius: 4px;
-  /*z-index: 20;*/
 }
 
 .comment-form.track-index {
   width: 300px;
-
 }
 
 .track-show .comment-input {
   padding: 7px 10px;
-  /*width: 100%;*/
 }
 .track-show .comment-input input{
-  /*padding: 4px 10px;*/
   width: 100%;
 }
 
@@ -193,8 +185,6 @@
 }
 
 .track-list.playnode-container {
-  /*top: -40px;*/
-  /*position: fixed;*/
   width: 420px;
   height: 40;
   background-color: transparent;;
@@ -208,14 +198,11 @@
 }
 
 .track-show.playnode-container {
-  /*float: right;*/
-
   background-color: transparent;
   float: left;
   position: relative;
   top: 108px;
   margin-left: 30px;
-  /*background-color: grey;*/
   width: 500px;
   height: 16px;
 }
@@ -224,8 +211,6 @@
 .track-show.playnode-played {
   height: 16px;
   width: 0px;
-  /*background: linear-gradient(to top, rgba(0,0,0,0), rgba(165,165,165,0.5));*/
-
   background-color: #ED980E;
 }
 
