@@ -79,10 +79,7 @@ var TrackIndexItem = React.createClass({
       this.onClick(e);
     }
   },
-  // <div className="track-index-track-like-button">
-  //   <TrackLikeButton track={ this.props.track }></TrackLikeButton>
-  // </div>
-  // <div className="track-list playnode-played" style={{width: (this.state.percentage * 420) + 'px'}}></div>
+
   render () {
     const waveOptions = {
       progressColor: '#ED980E',
